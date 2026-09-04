@@ -15,6 +15,6 @@ for dir in */; do
   category="${name#integration-}"
   mkdir -p $name/src
   (cd $name && bun i)
-  cat "../schemas/openapi/${category}.json" | (cd codegen && bun index.ts -t templates/rpc-method.hbs) >"${name}/src/index.ts"
+  cat "../../schemas/openapi/${category}.json" | (cd codegen && bun index.ts -t templates/rpc-method.hbs) >"${name}/src/index.ts"
   bunx prettier@3.8.5 --write "${name}/src/index.ts"
 done
