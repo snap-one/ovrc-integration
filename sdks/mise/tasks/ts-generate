@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+#MISE description="Generate typescript category-specific types"
+set -euo pipefail
+
+cd typescript
+(cd codegen && bun i)
+
+for dir in */; do
+  name="${dir%/}"
+  case "$name" in
+  codegen | create-integration | integration) continue ;;
+  esac
+
+  category="${name#integration-}"
+  mkdir -p $name/src
+  (cd $name && bun i)
+  cat "../schemas/openapi/${category}.json" | (cd codegen && bun index.ts -t templates/rpc-method.hbs) >"${name}/src/index.ts"
+  bunx prettier@3.8.5 --write "${name}/src/index.ts"
+done

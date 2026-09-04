@@ -1,0 +1,16 @@
+# Allows tasks to live close to their respective code.
+monorepo_root = true
+
+[settings]
+# Necessary for several features used in this config.
+experimental = true
+
+[monorepo]
+# Locations that contain mise configs.
+config_roots = [
+	"sdks",
+]
+
+[tools]
+bun = "1"
+

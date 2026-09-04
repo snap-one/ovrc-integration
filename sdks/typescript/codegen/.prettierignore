@@ -1,0 +1,5 @@
+*.hbs
+
+# Golden codegen output is compared byte-for-byte against raw pipeline output,
+# so it must not be reformatted.
+__tests__/golden
