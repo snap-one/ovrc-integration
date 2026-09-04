@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+#MISE description="Serve hugo and mdbook"
+
+set -euo pipefail
+
+cd "$MISE_PROJECT_ROOT"
+
+# mdbook needs a populated src/ before it can build, so render once up front.
+hugo --source hugo --destination ../mdbook/src --cleanDestinationDir
+
+trap 'kill 0' EXIT
+hugo --source hugo --destination ../mdbook/src --watch &
+mdbook serve mdbook --open
