@@ -7,12 +7,8 @@ set -euo pipefail
 cd typescript
 (cd codegen && bun i)
 
-for dir in */; do
+for dir in integration-*/; do
   name="${dir%/}"
-  case "$name" in
-  codegen | create-integration | integration) continue ;;
-  esac
-
   category="${name#integration-}"
   mkdir -p $name/src
   (cd $name && bun i)
