@@ -11,6 +11,18 @@ config_roots = [
 	"sdks",
 ]
 
+[tasks.generate]
+description = "Create or update all code generated artifacts"
+depends = [
+	"//sdks:ts-generate",
+]
+
+[tasks.test]
+description = "Execute all tests within the repository"
+depends = [
+	"//sdks:ts-test",
+]
+
 [tools]
 bun = "1"
 
