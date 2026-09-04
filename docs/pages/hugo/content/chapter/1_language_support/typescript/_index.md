@@ -1,12 +1,6 @@
-+++
-title = "Typescript & Javascript"
-+++
-
-# Typescript & Javascript
-
-## Quickstart
-
-TODO
+---
+title: Typescript & Javascript
+---
 
 ## Packages
 
@@ -21,7 +15,7 @@ There are two kinds of packages:
 In most cases, developers will prefer to use category-specific packages.
 Typically, these packages do not need to explicitly added to a project.
 The relevant packages are automatically added to a project
-when `create-ovrc-integration` is used to [scaffold a new integration](#quickstart)
+when `@ovrc/create-integration` is used to scaffold a new integration.
 These packages may be installed with any package manager.
 The examples demonstrate using `npm` for simplicity.
 

@@ -7,9 +7,9 @@ set -euo pipefail
 cd typescript
 (cd codegen && bun i)
 
-for dir in integration-*/; do
+for dir in ovrc-integration-*/; do
   name="${dir%/}"
-  category="${name#integration-}"
+  category="${name#ovrc-integration-}"
   mkdir -p $name/src
   (cd $name && bun i)
   cat "../../schemas/openapi/${category}.json" | (cd codegen && bun index.ts -t templates/rpc-method.hbs) >"${name}/src/index.ts"
@@ -17,7 +17,7 @@ for dir in integration-*/; do
 done
 
 # Core integration types
-cd integration
+cd ovrc-integration
 echo "// Auto-generated index file" >index.d.ts
 for f in $(find . -name node_modules -prune -o -name '*.d.ts' ! -name 'index.d.ts' -print | sort); do
   echo "/// <reference path=\"${f#./}\" />" >>index.d.ts
