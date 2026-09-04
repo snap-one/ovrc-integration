@@ -1,0 +1,1930 @@
+{
+  "components": {
+    "schemas": {
+      "Authentication": {
+        "description": "Represents a standalone authentication method or \"form\". This object serves as a mechanism to logically group fields required for authentication.\nFor example: a device may require an access token to communicate over the LAN. The integration may also support communicating via a cloud api, requiring a clientId and clientSecret.\nIn this case, the integration would return two Authentication objects, one for the LAN method and one for the cloud method, each with their respective fields and types.",
+        "properties": {
+          "documentationURL": {
+            "description": "A url to documentation describing how to set/configure this authentication method.\nThis is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.",
+            "format": "uri",
+            "nullable": true,
+            "type": "string"
+          },
+          "fields": {
+            "description": "A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationField"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "id": {
+            "description": "The unique identifier for this authentication method. This is used when setting authentication values.",
+            "type": "string"
+          },
+          "label": {
+            "description": "A short description of the authentication method. For example: \"Local Network Authentication\", \"Cloud Authentication\", etc...\nThis will be displayed to the user.",
+            "type": "string"
+          },
+          "valid": {
+            "description": "Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.\nThere is no way to report the validity of an individual field within the authentication method itself.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationField": {
+        "description": "Represents a single field within an authentication method.",
+        "properties": {
+          "credentialType": {
+            "$ref": "#/components/schemas/AuthenticationFieldCredentialType",
+            "description": "The credential type that best describes the kind\nof value stored in value."
+          },
+          "key": {
+            "description": "The unique identifier for this authentication field.",
+            "type": "string"
+          },
+          "label": {
+            "description": "A short, user-facing label describing this field. For example: \"Password\", \"Access Token\", etc...",
+            "type": "string"
+          },
+          "type": {
+            "description": "The type of this authentication field, indicating how the value should be obtained or set.\nPay close attention any specific requirements or constraints for the type being used.\n- \"STRING\": An authentication field of type string. For example: a password, pin, preshared-key, access token, etc...\n\n- \"PROMPT\": Prompt triggers an out-of-band authentication flow. For example: displaying a prompt on the device requesting permissions,\nor having a user scan a QR code. There is a 30 second timeout for a prompt to resolve.\n\nIf an authentication method's fields list contains a field of type `PROMPT`, it must be the only field present in the list.",
+            "enum": [
+              "STRING",
+              "PROMPT"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "description": "The current value of this authentication field. This typically only applies for the STRING types, but\nmay be populated for other authentication types as well.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationFieldCredentialType": {
+        "properties": {
+          "type": {
+            "description": "- \"OTHER\": \n\n- \"USERNAME\": \n\n- \"CLIENTID\": \n\n- \"CLIENTSECRET\": \n\n- \"PASSWORD\": \n\n- \"ACCESSTOKEN\": \n\n- \"APIKEY\":",
+            "enum": [
+              "OTHER",
+              "USERNAME",
+              "CLIENTID",
+              "CLIENTSECRET",
+              "PASSWORD",
+              "ACCESSTOKEN",
+              "APIKEY"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationFieldInput": {
+        "description": "Input type for setting the value of a single authentication field.",
+        "properties": {
+          "key": {
+            "description": "The unique identifier of the authentication field to set.",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value to set for this authentication field.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "AuthenticationInput": {
+        "description": "Input type for setting authentication values on an authentication method.\nThis is only applicable for authentication methods composed of STRING fields.",
+        "properties": {
+          "fields": {
+            "description": "The list of field values to set for this authentication method.",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationFieldInput"
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The unique identifier of the authentication method to set values for.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fields"
+        ],
+        "type": "object"
+      },
+      "DispatchAuthenticationPrompt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "dispatchAuthenticationPrompt"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/DispatchAuthenticationPromptParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "DispatchAuthenticationPromptArgs": {
+        "properties": {
+          "authenticationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "authenticationId"
+        ],
+        "type": "object"
+      },
+      "DispatchAuthenticationPromptParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/DispatchAuthenticationPromptArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "id",
+                "label",
+                "valid",
+                "documentationURL",
+                "fields"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "DispatchAuthenticationPromptResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/DispatchAuthenticationPromptResult"
+              }
+            }
+          }
+        ]
+      },
+      "DispatchAuthenticationPromptResult": {
+        "$ref": "#/components/schemas/Authentication"
+      },
+      "DispatchFirmwareUpdate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "dispatchFirmwareUpdate"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/DispatchFirmwareUpdateParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "DispatchFirmwareUpdateArgs": {
+        "properties": {
+          "versionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "versionId"
+        ],
+        "type": "object"
+      },
+      "DispatchFirmwareUpdateParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/DispatchFirmwareUpdateArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "version",
+                "status"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "DispatchFirmwareUpdateResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/DispatchFirmwareUpdateResult"
+              }
+            }
+          }
+        ]
+      },
+      "DispatchFirmwareUpdateResult": {
+        "$ref": "#/components/schemas/Firmware"
+      },
+      "DispatchPowerReboot": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "dispatchPowerReboot"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/DispatchPowerRebootParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Dispatches a reboot action to the camera."
+      },
+      "DispatchPowerRebootArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "DispatchPowerRebootParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/DispatchPowerRebootArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "DispatchPowerRebootResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/DispatchPowerRebootResult"
+              }
+            }
+          }
+        ]
+      },
+      "DispatchPowerRebootResult": {
+        "type": "boolean"
+      },
+      "Firmware": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/FirmwareStatus"
+          },
+          "version": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FirmwareVersion"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "FirmwareStatus": {
+        "properties": {
+          "updateStatus": {
+            "description": "The current status of any ongoing firmware update operation.\n- \"UNSUPPORTED\": Indicates that the integration does not support monitoring firmware update status, or that it cannot determine the current status of a firmware update operation.\nThis DOES NOT indicate that the integration does not support firmware updates at all. See the `updateCandidates` field on the firmware type for that information.\n\n- \"READY\": Communicates that the device is ready to begin a firmware update, and supports monitoring the status of the update once it has begun.\nThis does not indicate that a firmware update is available. See the `updateCandidates` field on the firmware type for that information.\n\n- \"COMPLETE\": Indicates that the firmware update has completed successfully.\n\n- \"INPROGRESS\": Indicates that a firmware update is currently in progress.\n\n- \"FAILED\": Indicates that the firmware update has failed.",
+            "enum": [
+              "UNSUPPORTED",
+              "READY",
+              "COMPLETE",
+              "INPROGRESS",
+              "FAILED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FirmwareVersion": {
+        "properties": {
+          "current": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FirmwareVersionDetails"
+              }
+            ],
+            "description": "The current firmware version details for the device.",
+            "nullable": true
+          },
+          "updateCandidates": {
+            "description": "A list of firmware versions available for update.\nA non-empty list indicates that a firmware update is available and that this integration supports dispatching firmware updates.\n\nA null value indicates that the integration does not support firmware updates, or that it cannot determine if there are any updates available.\nAn empty list indicates that there are no firmware updates currently available for this device, but that the integration does support firmware updates.",
+            "items": {
+              "$ref": "#/components/schemas/FirmwareVersionDetails"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "FirmwareVersionDetails": {
+        "description": "An object describing an available firmware version for the device.",
+        "properties": {
+          "documentationUrl": {
+            "description": "A url pointing to documentation for this firmware version. This is used for display purposes in the UI when listing available firmware versions, and can be used by the user to learn more about this firmware version before deciding to update.",
+            "nullable": true,
+            "type": "string"
+          },
+          "friendlyName": {
+            "description": "A user-friendly name for this firmware version. This is used for display purposes in the UI when listing available firmware versions.",
+            "type": "string"
+          },
+          "id": {
+            "description": "A unique identifier for this firmware version. This is used when dispatching a firmware update to specify which version to update to.",
+            "type": "string"
+          },
+          "releaseDate": {
+            "description": "The date this firmware version was released.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "releaseNotes": {
+            "description": "A description of the changes included in this firmware version. This is used for display purposes in the UI when listing available firmware versions.",
+            "nullable": true,
+            "type": "string"
+          },
+          "size": {
+            "description": "The size of the firmware file in bytes.",
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "GetAuthentication": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getAuthentication"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetAuthenticationParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Authentication methods supported by the integration."
+      },
+      "GetAuthenticationArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetAuthenticationParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetAuthenticationArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "methods"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetAuthenticationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetAuthenticationResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetAuthenticationResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IntegrationAuthentication"
+          }
+        ],
+        "nullable": true
+      },
+      "GetFirmware": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getFirmware"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetFirmwareParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Firmware metadata reported by the camera."
+      },
+      "GetFirmwareArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetFirmwareParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetFirmwareArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "version",
+                "status"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetFirmwareResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetFirmwareResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetFirmwareResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Firmware"
+          }
+        ],
+        "nullable": true
+      },
+      "GetImageSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getImageSettings"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetImageSettingsParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Lens/source image settings exposed by the camera."
+      },
+      "GetImageSettingsArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetImageSettingsParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetImageSettingsArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "sources"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetImageSettingsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetImageSettingsResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetImageSettingsResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ImageSettings"
+          }
+        ],
+        "nullable": true
+      },
+      "GetMetadata": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getMetadata"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetMetadataParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Integration metadata reported by the camera."
+      },
+      "GetMetadataArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetMetadataParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetMetadataArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "userManualURL",
+                "knowledgeBaseURL",
+                "dataAcquisition"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetMetadataResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetMetadataResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetMetadataResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        ],
+        "nullable": true
+      },
+      "GetNetwork": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getNetwork"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetNetworkParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Network information reported by the camera."
+      },
+      "GetNetworkArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetNetworkParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetNetworkArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "interfaces"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetNetworkResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetNetworkResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetNetworkResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Network"
+          }
+        ],
+        "nullable": true
+      },
+      "GetPower": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getPower"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetPowerParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Power capabilities and state reported by the camera."
+      },
+      "GetPowerArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetPowerParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetPowerArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "canReboot"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetPowerResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetPowerResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetPowerResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Power"
+          }
+        ],
+        "nullable": true
+      },
+      "GetProfiles": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getProfiles"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetProfilesParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Video streaming profiles exposed by the camera."
+      },
+      "GetProfilesArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetProfilesParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetProfilesArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "available"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetProfilesResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetProfilesResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetProfilesResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Profiles"
+          }
+        ],
+        "nullable": true
+      },
+      "GetSystem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getSystem"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetSystemParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "System-level metadata reported by the camera."
+      },
+      "GetSystemArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetSystemParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetSystemArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "hostname",
+                "model",
+                "brand",
+                "serialNumber",
+                "dateTime"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetSystemResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetSystemResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetSystemResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/System"
+          }
+        ],
+        "nullable": true
+      },
+      "IPv4Config": {
+        "description": "The IPv4 configuration for a network interface, including the assigned address, netmask, gateway, and dns servers.",
+        "properties": {
+          "address": {
+            "description": "The IPv4 address assigned to the device.\nThis may be null if the device does not expose this information.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          },
+          "dnsServers": {
+            "description": "A list of dns servers assigned to the device.\nThe list must return at most 3 servers.",
+            "items": {
+              "format": "ipv4",
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "gateway": {
+            "description": "The IPv4 gateway assigned to the device.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          },
+          "netmask": {
+            "description": "The IPv4 netmask assigned to the device.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "IPv4Settings": {
+        "description": "IPv4 network settings for a network interface, including the effective configuration, static configuration, and supported address types.",
+        "properties": {
+          "addressType": {
+            "description": "The currently active address type for this network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+            "enum": [
+              "DHCP",
+              "DHCP_STATIC_DNS",
+              "STATIC",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "addressTypes": {
+            "description": "A list of supported address types for this network interface,\nwhich can be changed if canSet is true.",
+            "items": {
+              "description": "- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+              "enum": [
+                "DHCP",
+                "DHCP_STATIC_DNS",
+                "STATIC"
+              ],
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "canSet": {
+            "description": "If true, the integration must support setting the IPv4 configuration on this interface. If false, the effective configuration is read-only and cannot be modified by the integration.",
+            "type": "boolean"
+          },
+          "dnsServerCount": {
+            "description": "The number of dns servers the network interface supports.\nThis value may be at most 3.",
+            "type": "integer"
+          },
+          "effective": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPv4Config"
+              }
+            ],
+            "description": "The configuration currently in effect on this network interface.",
+            "nullable": true
+          },
+          "static": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPv4Config"
+              }
+            ],
+            "description": "Where applicable, the static IPv4 configuration for this network interface.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "IPv4StaticConfigInput": {
+        "description": "The configuration for a given static network interface.",
+        "properties": {
+          "address": {
+            "description": "IPv4 address configuration for this network interface.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          },
+          "dnsServers": {
+            "description": "DNS server configuration.",
+            "items": {
+              "format": "ipv4",
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "gateway": {
+            "description": "Gateway configuration, where applicable.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          },
+          "netmask": {
+            "description": "Netmask configuration, where applicable.",
+            "format": "ipv4",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImageSettings": {
+        "description": "Image settings exposed by the camera across physical sources/lenses.",
+        "properties": {
+          "sources": {
+            "description": "A list of physical sources on the camera.",
+            "items": {
+              "$ref": "#/components/schemas/ImageSettingsSource"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ImageSettingsSource": {
+        "description": "Represents a single physical source (or lens) on the camera.",
+        "properties": {
+          "configuredDayNightMode": {
+            "description": "The currently configured day/night mode for this lens.\n- \"DAY\": Day mode.\n\n- \"NIGHT\": Night mode.\n\n- \"AUTO\": Automatically switch between day and night mode based on the current lighting conditions.",
+            "enum": [
+              "DAY",
+              "NIGHT",
+              "AUTO",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "currentDayNightMode": {
+            "description": "The current day/night mode for this lens. This value may be different\nthan the configuredDayNightMode if the configuredDayNightMode is set\nto AUTO and the camera has automatically switched modes based on lighting\nconditions. Must not be set to AUTO, as AUTO is only a valid value for\nconfiguredDayNightMode.\n- \"DAY\": Day mode.\n\n- \"NIGHT\": Night mode.\n\n- \"AUTO\": Automatically switch between day and night mode based on the current lighting conditions.",
+            "enum": [
+              "DAY",
+              "NIGHT",
+              "AUTO",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "The id of the physical source on the camera.",
+            "type": "string"
+          },
+          "rotation": {
+            "description": "The current rotation of the lens, in degrees.\nThis value is only valid if it also exists in the rotationPresets field.",
+            "nullable": true,
+            "type": "integer"
+          },
+          "rotationPresets": {
+            "description": "A set of preset rotation values that can be applied to the camera.\nThe unit of this value is degrees.",
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 359,
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "IntegrationAuthentication": {
+        "description": "The container for all authentication items.",
+        "properties": {
+          "methods": {
+            "description": "A list of authentication methods required or\navailable for a user to use.",
+            "items": {
+              "$ref": "#/components/schemas/Authentication"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "KeyValuePair": {
+        "properties": {
+          "canonicalId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "friendlyName": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Metadata": {
+        "properties": {
+          "dataAcquisition": {
+            "items": {
+              "$ref": "#/components/schemas/KeyValuePair"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "knowledgeBaseURL": {
+            "format": "uri",
+            "nullable": true,
+            "type": "string"
+          },
+          "userManualURL": {
+            "format": "uri",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Network": {
+        "description": "The device's network information.",
+        "properties": {
+          "interfaces": {
+            "description": "A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports.",
+            "items": {
+              "$ref": "#/components/schemas/NetworkInterface"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "NetworkConfigInput": {
+        "description": "Updates to apply to the device's network configuration.",
+        "properties": {
+          "interfaces": {
+            "description": "The interfaces to update, with their configuration.",
+            "items": {
+              "$ref": "#/components/schemas/NetworkInterfaceConfigInput"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "interfaces"
+        ],
+        "type": "object"
+      },
+      "NetworkIPv4ConfigInput": {
+        "properties": {
+          "addressType": {
+            "description": "The address type to use for the network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+            "enum": [
+              "DHCP",
+              "DHCP_STATIC_DNS",
+              "STATIC"
+            ],
+            "type": "string"
+          },
+          "static": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPv4StaticConfigInput"
+              }
+            ],
+            "description": "Static IPv4 configuration, if applicable.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "addressType"
+        ],
+        "type": "object"
+      },
+      "NetworkInterface": {
+        "description": "A network interface on the device, such as a Wi-Fi adapter or Ethernet port.",
+        "properties": {
+          "canEnable": {
+            "description": "Whether this network interface can be enabled via the integration.\nNull indicates the integration does not support changing the enabled status of\nany network interfaces. False indicates the network interface cannot be enabled,\nbut the integration does support changing the enabled status of network interfaces\nwhere canEnable is true.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Whether this network interface is currently enabled.",
+            "type": "boolean"
+          },
+          "friendlyName": {
+            "description": "A user-friendly name for this network interface, such as \"Wi-Fi\", \"Ethernet\", \"eth0\", etc...",
+            "type": "string"
+          },
+          "id": {
+            "description": "A unique identifier for this network interface. This is used when setting network configuration, if supported.",
+            "type": "string"
+          },
+          "ipv4": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPv4Settings"
+              }
+            ],
+            "description": "The IPv4 settings for this network interface.",
+            "nullable": true
+          },
+          "macAddress": {
+            "description": "The network interface's mac address.",
+            "nullable": true,
+            "type": "string"
+          },
+          "wifi": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WifiInfo"
+              }
+            ],
+            "description": "Details about the Wi-Fi connection for this network interface.\nIf this value is null, it is assumed that the network interface is a wired connection.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "NetworkInterfaceConfigInput": {
+        "description": "Used when updating the network interface configuration for a device.",
+        "properties": {
+          "enabled": {
+            "description": "Whether to enable or disable this network interface.\nThis value is only relevant when the network interface canEnable field is non-null.\nA null value in this field should be treated as \"no change\" to the enabled status of the network interface.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "id": {
+            "description": "The unique identifier of the network interface to update the configuration for.",
+            "type": "string"
+          },
+          "ipv4": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NetworkIPv4ConfigInput"
+              }
+            ],
+            "description": "The configuration for the network interface's IPv4 settings. If null, the IPv4 configuration should not be changed.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "Power": {
+        "description": "Power capabilities reported by the camera.",
+        "properties": {
+          "canReboot": {
+            "description": "Indicates whether the camera supports a reboot action.",
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "Profile": {
+        "description": "A single configured streaming profile.",
+        "properties": {
+          "friendlyName": {
+            "description": "A user-facing name for this streaming profile, used to identify\nthe profile in source-selection interfaces. Must not be empty.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "description": "A unique stable identifier for this profile.",
+            "type": "string"
+          },
+          "video": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoEncoding"
+              }
+            ],
+            "description": "Configured encoding settings for the video stream.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "Profiles": {
+        "description": "Streaming profile configuration exposed by the camera.",
+        "properties": {
+          "available": {
+            "description": "A list of configured streaming profiles on the camera.",
+            "items": {
+              "$ref": "#/components/schemas/Profile"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "RPCError": {
+        "properties": {
+          "code": {
+            "description": "JSON-RPC 2.0 error code. Codes in the range -32768 to -32000 are reserved for pre-defined errors.",
+            "type": "integer"
+          },
+          "data": {
+            "description": "Optional additional error information"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "RPCErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/RPCError"
+          },
+          "id": {
+            "type": "string"
+          },
+          "jsonrpc": {
+            "enum": [
+              "2.0"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "jsonrpc",
+          "id",
+          "error"
+        ],
+        "type": "object"
+      },
+      "RPCMethod": {
+        "discriminator": {
+          "mapping": {
+            "dispatchAuthenticationPrompt": "#/components/schemas/DispatchAuthenticationPrompt",
+            "dispatchFirmwareUpdate": "#/components/schemas/DispatchFirmwareUpdate",
+            "dispatchPowerReboot": "#/components/schemas/DispatchPowerReboot",
+            "getAuthentication": "#/components/schemas/GetAuthentication",
+            "getFirmware": "#/components/schemas/GetFirmware",
+            "getImageSettings": "#/components/schemas/GetImageSettings",
+            "getMetadata": "#/components/schemas/GetMetadata",
+            "getNetwork": "#/components/schemas/GetNetwork",
+            "getPower": "#/components/schemas/GetPower",
+            "getProfiles": "#/components/schemas/GetProfiles",
+            "getSystem": "#/components/schemas/GetSystem",
+            "setAuthentication": "#/components/schemas/SetAuthentication",
+            "setNetworkConfig": "#/components/schemas/SetNetworkConfig"
+          },
+          "propertyName": "method"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DispatchAuthenticationPrompt"
+          },
+          {
+            "$ref": "#/components/schemas/DispatchFirmwareUpdate"
+          },
+          {
+            "$ref": "#/components/schemas/DispatchPowerReboot"
+          },
+          {
+            "$ref": "#/components/schemas/GetAuthentication"
+          },
+          {
+            "$ref": "#/components/schemas/GetFirmware"
+          },
+          {
+            "$ref": "#/components/schemas/GetImageSettings"
+          },
+          {
+            "$ref": "#/components/schemas/GetMetadata"
+          },
+          {
+            "$ref": "#/components/schemas/GetNetwork"
+          },
+          {
+            "$ref": "#/components/schemas/GetPower"
+          },
+          {
+            "$ref": "#/components/schemas/GetProfiles"
+          },
+          {
+            "$ref": "#/components/schemas/GetSystem"
+          },
+          {
+            "$ref": "#/components/schemas/SetAuthentication"
+          },
+          {
+            "$ref": "#/components/schemas/SetNetworkConfig"
+          }
+        ]
+      },
+      "RPCMethodResult": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jsonrpc": {
+            "enum": [
+              "2.0"
+            ],
+            "type": "string"
+          },
+          "result": {
+            "description": "The method result. Type is defined by the specific method."
+          }
+        },
+        "required": [
+          "jsonrpc",
+          "id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "RPCMethods": {
+        "items": {
+          "$ref": "#/components/schemas/RPCMethod"
+        },
+        "type": "array"
+      },
+      "RPCRequestBase": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jsonrpc": {
+            "enum": [
+              "2.0"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "jsonrpc",
+          "id"
+        ],
+        "type": "object"
+      },
+      "RPCSuccessResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DispatchAuthenticationPromptResponse"
+          },
+          {
+            "$ref": "#/components/schemas/DispatchFirmwareUpdateResponse"
+          },
+          {
+            "$ref": "#/components/schemas/DispatchPowerRebootResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetAuthenticationResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetFirmwareResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetImageSettingsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetMetadataResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetNetworkResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetPowerResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetProfilesResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetSystemResponse"
+          },
+          {
+            "$ref": "#/components/schemas/SetAuthenticationResponse"
+          },
+          {
+            "$ref": "#/components/schemas/SetNetworkConfigResponse"
+          }
+        ]
+      },
+      "Resolution": {
+        "description": "Represents a video resolution in pixels.",
+        "properties": {
+          "height": {
+            "description": "Number of pixels across the y-axis of the video image, prior to taking rotation into account.\nFor example, a 1080p video rotated to 90 degrees would have a height of 1080.\nA 1080p video rotated to 0 degrees would have a height of 1080.",
+            "type": "integer"
+          },
+          "width": {
+            "description": "Number of pixels across the x-axis of the video image, prior to taking rotation into account.\nFor example, a 1080p video rotated to 90 degrees would have a width of 1920.\nA 1080p video rotated to 0 degrees would have a width of 1920.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "SetAuthentication": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "setAuthentication"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/SetAuthenticationParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SetAuthenticationArgs": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthenticationInput"
+          }
+        },
+        "required": [
+          "auth"
+        ],
+        "type": "object"
+      },
+      "SetAuthenticationParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/SetAuthenticationArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "id",
+                "label",
+                "valid",
+                "documentationURL",
+                "fields"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "SetAuthenticationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/SetAuthenticationResult"
+              }
+            }
+          }
+        ]
+      },
+      "SetAuthenticationResult": {
+        "$ref": "#/components/schemas/Authentication"
+      },
+      "SetNetworkConfig": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "setNetworkConfig"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/SetNetworkConfigParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SetNetworkConfigArgs": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/NetworkConfigInput"
+          }
+        },
+        "required": [
+          "config"
+        ],
+        "type": "object"
+      },
+      "SetNetworkConfigParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/SetNetworkConfigArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "interfaces"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "SetNetworkConfigResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/SetNetworkConfigResult"
+              }
+            }
+          }
+        ]
+      },
+      "SetNetworkConfigResult": {
+        "$ref": "#/components/schemas/Network"
+      },
+      "System": {
+        "description": "System metadata reported by the camera.",
+        "properties": {
+          "brand": {
+            "description": "Brand reported by the camera.",
+            "nullable": true,
+            "type": "string"
+          },
+          "dateTime": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SystemDateTime"
+              }
+            ],
+            "description": "Date/time metadata reported by the camera.",
+            "nullable": true
+          },
+          "hostname": {
+            "description": "Hostname reported directly by the camera.",
+            "nullable": true,
+            "type": "string"
+          },
+          "model": {
+            "description": "Model reported by the camera.",
+            "nullable": true,
+            "type": "string"
+          },
+          "serialNumber": {
+            "description": "Serial number reported by the camera.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SystemDateTime": {
+        "description": "Date/time metadata reported by the camera.",
+        "properties": {
+          "daylightSavingsEnabled": {
+            "description": "Reports whether daylight saving time (DST) is enabled on the camera.\nIf false, the camera-reported date/time will not apply daylight saving adjustments.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "localDateTime": {
+            "description": "An RFC 3339 compliant date-time reflecting the camera's local time and timezone.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "description": "Reports how the camera obtains the current date/time.\n- \"MANUAL\": Date/time is manually configured.\n\n- \"NTP\": Date/time is synchronized via NTP.",
+            "enum": [
+              "MANUAL",
+              "NTP",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoEncoding": {
+        "description": "Video encoding settings for a streaming profile.",
+        "properties": {
+          "codec": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KeyValuePair"
+              }
+            ],
+            "description": "A user-friendly representation of the current video encoding codec.\nExamples might include: {id:\"h265\", friendlyName:\"H.265\"}, {id:\"mpeg4\", friendlyName:\"MPEG4\"}, etc.",
+            "nullable": true
+          },
+          "maxBitrate": {
+            "description": "The ceiling bitrate the camera is currently\nconfigured to use in Kbps.",
+            "nullable": true,
+            "type": "integer"
+          },
+          "maxFrameRate": {
+            "description": "The maximum frame rate the camera is currently configured to use in frames per second.",
+            "nullable": true,
+            "type": "integer"
+          },
+          "resolution": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              }
+            ],
+            "description": "Configured video resolution.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "WifiInfo": {
+        "properties": {
+          "ssid": {
+            "description": "The SSID of the currently connected Wi-Fi network, if applicable.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Generated API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/rpc": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RPCMethods"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/RPCSuccessResponse"
+                      },
+                      {
+                        "$ref": "#/components/schemas/RPCErrorResponse"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "JSON-RPC response"
+          }
+        }
+      }
+    }
+  }
+}

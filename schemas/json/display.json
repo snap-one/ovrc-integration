@@ -1,0 +1,4350 @@
+{
+  "$defs": {
+    "ActiveContext": {
+      "description": "An active context of the device.\nFor example, with picture-in-picture mode, there would be a minimum of 2 active contexts.\nI.e. a representation of currently used input(s), output(s), app(s), etc... on the device.",
+      "properties": {
+        "canReportInput": {
+          "description": "Indicates whether the device is capable of reporting the currently active input.\nWhen true, the input field will be populated with the active input–if there is an active input;\nwhen false, the input field should always be null and will be ignored.",
+          "type": "boolean"
+        },
+        "canReportSource": {
+          "description": "Indicates whether the device is capable of reporting the currently active application/source.\nWhen true, the source field will be populated with the active application/source–if there is an active application;\nwhen false, the source field should always be null and will be ignored.",
+          "type": "boolean"
+        },
+        "id": {
+          "description": "The unique identifier for this context.",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Input"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The physical input that is currently active on the device. This may be null if there is no active input, or if the device does not report this information."
+        },
+        "outputs": {
+          "description": "The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information.",
+          "items": {
+            "$ref": "#/$defs/Output"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AppSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The application/source that is currently active on the device.\nThis does not include physical inputs, which are represented separately by the input field.\nIf there is no active application/source, or the device does not report this information, this field may be null."
+        }
+      },
+      "type": "object"
+    },
+    "ActiveContexts": {
+      "properties": {
+        "contexts": {
+          "description": "A list of currently active display contexts.\nFor many displays, this list will only ever contain a single item.",
+          "items": {
+            "$ref": "#/$defs/ActiveContext"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "AppSource": {
+      "properties": {
+        "canActivate": {
+          "type": "boolean"
+        },
+        "canTerminate": {
+          "type": "boolean"
+        },
+        "canonicalId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "friendlyName": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AppSources": {
+      "properties": {
+        "available": {
+          "items": {
+            "$ref": "#/$defs/AppSource"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "canTerminate": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "Authentication": {
+      "description": "Represents a standalone authentication method or \"form\". This object serves as a mechanism to logically group fields required for authentication.\nFor example: a device may require an access token to communicate over the LAN. The integration may also support communicating via a cloud api, requiring a clientId and clientSecret.\nIn this case, the integration would return two Authentication objects, one for the LAN method and one for the cloud method, each with their respective fields and types.",
+      "properties": {
+        "documentationURL": {
+          "description": "A url to documentation describing how to set/configure this authentication method.\nThis is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.",
+          "format": "uri",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "description": "A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.",
+          "items": {
+            "$ref": "#/$defs/AuthenticationField"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "The unique identifier for this authentication method. This is used when setting authentication values.",
+          "type": "string"
+        },
+        "label": {
+          "description": "A short description of the authentication method. For example: \"Local Network Authentication\", \"Cloud Authentication\", etc...\nThis will be displayed to the user.",
+          "type": "string"
+        },
+        "valid": {
+          "description": "Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.\nThere is no way to report the validity of an individual field within the authentication method itself.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "AuthenticationField": {
+      "description": "Represents a single field within an authentication method.",
+      "properties": {
+        "credentialType": {
+          "$ref": "#/$defs/AuthenticationFieldCredentialType",
+          "description": "The credential type that best describes the kind\nof value stored in value."
+        },
+        "key": {
+          "description": "The unique identifier for this authentication field.",
+          "type": "string"
+        },
+        "label": {
+          "description": "A short, user-facing label describing this field. For example: \"Password\", \"Access Token\", etc...",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of this authentication field, indicating how the value should be obtained or set.\nPay close attention any specific requirements or constraints for the type being used.\n- \"STRING\": An authentication field of type string. For example: a password, pin, preshared-key, access token, etc...\n\n- \"PROMPT\": Prompt triggers an out-of-band authentication flow. For example: displaying a prompt on the device requesting permissions,\nor having a user scan a QR code. There is a 30 second timeout for a prompt to resolve.\n\nIf an authentication method's fields list contains a field of type `PROMPT`, it must be the only field present in the list.",
+          "enum": [
+            "STRING",
+            "PROMPT"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "description": "The current value of this authentication field. This typically only applies for the STRING types, but\nmay be populated for other authentication types as well.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "AuthenticationFieldCredentialType": {
+      "properties": {
+        "type": {
+          "description": "- \"OTHER\": \n\n- \"USERNAME\": \n\n- \"CLIENTID\": \n\n- \"CLIENTSECRET\": \n\n- \"PASSWORD\": \n\n- \"ACCESSTOKEN\": \n\n- \"APIKEY\":",
+          "enum": [
+            "OTHER",
+            "USERNAME",
+            "CLIENTID",
+            "CLIENTSECRET",
+            "PASSWORD",
+            "ACCESSTOKEN",
+            "APIKEY"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AuthenticationFieldInput": {
+      "description": "Input type for setting the value of a single authentication field.",
+      "properties": {
+        "key": {
+          "description": "The unique identifier of the authentication field to set.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value to set for this authentication field.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "type": "object"
+    },
+    "AuthenticationInput": {
+      "description": "Input type for setting authentication values on an authentication method.\nThis is only applicable for authentication methods composed of STRING fields.",
+      "properties": {
+        "fields": {
+          "description": "The list of field values to set for this authentication method.",
+          "items": {
+            "$ref": "#/$defs/AuthenticationFieldInput"
+          },
+          "type": "array"
+        },
+        "id": {
+          "description": "The unique identifier of the authentication method to set values for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "fields"
+      ],
+      "type": "object"
+    },
+    "DispatchAppSourcesTerminate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "dispatchAppSourcesTerminate"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/DispatchAppSourcesTerminateParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "DispatchAppSourcesTerminateArgs": {
+      "properties": {
+        "contextId": {
+          "type": "string"
+        },
+        "sourceId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contextId",
+        "sourceId"
+      ],
+      "type": "object"
+    },
+    "DispatchAppSourcesTerminateParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/DispatchAppSourcesTerminateArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "source",
+              "canReportSource",
+              "input",
+              "canReportInput",
+              "outputs"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "DispatchAppSourcesTerminateResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/DispatchAppSourcesTerminateResult"
+            }
+          }
+        }
+      ]
+    },
+    "DispatchAppSourcesTerminateResult": {
+      "$ref": "#/$defs/ActiveContext"
+    },
+    "DispatchAuthenticationPrompt": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "dispatchAuthenticationPrompt"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/DispatchAuthenticationPromptParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "DispatchAuthenticationPromptArgs": {
+      "properties": {
+        "authenticationId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "authenticationId"
+      ],
+      "type": "object"
+    },
+    "DispatchAuthenticationPromptParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/DispatchAuthenticationPromptArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "label",
+              "valid",
+              "documentationURL",
+              "fields"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "DispatchAuthenticationPromptResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/DispatchAuthenticationPromptResult"
+            }
+          }
+        }
+      ]
+    },
+    "DispatchAuthenticationPromptResult": {
+      "$ref": "#/$defs/Authentication"
+    },
+    "DispatchFirmwareUpdate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "dispatchFirmwareUpdate"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/DispatchFirmwareUpdateParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "DispatchFirmwareUpdateArgs": {
+      "properties": {
+        "versionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "versionId"
+      ],
+      "type": "object"
+    },
+    "DispatchFirmwareUpdateParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/DispatchFirmwareUpdateArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "version",
+              "status"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "DispatchFirmwareUpdateResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/DispatchFirmwareUpdateResult"
+            }
+          }
+        }
+      ]
+    },
+    "DispatchFirmwareUpdateResult": {
+      "$ref": "#/$defs/Firmware"
+    },
+    "DispatchPowerReboot": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "dispatchPowerReboot"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/DispatchPowerRebootParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "DispatchPowerRebootArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "DispatchPowerRebootParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/DispatchPowerRebootArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "DispatchPowerRebootResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/DispatchPowerRebootResult"
+            }
+          }
+        }
+      ]
+    },
+    "DispatchPowerRebootResult": {
+      "type": "boolean"
+    },
+    "Firmware": {
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/FirmwareStatus"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FirmwareVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "FirmwareStatus": {
+      "properties": {
+        "updateStatus": {
+          "description": "The current status of any ongoing firmware update operation.\n- \"UNSUPPORTED\": Indicates that the integration does not support monitoring firmware update status, or that it cannot determine the current status of a firmware update operation.\nThis DOES NOT indicate that the integration does not support firmware updates at all. See the `updateCandidates` field on the firmware type for that information.\n\n- \"READY\": Communicates that the device is ready to begin a firmware update, and supports monitoring the status of the update once it has begun.\nThis does not indicate that a firmware update is available. See the `updateCandidates` field on the firmware type for that information.\n\n- \"COMPLETE\": Indicates that the firmware update has completed successfully.\n\n- \"INPROGRESS\": Indicates that a firmware update is currently in progress.\n\n- \"FAILED\": Indicates that the firmware update has failed.",
+          "enum": [
+            "UNSUPPORTED",
+            "READY",
+            "COMPLETE",
+            "INPROGRESS",
+            "FAILED"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FirmwareVersion": {
+      "properties": {
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FirmwareVersionDetails"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current firmware version details for the device."
+        },
+        "updateCandidates": {
+          "description": "A list of firmware versions available for update.\nA non-empty list indicates that a firmware update is available and that this integration supports dispatching firmware updates.\n\nA null value indicates that the integration does not support firmware updates, or that it cannot determine if there are any updates available.\nAn empty list indicates that there are no firmware updates currently available for this device, but that the integration does support firmware updates.",
+          "items": {
+            "$ref": "#/$defs/FirmwareVersionDetails"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "FirmwareVersionDetails": {
+      "description": "An object describing an available firmware version for the device.",
+      "properties": {
+        "documentationUrl": {
+          "description": "A url pointing to documentation for this firmware version. This is used for display purposes in the UI when listing available firmware versions, and can be used by the user to learn more about this firmware version before deciding to update.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "friendlyName": {
+          "description": "A user-friendly name for this firmware version. This is used for display purposes in the UI when listing available firmware versions.",
+          "type": "string"
+        },
+        "id": {
+          "description": "A unique identifier for this firmware version. This is used when dispatching a firmware update to specify which version to update to.",
+          "type": "string"
+        },
+        "releaseDate": {
+          "description": "The date this firmware version was released.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "releaseNotes": {
+          "description": "A description of the changes included in this firmware version. This is used for display purposes in the UI when listing available firmware versions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "size": {
+          "description": "The size of the firmware file in bytes.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "GetActiveContexts": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getActiveContexts"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetActiveContextsParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetActiveContextsArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetActiveContextsParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetActiveContextsArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "contexts"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetActiveContextsResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetActiveContextsResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetActiveContextsResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActiveContexts"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetAppSources": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getAppSources"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetAppSourcesParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetAppSourcesArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetAppSourcesParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetAppSourcesArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "canTerminate",
+              "available"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetAppSourcesResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetAppSourcesResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetAppSourcesResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppSources"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetAuthentication": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getAuthentication"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetAuthenticationParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Authentication methods supported by the integration."
+    },
+    "GetAuthenticationArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetAuthenticationParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetAuthenticationArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "methods"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetAuthenticationResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetAuthenticationResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetAuthenticationResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IntegrationAuthentication"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetFirmware": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getFirmware"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetFirmwareParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Firmware metadata reported by the device."
+    },
+    "GetFirmwareArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetFirmwareParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetFirmwareArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "version",
+              "status"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetFirmwareResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetFirmwareResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetFirmwareResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Firmware"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetInputs": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getInputs"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetInputsParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetInputsArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetInputsParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetInputsArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "cecMode",
+              "arcMode"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetInputsResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetInputsResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetInputsResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Inputs"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetMetadata": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getMetadata"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetMetadataParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetMetadataArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetMetadataParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetMetadataArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "userManualURL",
+              "knowledgeBaseURL",
+              "dataAcquisition"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetMetadataResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetMetadataResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetMetadataResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Metadata"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetNetwork": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getNetwork"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetNetworkParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetNetworkArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetNetworkParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetNetworkArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "interfaces"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetNetworkResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetNetworkResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetNetworkResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Network"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetOutputs": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getOutputs"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetOutputsParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetOutputsArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetOutputsParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetOutputsArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "allAudio"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetOutputsResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetOutputsResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetOutputsResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Outputs"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetPower": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getPower"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetPowerParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetPowerArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetPowerParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetPowerArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "canReboot",
+              "state",
+              "powerSavingMode",
+              "wakeOnLAN"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetPowerResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetPowerResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetPowerResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Power"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetSystem": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getSystem"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetSystemParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetSystemArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetSystemParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetSystemArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "friendlyName",
+              "label",
+              "language",
+              "country",
+              "model",
+              "brand",
+              "serialNumber"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetSystemResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetSystemResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetSystemResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/System"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GetVideo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "getVideo"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/GetVideoParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "GetVideoArgs": {
+      "properties": {},
+      "type": "object"
+    },
+    "GetVideoParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GetVideoArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "screenMute",
+              "aspectRatio",
+              "pictureMode",
+              "brightness",
+              "contrast",
+              "sharpness"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "GetVideoResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/GetVideoResult"
+            }
+          }
+        }
+      ]
+    },
+    "GetVideoResult": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Video"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "GlobalLabel": {
+      "properties": {
+        "canSet": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "IPv4Config": {
+      "description": "The IPv4 configuration for a network interface, including the assigned address, netmask, gateway, and dns servers.",
+      "properties": {
+        "address": {
+          "description": "The IPv4 address assigned to the device.\nThis may be null if the device does not expose this information.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dnsServers": {
+          "description": "A list of dns servers assigned to the device.\nThe list must return at most 3 servers.",
+          "items": {
+            "format": "ipv4",
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "gateway": {
+          "description": "The IPv4 gateway assigned to the device.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "netmask": {
+          "description": "The IPv4 netmask assigned to the device.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "IPv4Settings": {
+      "description": "IPv4 network settings for a network interface, including the effective configuration, static configuration, and supported address types.",
+      "properties": {
+        "addressType": {
+          "description": "The currently active address type for this network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+          "enum": [
+            "DHCP",
+            "DHCP_STATIC_DNS",
+            "STATIC",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "addressTypes": {
+          "description": "A list of supported address types for this network interface,\nwhich can be changed if canSet is true.",
+          "items": {
+            "description": "- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+            "enum": [
+              "DHCP",
+              "DHCP_STATIC_DNS",
+              "STATIC"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "canSet": {
+          "description": "If true, the integration must support setting the IPv4 configuration on this interface. If false, the effective configuration is read-only and cannot be modified by the integration.",
+          "type": "boolean"
+        },
+        "dnsServerCount": {
+          "description": "The number of dns servers the network interface supports.\nThis value may be at most 3.",
+          "type": "integer"
+        },
+        "effective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IPv4Config"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The configuration currently in effect on this network interface."
+        },
+        "static": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IPv4Config"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Where applicable, the static IPv4 configuration for this network interface."
+        }
+      },
+      "type": "object"
+    },
+    "IPv4StaticConfigInput": {
+      "description": "The configuration for a given static network interface.",
+      "properties": {
+        "address": {
+          "description": "IPv4 address configuration for this network interface.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dnsServers": {
+          "description": "DNS server configuration.",
+          "items": {
+            "format": "ipv4",
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "gateway": {
+          "description": "Gateway configuration, where applicable.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "netmask": {
+          "description": "Netmask configuration, where applicable.",
+          "format": "ipv4",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Input": {
+      "description": "Input represents a physical input on the device, such as an HDMI port, a tuner, etc...",
+      "properties": {
+        "arcMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The active ARC mode for this input.\nThis field is only populated if the display supports reporting the current ARC mode on a per-input basis.\nSee the inputs object's arcMode field for more information."
+        },
+        "arcModes": {
+          "description": "A list of ARC modes supported by this input.\nThis field is only populated if the display supports reporting ARC modes on a per-input basis.\nSee the inputs object's arcModes field for more information.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "canActivate": {
+          "description": "Communicates whether this input can be selected as the active input.\nThis value reflects the current state of the input, not the overall capability of the device or integration.\nFor example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.",
+          "type": "boolean"
+        },
+        "cecMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The active CEC mode for this input.\nThis field is only populated if the display supports reporting the current CEC mode on a per-input basis.\nSee the inputs object's cecMode field for more information."
+        },
+        "cecModes": {
+          "description": "A list of CEC modes supported by this input.\nThis field is only populated if the display supports reporting CEC modes on a per-input basis.\nSee the inputs object's cecModes field for more information.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "connectionPresent": {
+          "description": "Communicates whether a physical connection is detected on this input.\nIf this value is not supported, it may be null or UNKNOWN.\n- \"TRUE\": \n\n- \"FALSE\": \n\n- \"UNKNOWN\":",
+          "enum": [
+            "TRUE",
+            "FALSE",
+            "UNKNOWN",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "connectionType": {
+          "$ref": "#/$defs/KeyValuePair",
+          "description": "The active connectionType for this input. Even if connectionTypes is empty\nor not supported, this field must be populated. For example a plain HDMI input\nmay have the type \"hdmi\" and a canonicalId of \"CONN:HDMI\"."
+        },
+        "connectionTypes": {
+          "description": "A list of connection types that this input supports. For example: \"COMPONENT vs or COMPOSITE\" or \"HDMI with Optical Audio\".\nIn many cases, this field is not applicable. In which case it may be null or empty.\nA non-empty list implies that the integration supports setting the input's connection type.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "friendlyName": {
+          "description": "A user-friendly name for this input.\nThis value provides a consistent identifier for the input, regardless of the device's internal naming.\nFor example: \"HDMI1\".",
+          "type": "string"
+        },
+        "id": {
+          "description": "The unique identifier for this input. This is used when setting the active input.",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Label"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The input's label, as stored on the device itself. E.g. \"Playstation\", \"Blu-ray\", \"Cable Box\", etc...\nThis is typically user-configurable on the device, and may be null if the device does not have a label for this input."
+        },
+        "signalPresent": {
+          "description": "Communicates whether an active signal can be detected on this input.\nIf this value is not supported, it may be null or UNKNOWN.\n- \"TRUE\": \n\n- \"FALSE\": \n\n- \"UNKNOWN\":",
+          "enum": [
+            "TRUE",
+            "FALSE",
+            "UNKNOWN",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Inputs": {
+      "description": "An object representing all physical inputs on the device, as well as any global input settings that may apply to all or some of the inputs.",
+      "properties": {
+        "arcMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputsARCMode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Global information about the displays' available and configured ARC modes."
+        },
+        "available": {
+          "description": "A list of physical inputs on the device.\nThis may be null or empty if the device does not have any physical inputs,\nor if it does not support reporting them.",
+          "items": {
+            "$ref": "#/$defs/Input"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "cecMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputsCECMode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Global information about the display's available and configured CEC modes."
+        }
+      },
+      "type": "object"
+    },
+    "InputsARCMode": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "If the display does not support reporting the current ARC mode on a per-input basis, this field may be populated with the active ARC mode.\nSee the arcModes field for more information."
+        },
+        "available": {
+          "description": "If the display does not support reporting ARC modes on a per-input basis, this field may be populated with the list of ARC modes the display supports.\nTypical modes might include \"ARC\", \"eARC\", or \"Disabled\".\n\nIf the display does support reporting ARC modes on a per-input basis, this field should be null,\nand the modes should be listed on the individual input(s) instead.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "InputsCECMode": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "If the display does not support reporting the current CEC mode on a per-input basis, this field may be populated with the active CEC mode.\nSee the cecModes field for more information."
+        },
+        "available": {
+          "description": "If the display does not support reporting CEC modes on a per-input basis, this field may be populated with the list of CEC modes the display supports.\nIn many cases, this may be as simple \"Enabled\" or \"Disabled\".\n\nIf the display does support reporting CEC modes on a per-input basis, this field should be null,\nand the modes should be listed on the individual input(s) instead.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "IntegrationAuthentication": {
+      "description": "The container for all authentication items.",
+      "properties": {
+        "methods": {
+          "description": "A list of authentication methods required or\navailable for a user to use.",
+          "items": {
+            "$ref": "#/$defs/Authentication"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "KeyValuePair": {
+      "properties": {
+        "canonicalId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "friendlyName": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Label": {
+      "properties": {
+        "canSet": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Metadata": {
+      "properties": {
+        "dataAcquisition": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "knowledgeBaseURL": {
+          "format": "uri",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userManualURL": {
+          "format": "uri",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Network": {
+      "description": "The device's network information.",
+      "properties": {
+        "interfaces": {
+          "description": "A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports.",
+          "items": {
+            "$ref": "#/$defs/NetworkInterface"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "NetworkConfigInput": {
+      "description": "Updates to apply to the device's network configuration.",
+      "properties": {
+        "interfaces": {
+          "description": "The interfaces to update, with their configuration.",
+          "items": {
+            "$ref": "#/$defs/NetworkInterfaceConfigInput"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "interfaces"
+      ],
+      "type": "object"
+    },
+    "NetworkIPv4ConfigInput": {
+      "properties": {
+        "addressType": {
+          "description": "The address type to use for the network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+          "enum": [
+            "DHCP",
+            "DHCP_STATIC_DNS",
+            "STATIC"
+          ],
+          "type": "string"
+        },
+        "static": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IPv4StaticConfigInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Static IPv4 configuration, if applicable."
+        }
+      },
+      "required": [
+        "addressType"
+      ],
+      "type": "object"
+    },
+    "NetworkInterface": {
+      "description": "A network interface on the device, such as a Wi-Fi adapter or Ethernet port.",
+      "properties": {
+        "canEnable": {
+          "description": "Whether this network interface can be enabled via the integration.\nNull indicates the integration does not support changing the enabled status of\nany network interfaces. False indicates the network interface cannot be enabled,\nbut the integration does support changing the enabled status of network interfaces\nwhere canEnable is true.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "enabled": {
+          "description": "Whether this network interface is currently enabled.",
+          "type": "boolean"
+        },
+        "friendlyName": {
+          "description": "A user-friendly name for this network interface, such as \"Wi-Fi\", \"Ethernet\", \"eth0\", etc...",
+          "type": "string"
+        },
+        "id": {
+          "description": "A unique identifier for this network interface. This is used when setting network configuration, if supported.",
+          "type": "string"
+        },
+        "ipv4": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IPv4Settings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The IPv4 settings for this network interface."
+        },
+        "macAddress": {
+          "description": "The network interface's mac address.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wifi": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WifiInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Details about the Wi-Fi connection for this network interface.\nIf this value is null, it is assumed that the network interface is a wired connection."
+        }
+      },
+      "type": "object"
+    },
+    "NetworkInterfaceConfigInput": {
+      "description": "Used when updating the network interface configuration for a device.",
+      "properties": {
+        "enabled": {
+          "description": "Whether to enable or disable this network interface.\nThis value is only relevant when the network interface canEnable field is non-null.\nA null value in this field should be treated as \"no change\" to the enabled status of the network interface.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "description": "The unique identifier of the network interface to update the configuration for.",
+          "type": "string"
+        },
+        "ipv4": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NetworkIPv4ConfigInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The configuration for the network interface's IPv4 settings. If null, the IPv4 configuration should not be changed."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "Output": {
+      "description": "Represents an individual physical output on the device, such as TV speakers, an ARC-connected soundbar, a headphone jack, etc...",
+      "properties": {
+        "audio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputAudio"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current state of audio on this output. This may be null if the display does not report audio\ninformation for individual outputs, in which case the allAudio field on the outputs object should be used–if possible."
+        },
+        "connectionType": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The active connectionType for this output. Even if connectionTypes is empty\nor not supported, this field must be populated. For example a TV speaker output\nmay have the type \"Digital Optical\" and a canonicalId of \"CONN:OPTICAL\"."
+        },
+        "connectionTypes": {
+          "description": "A list of connection types that this output supports. For example: \"Digital Optical\", \"Digital Coax\", \"RCA\".\n\nIn many cases, this field is not applicable. In which case it may be null.\nA non-null value implies that the integration supports setting the output's connection type.",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "friendlyName": {
+          "description": "A user-friendly name for this output.",
+          "type": "string"
+        },
+        "id": {
+          "description": "A unique identifier for this output. This is used when setting the active output.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "OutputAudio": {
+      "description": "Reports the audio status for an individual output, or the display as a whole (in the case of the outputs.allAudio field).",
+      "properties": {
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current audio format being streamed over this output. For example: \"Dolby Atmos\", \"DTS:X\", \"PCM Stereo\", etc..."
+        },
+        "muted": {
+          "description": "Whether the audio is currently muted.\nThis value should be null if the mute status cannot be known.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "volume": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Volume"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current volume level of the output or display.\nThis value should be null if the volume level cannot be known."
+        }
+      },
+      "type": "object"
+    },
+    "Outputs": {
+      "properties": {
+        "allAudio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputAudio"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current state of audio for the display as a whole.\nThis should only be provided if the audio cannot be reported on a per-output basis."
+        },
+        "available": {
+          "description": "A list of outputs the display has available.\nThis may be null or empty if the available outputs cannot be retrieved from the device.",
+          "items": {
+            "$ref": "#/$defs/Output"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Power": {
+      "properties": {
+        "canReboot": {
+          "description": "If non-null, denotes the integration supports the dispatchPowerReboot rpc method.\nA false value denotes the integration supports the dispatchPowerReboot rpc method,\nbut the device cannot currently be rebooted.\nA true value denotes the integration supports the dispatchPowerReboot rpc method,\nand the device can be rebooted.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "powerSavingMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PowerPowerSavingMode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PowerPowerState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "wakeOnLAN": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WakeOnLAN"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "PowerPowerSavingMode": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "PowerPowerState": {
+      "properties": {
+        "allowedPowerState": {
+          "description": "If non-null, denotes the integration supports\nthe setPowerPowerState method.\n- \"ON\": \n\n- \"STANDBY\": \n\n- \"OFF\":",
+          "enum": [
+            "ON",
+            "STANDBY",
+            "OFF",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "current": {
+          "description": "- \"ON\": \n\n- \"STANDBY\": \n\n- \"UNKNOWN\":",
+          "enum": [
+            "ON",
+            "STANDBY",
+            "UNKNOWN",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "RPCError": {
+      "properties": {
+        "code": {
+          "description": "JSON-RPC 2.0 error code. Codes in the range -32768 to -32000 are reserved for pre-defined errors.",
+          "type": "integer"
+        },
+        "data": {
+          "description": "Optional additional error information"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "RPCErrorResponse": {
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/RPCError"
+        },
+        "id": {
+          "type": "string"
+        },
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "id",
+        "error"
+      ],
+      "type": "object"
+    },
+    "RPCMethod": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DispatchAppSourcesTerminate"
+        },
+        {
+          "$ref": "#/$defs/DispatchAuthenticationPrompt"
+        },
+        {
+          "$ref": "#/$defs/DispatchFirmwareUpdate"
+        },
+        {
+          "$ref": "#/$defs/DispatchPowerReboot"
+        },
+        {
+          "$ref": "#/$defs/GetActiveContexts"
+        },
+        {
+          "$ref": "#/$defs/GetAppSources"
+        },
+        {
+          "$ref": "#/$defs/GetAuthentication"
+        },
+        {
+          "$ref": "#/$defs/GetFirmware"
+        },
+        {
+          "$ref": "#/$defs/GetInputs"
+        },
+        {
+          "$ref": "#/$defs/GetMetadata"
+        },
+        {
+          "$ref": "#/$defs/GetNetwork"
+        },
+        {
+          "$ref": "#/$defs/GetOutputs"
+        },
+        {
+          "$ref": "#/$defs/GetPower"
+        },
+        {
+          "$ref": "#/$defs/GetSystem"
+        },
+        {
+          "$ref": "#/$defs/GetVideo"
+        },
+        {
+          "$ref": "#/$defs/SetAppSourcesActive"
+        },
+        {
+          "$ref": "#/$defs/SetAuthentication"
+        },
+        {
+          "$ref": "#/$defs/SetInputARCMode"
+        },
+        {
+          "$ref": "#/$defs/SetInputCECMode"
+        },
+        {
+          "$ref": "#/$defs/SetInputConnectionType"
+        },
+        {
+          "$ref": "#/$defs/SetInputLabel"
+        },
+        {
+          "$ref": "#/$defs/SetInputsARCMode"
+        },
+        {
+          "$ref": "#/$defs/SetInputsActive"
+        },
+        {
+          "$ref": "#/$defs/SetInputsCECMode"
+        },
+        {
+          "$ref": "#/$defs/SetNetworkConfig"
+        },
+        {
+          "$ref": "#/$defs/SetOutputConnectionType"
+        },
+        {
+          "$ref": "#/$defs/SetPowerPowerSavingMode"
+        },
+        {
+          "$ref": "#/$defs/SetPowerState"
+        },
+        {
+          "$ref": "#/$defs/SetPowerWakeOnLan"
+        },
+        {
+          "$ref": "#/$defs/SetSystemCountry"
+        },
+        {
+          "$ref": "#/$defs/SetSystemLabel"
+        },
+        {
+          "$ref": "#/$defs/SetSystemLanguage"
+        },
+        {
+          "$ref": "#/$defs/SetVideoAspectRatio"
+        },
+        {
+          "$ref": "#/$defs/SetVideoPictureMode"
+        }
+      ]
+    },
+    "RPCMethodResult": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ],
+          "type": "string"
+        },
+        "result": {
+          "description": "The method result. Type is defined by the specific method."
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "id",
+        "result"
+      ],
+      "type": "object"
+    },
+    "RPCMethods": {
+      "items": {
+        "$ref": "#/$defs/RPCMethod"
+      },
+      "type": "array"
+    },
+    "RPCRequestBase": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "jsonrpc": {
+          "enum": [
+            "2.0"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "jsonrpc",
+        "id"
+      ],
+      "type": "object"
+    },
+    "RPCSuccessResponse": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DispatchAppSourcesTerminateResponse"
+        },
+        {
+          "$ref": "#/$defs/DispatchAuthenticationPromptResponse"
+        },
+        {
+          "$ref": "#/$defs/DispatchFirmwareUpdateResponse"
+        },
+        {
+          "$ref": "#/$defs/DispatchPowerRebootResponse"
+        },
+        {
+          "$ref": "#/$defs/GetActiveContextsResponse"
+        },
+        {
+          "$ref": "#/$defs/GetAppSourcesResponse"
+        },
+        {
+          "$ref": "#/$defs/GetAuthenticationResponse"
+        },
+        {
+          "$ref": "#/$defs/GetFirmwareResponse"
+        },
+        {
+          "$ref": "#/$defs/GetInputsResponse"
+        },
+        {
+          "$ref": "#/$defs/GetMetadataResponse"
+        },
+        {
+          "$ref": "#/$defs/GetNetworkResponse"
+        },
+        {
+          "$ref": "#/$defs/GetOutputsResponse"
+        },
+        {
+          "$ref": "#/$defs/GetPowerResponse"
+        },
+        {
+          "$ref": "#/$defs/GetSystemResponse"
+        },
+        {
+          "$ref": "#/$defs/GetVideoResponse"
+        },
+        {
+          "$ref": "#/$defs/SetAppSourcesActiveResponse"
+        },
+        {
+          "$ref": "#/$defs/SetAuthenticationResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputARCModeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputCECModeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputConnectionTypeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputLabelResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputsARCModeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputsActiveResponse"
+        },
+        {
+          "$ref": "#/$defs/SetInputsCECModeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetNetworkConfigResponse"
+        },
+        {
+          "$ref": "#/$defs/SetOutputConnectionTypeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetPowerPowerSavingModeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetPowerStateResponse"
+        },
+        {
+          "$ref": "#/$defs/SetPowerWakeOnLanResponse"
+        },
+        {
+          "$ref": "#/$defs/SetSystemCountryResponse"
+        },
+        {
+          "$ref": "#/$defs/SetSystemLabelResponse"
+        },
+        {
+          "$ref": "#/$defs/SetSystemLanguageResponse"
+        },
+        {
+          "$ref": "#/$defs/SetVideoAspectRatioResponse"
+        },
+        {
+          "$ref": "#/$defs/SetVideoPictureModeResponse"
+        }
+      ]
+    },
+    "ScreenMute": {
+      "properties": {
+        "muted": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "SetAppSourcesActive": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setAppSourcesActive"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetAppSourcesActiveParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetAppSourcesActiveArgs": {
+      "properties": {
+        "contextId": {
+          "type": "string"
+        },
+        "sourceId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contextId",
+        "sourceId"
+      ],
+      "type": "object"
+    },
+    "SetAppSourcesActiveParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetAppSourcesActiveArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "source",
+              "canReportSource",
+              "input",
+              "canReportInput",
+              "outputs"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetAppSourcesActiveResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetAppSourcesActiveResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetAppSourcesActiveResult": {
+      "$ref": "#/$defs/ActiveContext"
+    },
+    "SetAuthentication": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setAuthentication"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetAuthenticationParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetAuthenticationArgs": {
+      "properties": {
+        "auth": {
+          "$ref": "#/$defs/AuthenticationInput"
+        }
+      },
+      "required": [
+        "auth"
+      ],
+      "type": "object"
+    },
+    "SetAuthenticationParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetAuthenticationArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "label",
+              "valid",
+              "documentationURL",
+              "fields"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetAuthenticationResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetAuthenticationResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetAuthenticationResult": {
+      "$ref": "#/$defs/Authentication"
+    },
+    "SetInputARCMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputARCMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputARCModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetInputARCModeArgs": {
+      "properties": {
+        "inputId": {
+          "type": "string"
+        },
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "inputId",
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetInputARCModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputARCModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "label",
+              "canActivate",
+              "connectionTypes",
+              "connectionType",
+              "cecModes",
+              "cecMode",
+              "arcModes",
+              "arcMode",
+              "signalPresent",
+              "connectionPresent"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputARCModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputARCModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputARCModeResult": {
+      "$ref": "#/$defs/Input"
+    },
+    "SetInputCECMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputCECMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputCECModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetInputCECModeArgs": {
+      "properties": {
+        "inputId": {
+          "type": "string"
+        },
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "inputId",
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetInputCECModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputCECModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "label",
+              "canActivate",
+              "connectionTypes",
+              "connectionType",
+              "cecModes",
+              "cecMode",
+              "arcModes",
+              "arcMode",
+              "signalPresent",
+              "connectionPresent"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputCECModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputCECModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputCECModeResult": {
+      "$ref": "#/$defs/Input"
+    },
+    "SetInputConnectionType": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputConnectionType"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputConnectionTypeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetInputConnectionTypeArgs": {
+      "properties": {
+        "inputId": {
+          "type": "string"
+        },
+        "typeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "inputId",
+        "typeId"
+      ],
+      "type": "object"
+    },
+    "SetInputConnectionTypeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputConnectionTypeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "label",
+              "canActivate",
+              "connectionTypes",
+              "connectionType",
+              "cecModes",
+              "cecMode",
+              "arcModes",
+              "arcMode",
+              "signalPresent",
+              "connectionPresent"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputConnectionTypeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputConnectionTypeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputConnectionTypeResult": {
+      "$ref": "#/$defs/Input"
+    },
+    "SetInputLabel": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputLabel"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputLabelParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetInputLabelArgs": {
+      "properties": {
+        "inputId": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "inputId",
+        "label"
+      ],
+      "type": "object"
+    },
+    "SetInputLabelParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputLabelArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "label",
+              "canActivate",
+              "connectionTypes",
+              "connectionType",
+              "cecModes",
+              "cecMode",
+              "arcModes",
+              "arcMode",
+              "signalPresent",
+              "connectionPresent"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputLabelResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputLabelResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputLabelResult": {
+      "$ref": "#/$defs/Input"
+    },
+    "SetInputsARCMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputsARCMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputsARCModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Selects the target ARC mode for the display.\nThis action only applies to integrations\nthat expose arcModes only at the global level–not per input.\n\nThe per input method is setInputARCMode."
+    },
+    "SetInputsARCModeArgs": {
+      "properties": {
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetInputsARCModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputsARCModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputsARCModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputsARCModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputsARCModeResult": {
+      "$ref": "#/$defs/InputsARCMode"
+    },
+    "SetInputsActive": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputsActive"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputsActiveParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetInputsActiveArgs": {
+      "properties": {
+        "contextId": {
+          "type": "string"
+        },
+        "inputId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contextId",
+        "inputId"
+      ],
+      "type": "object"
+    },
+    "SetInputsActiveParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputsActiveArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "source",
+              "canReportSource",
+              "input",
+              "canReportInput",
+              "outputs"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputsActiveResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputsActiveResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputsActiveResult": {
+      "$ref": "#/$defs/ActiveContext"
+    },
+    "SetInputsCECMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setInputsCECMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetInputsCECModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Selects the target CEC mode for the display.\nThis action only applies to integrations\nthat expose cecModes only at the global level–not per input.\n\nThe per input method is setInputCECMode."
+    },
+    "SetInputsCECModeArgs": {
+      "properties": {
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetInputsCECModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetInputsCECModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetInputsCECModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetInputsCECModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetInputsCECModeResult": {
+      "$ref": "#/$defs/InputsCECMode"
+    },
+    "SetNetworkConfig": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setNetworkConfig"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetNetworkConfigParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetNetworkConfigArgs": {
+      "properties": {
+        "config": {
+          "$ref": "#/$defs/NetworkConfigInput"
+        }
+      },
+      "required": [
+        "config"
+      ],
+      "type": "object"
+    },
+    "SetNetworkConfigParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetNetworkConfigArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "interfaces"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetNetworkConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetNetworkConfigResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetNetworkConfigResult": {
+      "$ref": "#/$defs/Network"
+    },
+    "SetOutputConnectionType": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setOutputConnectionType"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetOutputConnectionTypeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetOutputConnectionTypeArgs": {
+      "properties": {
+        "outputId": {
+          "type": "string"
+        },
+        "typeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "outputId",
+        "typeId"
+      ],
+      "type": "object"
+    },
+    "SetOutputConnectionTypeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetOutputConnectionTypeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "connectionTypes",
+              "connectionType",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetOutputConnectionTypeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetOutputConnectionTypeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetOutputConnectionTypeResult": {
+      "$ref": "#/$defs/Output"
+    },
+    "SetPowerPowerSavingMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setPowerPowerSavingMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetPowerPowerSavingModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetPowerPowerSavingModeArgs": {
+      "properties": {
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetPowerPowerSavingModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetPowerPowerSavingModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetPowerPowerSavingModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetPowerPowerSavingModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetPowerPowerSavingModeResult": {
+      "$ref": "#/$defs/PowerPowerSavingMode"
+    },
+    "SetPowerState": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setPowerState"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetPowerStateParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetPowerStateArgs": {
+      "properties": {
+        "state": {
+          "description": "- \"ON\": \n\n- \"STANDBY\": \n\n- \"OFF\":",
+          "enum": [
+            "ON",
+            "STANDBY",
+            "OFF"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "type": "object"
+    },
+    "SetPowerStateParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetPowerStateArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "current",
+              "allowedPowerState"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetPowerStateResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetPowerStateResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetPowerStateResult": {
+      "$ref": "#/$defs/PowerPowerState"
+    },
+    "SetPowerWakeOnLan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setPowerWakeOnLan"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetPowerWakeOnLanParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetPowerWakeOnLanArgs": {
+      "properties": {
+        "mode": {
+          "description": "- \"ENABLED\": \n\n- \"DISABLED\":",
+          "enum": [
+            "ENABLED",
+            "DISABLED"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "type": "object"
+    },
+    "SetPowerWakeOnLanParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetPowerWakeOnLanArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "mode",
+              "canSet"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetPowerWakeOnLanResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetPowerWakeOnLanResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetPowerWakeOnLanResult": {
+      "$ref": "#/$defs/WakeOnLAN"
+    },
+    "SetSystemCountry": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setSystemCountry"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetSystemCountryParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Sets the system country, providing a countryId\nfrom the list of available languages returned by\ngetSystem."
+    },
+    "SetSystemCountryArgs": {
+      "properties": {
+        "countryId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "countryId"
+      ],
+      "type": "object"
+    },
+    "SetSystemCountryParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetSystemCountryArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetSystemCountryResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetSystemCountryResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetSystemCountryResult": {
+      "$ref": "#/$defs/SystemCountry"
+    },
+    "SetSystemLabel": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setSystemLabel"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetSystemLabelParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Sets the system label, when applicable (i.e. if getSystem denotes the integration supports setting the system label)"
+    },
+    "SetSystemLabelArgs": {
+      "properties": {
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "SetSystemLabelParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetSystemLabelArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "label",
+              "canSet"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetSystemLabelResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetSystemLabelResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetSystemLabelResult": {
+      "$ref": "#/$defs/GlobalLabel"
+    },
+    "SetSystemLanguage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setSystemLanguage"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetSystemLanguageParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Sets the system language, providing a languageId\nfrom the list of available languages returned by\ngetSystem."
+    },
+    "SetSystemLanguageArgs": {
+      "properties": {
+        "languageId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "languageId"
+      ],
+      "type": "object"
+    },
+    "SetSystemLanguageParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetSystemLanguageArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetSystemLanguageResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetSystemLanguageResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetSystemLanguageResult": {
+      "$ref": "#/$defs/SystemLanguage"
+    },
+    "SetVideoAspectRatio": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setVideoAspectRatio"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetVideoAspectRatioParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetVideoAspectRatioArgs": {
+      "properties": {
+        "aspectRatioId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "aspectRatioId"
+      ],
+      "type": "object"
+    },
+    "SetVideoAspectRatioParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetVideoAspectRatioArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetVideoAspectRatioResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetVideoAspectRatioResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetVideoAspectRatioResult": {
+      "$ref": "#/$defs/VideoAspectRatio"
+    },
+    "SetVideoPictureMode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setVideoPictureMode"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetVideoPictureModeParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SetVideoPictureModeArgs": {
+      "properties": {
+        "modeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "modeId"
+      ],
+      "type": "object"
+    },
+    "SetVideoPictureModeParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetVideoPictureModeArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "available",
+              "active"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetVideoPictureModeResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetVideoPictureModeResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetVideoPictureModeResult": {
+      "$ref": "#/$defs/VideoPictureMode"
+    },
+    "System": {
+      "properties": {
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SystemCountry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "friendlyName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlobalLabel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "language": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SystemLanguage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "serialNumber": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "SystemCountry": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "SystemLanguage": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Video": {
+      "properties": {
+        "aspectRatio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoAspectRatio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "brightness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoLevel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contrast": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoLevel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pictureMode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoPictureMode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "screenMute": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScreenMute"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sharpness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoLevel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "VideoAspectRatio": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "VideoLevel": {
+      "properties": {
+        "max": {
+          "type": "integer"
+        },
+        "min": {
+          "type": "integer"
+        },
+        "step": {
+          "type": "integer"
+        },
+        "value": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "VideoPictureMode": {
+      "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KeyValuePair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available": {
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Volume": {
+      "description": "Represents the volume level of an external output, such as the TV speakers, an ARC-connected soundbar, or a headphone jack.",
+      "properties": {
+        "level": {
+          "description": "The current volume level, represented as an integer between min and max (inclusive).",
+          "type": "integer"
+        },
+        "max": {
+          "description": "The maximum volume level supported by this output. This may be null if the display does not report a maximum volume level.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "min": {
+          "description": "The minimum volume level supported by this output. This may be null if the display does not report a minimum volume level.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "step": {
+          "description": "An integer representing the step size for volume changes. For example, a step of 5 means that the volume\nis changed in increments of 5 (e.g. 0, 5, 10, 15, etc...). This may be null if the display does not report a volume step size.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "WakeOnLAN": {
+      "properties": {
+        "canSet": {
+          "type": "boolean"
+        },
+        "mode": {
+          "description": "- \"ENABLED\": \n\n- \"DISABLED\":",
+          "enum": [
+            "ENABLED",
+            "DISABLED"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WifiInfo": {
+      "properties": {
+        "ssid": {
+          "description": "The SSID of the currently connected Wi-Fi network, if applicable.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object"
+}
