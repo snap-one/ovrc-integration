@@ -37,6 +37,7 @@ if (import.meta.main) {
     await Bun.write(path, next);
     tagged++;
   }
-  console.log(`add-module-tags: tagged ${tagged}, left path-named ${skipped.length}`);
-  for (const file of skipped) console.log(`  skipped ${file}`);
+  console.log(
+    `add-module-tags: tagged ${tagged}, left path-named ${skipped.length}`,
+  );
 }
