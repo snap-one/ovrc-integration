@@ -17,6 +17,10 @@ export NPM_CONFIG_ACCESS=public
 if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
   channel=release
   export NPM_CONFIG_REGISTRY="https://registry.npmjs.org"
+  # Signed SLSA provenance, tying each tarball to this run and commit. Needs the
+  # job's id-token:write plus the public access set above, and is npmjs-only -
+  # GitHub Packages cannot check visibility, so the rc path leaves it off.
+  export NPM_CONFIG_PROVENANCE=true
 else
   channel=rc
   export NPM_CONFIG_REGISTRY="https://npm.pkg.github.com"
