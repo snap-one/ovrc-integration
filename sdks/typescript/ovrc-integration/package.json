@@ -2,7 +2,6 @@
   "name": "@snap-one/ovrc-integration",
   "repository": "https://github.com/snap-one/ovrc-integration",
   "scripts": {
-    "publish-package": "npm publish",
     "test": "bun i && bun test",
     "typedoc": "bunx typedoc"
   },

@@ -6,8 +6,8 @@
     "create-integration": "./dist/create.js"
   },
   "scripts": {
-    "publish-package": "npm run build && npm publish",
-    "build": "rm -rf dist && bun build src/index.ts --outfile dist/create.js --target node --format esm --bundle && cp -r src/template dist"
+    "build": "rm -rf dist && bun build src/index.ts --outfile dist/create.js --target node --format esm --bundle && cp -r src/template dist",
+    "prepack": "bun run build"
   },
   "module": "index.ts",
   "type": "module",

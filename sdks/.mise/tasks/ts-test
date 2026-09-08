@@ -7,7 +7,7 @@ cd typescript
 for dir in */; do
   name="${dir%/}"
   case "$name" in
-  mise) continue ;;
+  mise | node_modules) continue ;;
   esac
 
   cd $name

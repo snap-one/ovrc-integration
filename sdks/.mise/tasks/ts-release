@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+#MISE description="Publish the typescript packages whose source changed: rc prereleases from the internal repo, semantic-release versions from the public one"
+set -euo pipefail
+
+cd typescript
+bun install
+
+# The public mirror cuts real releases to npm, versioned from the conventional
+# commits since each package's last release. Anywhere else - i.e. the internal
+# repo - cuts an rc prerelease of the next patch to GitHub Packages.
+#
+# NPM_CONFIG_* has to be spelled uppercase: @semantic-release/npm reads
+# NPM_CONFIG_REGISTRY off the environment by that exact name to pick its
+# registry, and only npm itself is case-insensitive about the prefix.
+export NPM_CONFIG_ACCESS=public
+if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
+  channel=release
+  export NPM_CONFIG_REGISTRY="https://registry.npmjs.org"
+else
+  channel=rc
+  export NPM_CONFIG_REGISTRY="https://npm.pkg.github.com"
+  export NPM_CONFIG_TAG=rc # keep prereleases off the `latest` dist-tag
+fi
+echo "Publishing $channel builds to $NPM_CONFIG_REGISTRY"
+
+# Upstream is where real releases live; its tags are the released versions.
+UPSTREAM_REPO="${UPSTREAM_REPO:-https://github.com/snap-one/ovrc-integration}"
+export GIT_TERMINAL_PROMPT=0 # fail instead of hanging on a credential prompt
+
+# True when version $1 is at or above version $2. Plain x.y.z only, which is all
+# a released version and an rc base ever are.
+gte() {
+  [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | tail -1)" = "$1" ]
+}
+
+# x.y.z -> x.y.(z+1), ignoring any prerelease suffix.
+next_patch() {
+  local major minor patch
+  IFS=. read -r major minor patch <<<"${1%%-*}"
+  echo "$major.$minor.$((patch + 1))"
+}
+
+# Sets rc_base and rc_counter for package $1, run from its directory.
+#
+# The counter is kept in this repo's rc tags rather than derived from the run
+# number, so it counts 0, 1, 2... per base. Once upstream has released the base
+# we were building rc's for, that base is spent: we move to the patch above
+# upstream, which has no rc tags yet and so restarts the counter at zero.
+#
+# Upstream is read from tags rather than the registry so this works before the
+# first publish. An unreachable upstream is fatal on purpose - guessing 0.0.0
+# would quietly build rc's on a base that upstream has already released. Note
+# this has to set variables rather than echo them: bash suppresses `set -e`
+# inside command substitution, so a failure in `x=$(rc_next)` would be ignored.
+compute_rc() {
+  local name="$1" refs upstream
+  rc_base=$(next_patch "$(npm pkg get version | tr -d '"')")
+
+  if ! refs=$(git ls-remote --tags "$UPSTREAM_REPO" "refs/tags/ts-$name-v*" 2>&1); then
+    echo "::error::cannot read tags from $UPSTREAM_REPO: $refs" >&2
+    exit 1
+  fi
+  upstream=$(printf '%s\n' "$refs" |
+    sed -n "s|.*refs/tags/ts-$name-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
+  if gte "${upstream:-0.0.0}" "$rc_base"; then
+    rc_base=$(next_patch "$upstream")
+  fi
+
+  rc_counter=$(git tag -l "ts-$name-v$rc_base-rc.*" | sed 's|.*-rc\.||' | sort -n | tail -1)
+  if [ -z "$rc_counter" ]; then rc_counter=0; else rc_counter=$((rc_counter + 1)); fi
+}
+
+# The only place this task publishes from. Re-reads `private` off disk rather
+# than trusting the loop below, so a private package cannot be published even if
+# the skip above is wrong, and fails the run loudly rather than skipping quietly.
+# The semantic-release path never reaches here: @semantic-release/npm applies the
+# same `pkg.private !== true` check itself before it publishes.
+publish() {
+  if [ "$(npm pkg get private | tr -d '"')" = "true" ]; then
+    echo "::error::refusing to publish $(npm pkg get name): package.json sets private" >&2
+    exit 1
+  fi
+  npm publish # prepack builds
+}
+
+# rc builds only touch packages changed by this push. Falls back to the previous
+# commit for manual runs and for pushes with no usable base (a new branch).
+base="${BASE_SHA:-}"
+if [ -z "$base" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+  base="HEAD~1"
+fi
+
+for dir in */; do
+  name="${dir%/}"
+  [ -f "$name/package.json" ] || continue
+
+  if jq -e '.private == true or .private == "true"' "$name/package.json" >/dev/null; then
+    echo "::notice::$name is ignored because it is private"
+    continue
+  fi
+
+  if [ "$channel" = "rc" ] && git diff --quiet "$base" HEAD -- "$name"; then
+    echo "::notice::$name is unchanged since $base"
+    continue
+  fi
+
+  echo "::group::$name"
+  (
+    cd "$name"
+    bun install
+    if [ "$channel" = "rc" ]; then
+      pkg=$(npm pkg get name | tr -d '"')
+      compute_rc "$pkg"
+      version="$rc_base-rc.$rc_counter"
+      npm --no-git-tag-version version "$version" >/dev/null
+
+      # Tag and push before publishing, so a failed publish burns an rc number
+      # instead of leaving the next run to collide with a version that is
+      # already on the registry.
+      # ponytail: rc versions are never written back to package.json, so the
+      # repo only ever shows the last real release. Commit the bump back if the
+      # checked-in version needs to track the prereleases.
+      echo "Publishing $version"
+      git tag "ts-$pkg-v$version"
+      git push origin "ts-$pkg-v$version"
+      publish
+    else
+      # semantic-release-monorepo scopes commit analysis to this directory, so a
+      # package with no source changes since its last tag is a no-op.
+      ../node_modules/.bin/semantic-release \
+        -e semantic-release-monorepo -e ../release.config.mjs ${DRY_RUN:+--dry-run}
+    fi
+  )
+  echo "::endgroup::"
+done

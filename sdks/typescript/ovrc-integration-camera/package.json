@@ -7,12 +7,9 @@
     "dist",
     "README.md"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "bun build src/index.ts --external 'ovrc:*' --outdir dist && tsc --declaration --emitDeclarationOnly --noEmit false",
-    "publish-package": "bun run build && npm publish",
+    "prepack": "bun run build",
     "typedoc": "bunx typedoc"
   },
   "type": "module",
