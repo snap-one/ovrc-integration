@@ -153,7 +153,13 @@ publish() {
     echo "::error::refusing to publish $(npm pkg get name): package.json sets private" >&2
     exit 1
   fi
+  # NPM_CONFIG_TAG must be set explicitly even though `latest` is npm's default:
+  # publish refuses a prerelease when the tag is the *unset* default
+  # ("You must specify a tag using --tag when publishing a prerelease version"),
+  # and it tests how the value was set, not what it is. Do not drop this on the
+  # grounds that it matches the default.
   NPM_CONFIG_REGISTRY="$registry" \
+    NPM_CONFIG_TAG=latest \
     NPM_CONFIG_ACCESS=public \
     npm publish # prepack builds
 }
