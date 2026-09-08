@@ -9,6 +9,11 @@ on:
     paths:
       - "sdks/typescript/**"
   workflow_dispatch:
+    inputs:
+      packages:
+        description: "Optional: release only these packages, e.g. sdks/typescript/ovrc-integration-{camera,display}. Leave empty to release whatever the last push changed."
+        required: false
+        type: string
 permissions:
   contents: read
 jobs:
@@ -60,5 +65,6 @@ jobs:
           GIT_COMMITTER_EMAIL: "${{ secrets.SNPO_SEMANTIC_RELEASE_APP_INSTALLATION_ID }}+${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}@users.noreply.github.com"
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }} # fallback if extraheader auth fails
           BASE_SHA: ${{ github.event.before }} # rc builds diff against the push base
+          PACKAGES: ${{ inputs.packages }} # empty on push, so change detection applies
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Packages
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npmjs.org

@@ -4,29 +4,68 @@
 set -euo pipefail
 
 cd typescript
+# Runs before anything sets a registry, so dependencies resolve from the default
+# registry. GitHub Packages does not proxy npmjs, so an install pointed there
+# fails outright.
 bun install
 
 # The public mirror cuts real releases to npm, versioned from the conventional
 # commits since each package's last release. Anywhere else - i.e. the internal
-# repo - cuts an rc prerelease of the next patch to GitHub Packages.
-#
-# NPM_CONFIG_* has to be spelled uppercase: @semantic-release/npm reads
-# NPM_CONFIG_REGISTRY off the environment by that exact name to pick its
-# registry, and only npm itself is case-insensitive about the prefix.
-export NPM_CONFIG_ACCESS=public
+# repo - cuts an rc prerelease of the next patch to GitHub Packages. Nothing is
+# exported here: the registry is applied per publish command, further down.
 if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
   channel=release
-  export NPM_CONFIG_REGISTRY="https://registry.npmjs.org"
-  # Signed SLSA provenance, tying each tarball to this run and commit. Needs the
-  # job's id-token:write plus the public access set above, and is npmjs-only -
-  # GitHub Packages cannot check visibility, so the rc path leaves it off.
-  export NPM_CONFIG_PROVENANCE=true
+  registry="https://registry.npmjs.org"
+  dist_tag=latest
 else
   channel=rc
-  export NPM_CONFIG_REGISTRY="https://npm.pkg.github.com"
-  export NPM_CONFIG_TAG=rc # keep prereleases off the `latest` dist-tag
+  registry="https://npm.pkg.github.com"
+  dist_tag=rc # keep prereleases off the `latest` dist-tag
 fi
-echo "Publishing $channel builds to $NPM_CONFIG_REGISTRY"
+echo "Publishing $channel builds to $registry"
+
+# PACKAGES optionally selects which package directories to release, as
+# whitespace-separated glob patterns. Brace groups work
+# (sdks/typescript/ovrc-integration-{camera,display}), and when no braces are
+# present a comma-separated list is accepted too. Patterns may be written
+# relative to the repo root or to this directory, with or without a leading ./
+#
+# The patterns are only ever pattern-matched, never eval'd or expanded against
+# the disk, so an input naming a package that does not exist matches nothing
+# rather than doing anything surprising.
+shopt -s extglob
+filters=()
+if [ -n "${PACKAGES:-}" ]; then
+  raw="$PACKAGES"
+  case "$raw" in
+  *"{"*) : ;;             # commas belong to the brace groups
+  *) raw="${raw//,/ }" ;; # no braces, so allow a comma-separated list
+  esac
+
+  set -f # split on whitespace without expanding the patterns against the disk
+  for pat in $raw; do
+    pat="${pat#./}"
+    pat="${pat#sdks/typescript/}"
+    pat="${pat%/}"
+    if [[ "$pat" == *"{"* ]]; then
+      pat="${pat//\{/@(}"
+      pat="${pat//\}/)}"
+      pat="${pat//,/|}"
+    fi
+    filters+=("$pat")
+  done
+  set +f
+  echo "Releasing only packages matching: ${filters[*]}"
+fi
+
+# True when $1 is named by one of the requested patterns.
+selected() {
+  local pat
+  for pat in "${filters[@]}"; do
+    [[ "$1" == $pat ]] && return 0
+  done
+  return 1
+}
 
 # Upstream is where real releases live; its tags are the released versions.
 UPSTREAM_REPO="${UPSTREAM_REPO:-https://github.com/snap-one/ovrc-integration}"
@@ -85,17 +124,23 @@ compute_rc() {
   if [ -z "$rc_counter" ]; then rc_counter=0; else rc_counter=$((rc_counter + 1)); fi
 }
 
-# The only place this task publishes from. Re-reads `private` off disk rather
-# than trusting the loop below, so a private package cannot be published even if
-# the skip above is wrong, and fails the run loudly rather than skipping quietly.
-# The semantic-release path never reaches here: @semantic-release/npm applies the
-# same `pkg.private !== true` check itself before it publishes.
+# The rc path's only publish, and the only place it points at GitHub Packages -
+# every install and build above this runs against the default registry.
+#
+# Re-reads `private` off disk rather than trusting the loop below, so a private
+# package cannot be published even if the skip above is wrong, and fails the run
+# loudly rather than skipping quietly. The semantic-release path never reaches
+# here: @semantic-release/npm applies the same `pkg.private !== true` check
+# itself before it publishes.
 publish() {
   if [ "$(npm pkg get private | tr -d '"')" = "true" ]; then
     echo "::error::refusing to publish $(npm pkg get name): package.json sets private" >&2
     exit 1
   fi
-  npm publish # prepack builds
+  NPM_CONFIG_REGISTRY="$registry" \
+    NPM_CONFIG_TAG="$dist_tag" \
+    NPM_CONFIG_ACCESS=public \
+    npm publish # prepack builds
 }
 
 # rc builds only touch packages changed by this push. Falls back to the previous
@@ -114,7 +159,14 @@ for dir in */; do
     continue
   fi
 
-  if [ "$channel" = "rc" ] && git diff --quiet "$base" HEAD -- "$name"; then
+  # An explicit selection replaces the change detection: naming a package is a
+  # request to release it whether or not this push touched it.
+  if [ ${#filters[@]} -gt 0 ]; then
+    if ! selected "$name"; then
+      echo "::notice::$name is not selected by PACKAGES"
+      continue
+    fi
+  elif [ "$channel" = "rc" ] && git diff --quiet "$base" HEAD -- "$name"; then
     echo "::notice::$name is unchanged since $base"
     continue
   fi
@@ -142,7 +194,17 @@ for dir in */; do
     else
       # semantic-release-monorepo scopes commit analysis to this directory, so a
       # package with no source changes since its last tag is a no-op.
-      ../node_modules/.bin/semantic-release \
+      #
+      # NPM_CONFIG_* has to be spelled uppercase here: @semantic-release/npm
+      # reads NPM_CONFIG_REGISTRY off the environment by that exact name, and
+      # only npm itself is case-insensitive about the prefix. Signed SLSA
+      # provenance ties each tarball to this run and commit; it needs the job's
+      # id-token:write plus public access, and is npmjs-only, which is why the
+      # rc path leaves it off.
+      NPM_CONFIG_REGISTRY="$registry" \
+        NPM_CONFIG_ACCESS=public \
+        NPM_CONFIG_PROVENANCE=true \
+        ../node_modules/.bin/semantic-release \
         -e semantic-release-monorepo -e ../release.config.mjs ${DRY_RUN:+--dry-run}
     fi
   )
