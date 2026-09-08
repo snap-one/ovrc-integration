@@ -19,7 +19,7 @@ done
 # Core integration types
 cd ovrc-integration
 echo "// Auto-generated index file" >index.d.ts
-for f in $(find . -name node_modules -prune -o -name '*.d.ts' ! -name 'index.d.ts' -print | sort); do
+for f in $(find . -name node_modules -prune -o -name '*.d.ts' ! -name 'index.d.ts' -print | LC_ALL=C sort); do
   echo "/// <reference path=\"${f#./}\" />" >>index.d.ts
 done
 
