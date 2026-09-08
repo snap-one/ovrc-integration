@@ -13,14 +13,17 @@ bun install
 # commits since each package's last release. Anywhere else - i.e. the internal
 # repo - cuts an rc prerelease of the next patch to GitHub Packages. Nothing is
 # exported here: the registry is applied per publish command, further down.
+# Both channels publish under npm's default `latest` dist-tag. GitHub Packages
+# only ever receives rc builds - stable releases go to npmjs - so `latest` there
+# means the newest rc. Publishing prereleases under an `rc` tag instead would
+# leave that registry with no `latest` at all, and `npm install <pkg>` with
+# nothing to resolve.
 if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
   channel=release
   registry="https://registry.npmjs.org"
-  dist_tag=latest
 else
   channel=rc
   registry="https://npm.pkg.github.com"
-  dist_tag=rc # keep prereleases off the `latest` dist-tag
 fi
 echo "Publishing $channel builds to $registry"
 
@@ -151,7 +154,6 @@ publish() {
     exit 1
   fi
   NPM_CONFIG_REGISTRY="$registry" \
-    NPM_CONFIG_TAG="$dist_tag" \
     NPM_CONFIG_ACCESS=public \
     npm publish # prepack builds
 }
