@@ -70,10 +70,10 @@ jobs:
       - name: Release
         run: mise run //sdks:ts-release
         env:
-          GIT_AUTHOR_NAME: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}
-          GIT_AUTHOR_EMAIL: "${{ secrets.SNPO_SEMANTIC_RELEASE_APP_INSTALLATION_ID }}+${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}@users.noreply.github.com"
-          GIT_COMMITTER_NAME: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}
-          GIT_COMMITTER_EMAIL: "${{ secrets.SNPO_SEMANTIC_RELEASE_APP_INSTALLATION_ID }}+${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}@users.noreply.github.com"
+          GIT_AUTHOR_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
+          GIT_AUTHOR_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
+          GIT_COMMITTER_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }} # fallback if extraheader auth fails
           BASE_SHA: ${{ github.event.before }} # rc builds diff against the push base
           PACKAGES: ${{ inputs.packages }} # empty on push, so change detection applies
