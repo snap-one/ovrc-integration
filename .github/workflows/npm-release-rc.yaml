@@ -1,17 +1,17 @@
-name: NPM Release
+name: NPM Release Candidate
 concurrency: npm-release-${{ github.ref }}
 on:
   push:
     tags-ignore:
       - "**"
     branches:
-      - main
+      - release-candidate
     paths:
       - "sdks/typescript/**"
   workflow_dispatch:
     inputs:
       packages:
-        description: "Optional: release only these packages, e.g. sdks/typescript/ovrc-integration-{camera,display}. Leave empty to release whatever the conventional commits since each package's last release call for."
+        description: "Optional: release only these packages, e.g. sdks/typescript/ovrc-integration-{camera,display}. Leave empty to release whatever the last push changed."
         required: false
         type: string
 permissions:
@@ -21,8 +21,8 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write # semantic-release pushes the version commit and tag
-      id-token: write # SLSA provenance
+      contents: write # the rc tag is pushed back
+      packages: write # publish to GitHub Packages
     steps:
       - name: Generate a token
         id: generate_token
@@ -35,11 +35,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0 # semantic-release needs the full history and tags
+          # rc numbering reads the release and rc tags out of the local clone.
+          fetch-depth: 0
           token: ${{ steps.generate_token.outputs.token }}
-          # Default is true, but stated because this is what authenticates
-          # semantic-release's version commit. Stored as an http.extraheader
-          # that checkout strips again in its post step.
+          # Default is true, but stated because this is what authenticates the
+          # rc tag push. Stored as an http.extraheader that checkout strips
+          # again in its post step.
           persist-credentials: true
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -51,16 +52,12 @@ jobs:
         # npm expands the ${...} at read time, so the token stays out of the file.
         run: |
           cat > "$HOME/.npmrc" <<'NPMRC_EOF'
-          //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           NPMRC_EOF
       - name: Release
         run: mise run //sdks:ts-release
         env:
-          GIT_AUTHOR_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
-          GIT_AUTHOR_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
-          GIT_COMMITTER_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
-          GIT_COMMITTER_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }} # fallback if extraheader auth fails
-          PACKAGES: ${{ inputs.packages }} # empty on push, so semantic-release decides
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npmjs.org
-          REPO_VISIBILITY: ${{ github.event.repository.visibility }} # provenance needs "public"
+          BASE_SHA: ${{ github.event.before }} # rc builds diff against the push base
+          PACKAGES: ${{ inputs.packages }} # empty on push, so change detection applies
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Packages
