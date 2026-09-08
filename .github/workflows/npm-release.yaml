@@ -80,3 +80,4 @@ jobs:
           UPSTREAM_TOKEN: ${{ steps.generate_upstream_token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Packages
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npmjs.org
+          REPO_VISIBILITY: ${{ github.event.repository.visibility }} # provenance needs "public"

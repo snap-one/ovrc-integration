@@ -220,11 +220,11 @@ for dir in */; do
       # reads NPM_CONFIG_REGISTRY off the environment by that exact name, and
       # only npm itself is case-insensitive about the prefix. Signed SLSA
       # provenance ties each tarball to this run and commit; it needs the job's
-      # id-token:write plus public access, and is npmjs-only, which is why the
-      # rc path leaves it off.
+      # id-token:write, a public repository and public access, and is npmjs-only -
+      # hence REPO_VISIBILITY here and no provenance at all on the rc path.
       NPM_CONFIG_REGISTRY="$registry" \
         NPM_CONFIG_ACCESS=public \
-        NPM_CONFIG_PROVENANCE=true \
+        NPM_CONFIG_PROVENANCE=$([ "${REPO_VISIBILITY:-}" = public ] && echo true || echo false) \
         ../node_modules/.bin/semantic-release \
         -e semantic-release-monorepo -e ../release.config.mjs ${DRY_RUN:+--dry-run}
     fi
