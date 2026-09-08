@@ -71,6 +71,18 @@ selected() {
 UPSTREAM_REPO="${UPSTREAM_REPO:-https://github.com/snap-one/ovrc-integration}"
 export GIT_TERMINAL_PROMPT=0 # fail instead of hanging on a credential prompt
 
+# Upstream is a separate private repository, and checkout's persisted credential
+# is an app token scoped to this repository alone - being in the same org grants
+# it nothing, so it reads upstream as a 404. Use a token minted for upstream and
+# clear the persisted header for those reads, so the repo-scoped credential
+# cannot take precedence over the one in the URL.
+upstream_url="$UPSTREAM_REPO"
+upstream_git=(git)
+if [ -n "${UPSTREAM_TOKEN:-}" ]; then
+  upstream_url="https://x-access-token:${UPSTREAM_TOKEN}@${UPSTREAM_REPO#https://}"
+  upstream_git=(git -c "http.https://github.com/.extraheader=")
+fi
+
 # True when version $1 is at or above version $2. Plain x.y.z only, which is all
 # a released version and an rc base ever are.
 gte() {
@@ -110,8 +122,9 @@ compute_rc() {
   prefix=$(tag_prefix "$name")
   rc_base=$(next_patch "$(npm pkg get version | tr -d '"')")
 
-  if ! refs=$(git ls-remote --tags "$UPSTREAM_REPO" "refs/tags/$prefix-v*" 2>&1); then
-    echo "::error::cannot read tags from $UPSTREAM_REPO: $refs" >&2
+  if ! refs=$("${upstream_git[@]}" ls-remote --tags "$upstream_url" "refs/tags/$prefix-v*" 2>&1); then
+    # git echoes the remote URL on failure, so keep the token out of the log.
+    echo "::error::cannot read tags from $UPSTREAM_REPO: ${refs//${UPSTREAM_TOKEN:-__unset__}/***}" >&2
     exit 1
   fi
   upstream=$(printf '%s\n' "$refs" |

@@ -33,6 +33,18 @@ jobs:
           private-key: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: "${{ github.event.repository.name }}"
+      - name: Generate a token for the upstream repository
+        id: generate_upstream_token
+        # Installation tokens are scoped to selected repositories, not to the
+        # org, so the token above cannot read upstream's tags. Read-only: this
+        # one only needs to list refs.
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "ovrc-integration"
+          permission-contents: read
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -54,7 +66,6 @@ jobs:
           cat > "$HOME/.npmrc" <<'NPMRC_EOF'
           //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-          always-auth=true
           NPMRC_EOF
       - name: Release
         run: mise run //sdks:ts-release
@@ -66,5 +77,6 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }} # fallback if extraheader auth fails
           BASE_SHA: ${{ github.event.before }} # rc builds diff against the push base
           PACKAGES: ${{ inputs.packages }} # empty on push, so change detection applies
+          UPSTREAM_TOKEN: ${{ steps.generate_upstream_token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Packages
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npmjs.org
