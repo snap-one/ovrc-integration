@@ -1,0 +1,82 @@
+name: NPM Release
+concurrency: npm-release-${{ github.ref }}
+on:
+  push:
+    tags-ignore:
+      - "**"
+    branches:
+      - main
+    paths:
+      - "sdks/typescript/**"
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Optional: release only these packages, e.g. sdks/typescript/ovrc-integration-{camera,display}. Leave empty to release whatever the last push changed."
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # semantic-release pushes the version commit and tag
+      packages: write # publish to GitHub Packages
+      id-token: write
+    steps:
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "${{ github.event.repository.name }}"
+      - name: Generate a token for the upstream repository
+        id: generate_upstream_token
+        # Installation tokens are scoped to selected repositories, not to the
+        # org, so the token above cannot read upstream's tags. Read-only: this
+        # one only needs to list refs.
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "ovrc-integration"
+          permission-contents: read
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # semantic-release needs the full history and tags
+          token: ${{ steps.generate_token.outputs.token }}
+          # Default is true, but stated because this is what authenticates the
+          # rc tag push and semantic-release's version commit. Stored as an
+          # http.extraheader that checkout strips again in its post step.
+          persist-credentials: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "lts/*"
+      - name: Setup mise
+        uses: jdx/mise-action@v4
+      - name: Configure registry authentication
+        # npm expands the ${...} at read time, so the tokens stay out of the file.
+        run: |
+          cat > "$HOME/.npmrc" <<'NPMRC_EOF'
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+          NPMRC_EOF
+      - name: Release
+        run: mise run //sdks:ts-release
+        env:
+          GIT_AUTHOR_NAME: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}
+          GIT_AUTHOR_EMAIL: "${{ secrets.SNPO_SEMANTIC_RELEASE_APP_INSTALLATION_ID }}+${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}@users.noreply.github.com"
+          GIT_COMMITTER_NAME: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}
+          GIT_COMMITTER_EMAIL: "${{ secrets.SNPO_SEMANTIC_RELEASE_APP_INSTALLATION_ID }}+${{ secrets.SNPO_SEMANTIC_RELEASE_APP_LOGIN }}@users.noreply.github.com"
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }} # fallback if extraheader auth fails
+          BASE_SHA: ${{ github.event.before }} # rc builds diff against the push base
+          PACKAGES: ${{ inputs.packages }} # empty on push, so change detection applies
+          UPSTREAM_TOKEN: ${{ steps.generate_upstream_token.outputs.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Packages
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npmjs.org

@@ -1,0 +1,25 @@
+{{#each rpcMethods}}
+export type method{{ucf method.name}}Result = {{#if fields}}{
+{{#each fields as |fieldDef fieldName|}}
+  {{{fieldDef.comments.toString}}}
+  {{fieldName}}?: ((args: {{../argType}}) => Promise<{{{fieldDef.type}}}>) | {{{fieldDef.type}}};
+{{/each}}
+}{{~else}}{{resultType}}{{/if}}
+
+export type method{{ucf method.name}} = (params: {{{paramType}}}) => Promise<method{{ucf method.name}}Result>;
+{{/each}}
+
+export type Handler = {
+{{#each rpcMethods}}
+  {{{method.comments.toString}}}
+  {{method.name}}?: method{{ucf method.name}};
+{{/each}}
+}
+
+
+//@ts-ignore
+import { serveRpc as ovrcServeRpc } from "ovrc:rpc";
+
+export async function serveRpc(handler: Handler) {
+  await ovrcServeRpc(handler);
+}

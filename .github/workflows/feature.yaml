@@ -1,0 +1,36 @@
+name: Feature Tests
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+  packages: read # Needed to install npm packages from GitHub registry.
+jobs:
+  build_test:
+    runs-on: ubuntu-latest-spot-use1
+    name: Test
+    env:
+      GH_USER: ${{ github.actor }}
+      GH_TOKEN: ${{ secrets.OVRC_DOCKER_BOT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup mise
+        uses: jdx/mise-action@v4
+
+      - name: Ensure code generation is up to date
+        run: mise run generate
+
+      - name: Fail if repository dirty after generation
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Repository has pending changes after mise run generate. Run 'mise run generate' and commit results." >&2
+            git status --short
+            git diff
+            exit 1
+          fi
+
+      - name: Execute unit tests
+        run: mise run test

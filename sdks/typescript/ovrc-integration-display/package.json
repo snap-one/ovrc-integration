@@ -1,0 +1,23 @@
+{
+  "name": "@snap-one/ovrc-integration-display",
+  "version": "0.0.8-rc.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snap-one/ovrc-integration.git"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --external 'ovrc:*' --outdir dist && tsc --declaration --emitDeclarationOnly --noEmit false",
+    "prepack": "bun run build",
+    "typedoc": "bunx typedoc"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

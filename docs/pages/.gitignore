@@ -1,0 +1,5 @@
+dist/
+mdbook/src
+hugo/.hugo_build.lock
+**/book/
+**/bin/

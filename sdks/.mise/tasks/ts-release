@@ -1,0 +1,233 @@
+#!/usr/bin/env bash
+
+#MISE description="Publish the typescript packages whose source changed: rc prereleases from the internal repo, semantic-release versions from the public one"
+set -euo pipefail
+
+cd typescript
+# Runs before anything sets a registry, so dependencies resolve from the default
+# registry. GitHub Packages does not proxy npmjs, so an install pointed there
+# fails outright.
+bun install
+
+# The public mirror cuts real releases to npm, versioned from the conventional
+# commits since each package's last release. Anywhere else - i.e. the internal
+# repo - cuts an rc prerelease of the next patch to GitHub Packages. Nothing is
+# exported here: the registry is applied per publish command, further down.
+# Both channels publish under npm's default `latest` dist-tag. GitHub Packages
+# only ever receives rc builds - stable releases go to npmjs - so `latest` there
+# means the newest rc. Publishing prereleases under an `rc` tag instead would
+# leave that registry with no `latest` at all, and `npm install <pkg>` with
+# nothing to resolve.
+if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
+  channel=release
+  registry="https://registry.npmjs.org"
+else
+  channel=rc
+  registry="https://npm.pkg.github.com"
+fi
+echo "Publishing $channel builds to $registry"
+
+# PACKAGES optionally selects which package directories to release, as
+# whitespace-separated glob patterns. Brace groups work
+# (sdks/typescript/ovrc-integration-{camera,display}), and when no braces are
+# present a comma-separated list is accepted too. Patterns may be written
+# relative to the repo root or to this directory, with or without a leading ./
+#
+# The patterns are only ever pattern-matched, never eval'd or expanded against
+# the disk, so an input naming a package that does not exist matches nothing
+# rather than doing anything surprising.
+shopt -s extglob
+filters=()
+if [ -n "${PACKAGES:-}" ]; then
+  raw="$PACKAGES"
+  case "$raw" in
+  *"{"*) : ;;             # commas belong to the brace groups
+  *) raw="${raw//,/ }" ;; # no braces, so allow a comma-separated list
+  esac
+
+  set -f # split on whitespace without expanding the patterns against the disk
+  for pat in $raw; do
+    pat="${pat#./}"
+    pat="${pat#sdks/typescript/}"
+    pat="${pat%/}"
+    if [[ "$pat" == *"{"* ]]; then
+      pat="${pat//\{/@(}"
+      pat="${pat//\}/)}"
+      pat="${pat//,/|}"
+    fi
+    filters+=("$pat")
+  done
+  set +f
+  echo "Releasing only packages matching: ${filters[*]}"
+fi
+
+# True when $1 is named by one of the requested patterns.
+selected() {
+  local pat
+  for pat in "${filters[@]}"; do
+    [[ "$1" == $pat ]] && return 0
+  done
+  return 1
+}
+
+# Upstream is where real releases live; its tags are the released versions.
+UPSTREAM_REPO="${UPSTREAM_REPO:-https://github.com/snap-one/ovrc-integration}"
+export GIT_TERMINAL_PROMPT=0 # fail instead of hanging on a credential prompt
+
+# Upstream is a separate private repository, and checkout's persisted credential
+# is an app token scoped to this repository alone - being in the same org grants
+# it nothing, so it reads upstream as a 404. Use a token minted for upstream and
+# clear the persisted header for those reads, so the repo-scoped credential
+# cannot take precedence over the one in the URL.
+upstream_url="$UPSTREAM_REPO"
+upstream_git=(git)
+if [ -n "${UPSTREAM_TOKEN:-}" ]; then
+  upstream_url="https://x-access-token:${UPSTREAM_TOKEN}@${UPSTREAM_REPO#https://}"
+  upstream_git=(git -c "http.https://github.com/.extraheader=")
+fi
+
+# True when version $1 is at or above version $2. Plain x.y.z only, which is all
+# a released version and an rc base ever are.
+gte() {
+  [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | tail -1)" = "$1" ]
+}
+
+# x.y.z -> x.y.(z+1), ignoring any prerelease suffix.
+next_patch() {
+  local major minor patch
+  IFS=. read -r major minor patch <<<"${1%%-*}"
+  echo "$major.$minor.$((patch + 1))"
+}
+
+# @snap-one/foo -> @snap-one/ts-foo. Every tag for a typescript package shares
+# that @scope/ts- namespace, upstream releases and rc's alike.
+tag_prefix() {
+  case "$1" in
+  */*) echo "${1%%/*}/ts-${1#*/}" ;;
+  *) echo "ts-$1" ;;
+  esac
+}
+
+# Sets rc_base and rc_counter for package $1, run from its directory.
+#
+# The counter is kept in this repo's rc tags rather than derived from the run
+# number, so it counts 0, 1, 2... per base. Once upstream has released the base
+# we were building rc's for, that base is spent: we move to the patch above
+# upstream, which has no rc tags yet and so restarts the counter at zero.
+#
+# Upstream is read from tags rather than the registry so this works before the
+# first publish. An unreachable upstream is fatal on purpose - guessing 0.0.0
+# would quietly build rc's on a base that upstream has already released. Note
+# this has to set variables rather than echo them: bash suppresses `set -e`
+# inside command substitution, so a failure in `x=$(rc_next)` would be ignored.
+compute_rc() {
+  local name="$1" prefix refs upstream
+  prefix=$(tag_prefix "$name")
+  rc_base=$(next_patch "$(npm pkg get version | tr -d '"')")
+
+  if ! refs=$("${upstream_git[@]}" ls-remote --tags "$upstream_url" "refs/tags/$prefix-v*" 2>&1); then
+    # git echoes the remote URL on failure, so keep the token out of the log.
+    echo "::error::cannot read tags from $UPSTREAM_REPO: ${refs//${UPSTREAM_TOKEN:-__unset__}/***}" >&2
+    exit 1
+  fi
+  upstream=$(printf '%s\n' "$refs" |
+    sed -n "s|.*refs/tags/$prefix-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
+  if gte "${upstream:-0.0.0}" "$rc_base"; then
+    rc_base=$(next_patch "$upstream")
+  fi
+
+  rc_counter=$(git tag -l "$prefix-v$rc_base-rc.*" | sed 's|.*-rc\.||' | sort -n | tail -1)
+  if [ -z "$rc_counter" ]; then rc_counter=0; else rc_counter=$((rc_counter + 1)); fi
+}
+
+# The rc path's only publish, and the only place it points at GitHub Packages -
+# every install and build above this runs against the default registry.
+#
+# Re-reads `private` off disk rather than trusting the loop below, so a private
+# package cannot be published even if the skip above is wrong, and fails the run
+# loudly rather than skipping quietly. The semantic-release path never reaches
+# here: @semantic-release/npm applies the same `pkg.private !== true` check
+# itself before it publishes.
+publish() {
+  if [ "$(npm pkg get private | tr -d '"')" = "true" ]; then
+    echo "::error::refusing to publish $(npm pkg get name): package.json sets private" >&2
+    exit 1
+  fi
+  # NPM_CONFIG_TAG must be set explicitly even though `latest` is npm's default:
+  # publish refuses a prerelease when the tag is the *unset* default
+  # ("You must specify a tag using --tag when publishing a prerelease version"),
+  # and it tests how the value was set, not what it is. Do not drop this on the
+  # grounds that it matches the default.
+  NPM_CONFIG_REGISTRY="$registry" \
+    NPM_CONFIG_TAG=latest \
+    NPM_CONFIG_ACCESS=public \
+    npm publish # prepack builds
+}
+
+# rc builds only touch packages changed by this push. Falls back to the previous
+# commit for manual runs and for pushes with no usable base (a new branch).
+base="${BASE_SHA:-}"
+if [ -z "$base" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+  base="HEAD~1"
+fi
+
+for dir in */; do
+  name="${dir%/}"
+  [ -f "$name/package.json" ] || continue
+
+  if jq -e '.private == true or .private == "true"' "$name/package.json" >/dev/null; then
+    echo "::notice::$name is ignored because it is private"
+    continue
+  fi
+
+  # An explicit selection replaces the change detection: naming a package is a
+  # request to release it whether or not this push touched it.
+  if [ ${#filters[@]} -gt 0 ]; then
+    if ! selected "$name"; then
+      echo "::notice::$name is not selected by PACKAGES"
+      continue
+    fi
+  elif [ "$channel" = "rc" ] && git diff --quiet "$base" HEAD -- "$name"; then
+    echo "::notice::$name is unchanged since $base"
+    continue
+  fi
+
+  echo "::group::$name"
+  (
+    cd "$name"
+    bun install
+    if [ "$channel" = "rc" ]; then
+      pkg=$(npm pkg get name | tr -d '"')
+      compute_rc "$pkg"
+      version="$rc_base-rc.$rc_counter"
+      # Never committed back. The rc tag below is this version's record, and
+      # compute_rc reads the counter back out of it on the next run.
+      npm --no-git-tag-version version "$version" >/dev/null
+
+      # Tag and push before publishing, so a failed publish burns an rc number
+      # instead of leaving the next run to collide with a version that is
+      # already on the registry.
+      echo "Publishing $version"
+      tag="$(tag_prefix "$pkg")-v$version"
+      git tag "$tag"
+      git push origin "$tag"
+      publish
+    else
+      # semantic-release-monorepo scopes commit analysis to this directory, so a
+      # package with no source changes since its last tag is a no-op.
+      #
+      # NPM_CONFIG_* has to be spelled uppercase here: @semantic-release/npm
+      # reads NPM_CONFIG_REGISTRY off the environment by that exact name, and
+      # only npm itself is case-insensitive about the prefix. Signed SLSA
+      # provenance ties each tarball to this run and commit; it needs the job's
+      # id-token:write plus public access, and is npmjs-only, which is why the
+      # rc path leaves it off.
+      NPM_CONFIG_REGISTRY="$registry" \
+        NPM_CONFIG_ACCESS=public \
+        NPM_CONFIG_PROVENANCE=true \
+        ../node_modules/.bin/semantic-release \
+        -e semantic-release-monorepo -e ../release.config.mjs ${DRY_RUN:+--dry-run}
+    fi
+  )
+  echo "::endgroup::"
+done

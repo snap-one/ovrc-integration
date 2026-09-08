@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+#MISE description="Generate typescript category-specific types, and core integration types"
+set -euo pipefail
+
+# Category specific packages
+cd typescript
+(cd codegen && bun i)
+
+for dir in ovrc-integration-*/; do
+  name="${dir%/}"
+  category="${name#ovrc-integration-}"
+  mkdir -p $name/src
+  (cd $name && bun i)
+  cat "../../schemas/openapi/${category}.json" | (cd codegen && bun index.ts -t templates/rpc-method.hbs) >"${name}/src/index.ts"
+  bunx prettier@3.8.5 --write "${name}/src/index.ts"
+done
+
+# Core integration types
+cd ovrc-integration
+echo "// Auto-generated index file" >index.d.ts
+for f in $(find . -name node_modules -prune -o -name '*.d.ts' ! -name 'index.d.ts' -print | sort); do
+  echo "/// <reference path=\"${f#./}\" />" >>index.d.ts
+done
+
+# Generate bin/modules.mjs, the esbuild --external list used by the ovrc-build bin.
+bun install
+bun run scripts/generate-modules.ts
+
+# Re-add the TypeDoc @module tags stripped by the copy above, so generated docs
+# name pages after the ambient module ("ovrc:core") not the file path.
+bun run scripts/add-module-tags.ts

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  // index.d.ts is only triple-slash references, so the default "resolve"
+  // strategy finds zero exports. "expand" documents each .d.ts as its own module.
+  "entryPoints": ["js_modules"],
+  "entryPointStrategy": "expand",
+  "tsconfig": "typedoc.tsconfig.json",
+  "out": "docs",
+  "plugin": [],
+  "excludeNotDocumented": false,
+  // The .d.ts files are copied build artifacts, so "Defined in js_modules/..."
+  // links point at paths that mean nothing to a consumer of the package.
+  "disableSources": true
+}
