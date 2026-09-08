@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#MISE description="Publish the typescript packages whose source changed: rc prereleases from the internal repo, semantic-release versions from the public one"
+#MISE description="Publish the typescript packages whose source changed: semantic-release versions from main, rc prereleases from anywhere else"
 set -euo pipefail
 
 cd typescript
@@ -9,16 +9,19 @@ cd typescript
 # fails outright.
 bun install
 
-# The public mirror cuts real releases to npm, versioned from the conventional
-# commits since each package's last release. Anywhere else - i.e. the internal
-# repo - cuts an rc prerelease of the next patch to GitHub Packages. Nothing is
-# exported here: the registry is applied per publish command, further down.
-# Both channels publish under npm's default `latest` dist-tag. GitHub Packages
-# only ever receives rc builds - stable releases go to npmjs - so `latest` there
-# means the newest rc. Publishing prereleases under an `rc` tag instead would
-# leave that registry with no `latest` at all, and `npm install <pkg>` with
-# nothing to resolve.
-if [ "${GITHUB_REPOSITORY:-}" = "snap-one/ovrc-integration" ]; then
+# main cuts real releases to npm, versioned from the conventional commits since
+# each package's last release. Every other branch - release-candidate, and a
+# local run - cuts an rc prerelease of the next patch to GitHub Packages.
+# Nothing is exported here: the registry is applied per publish command,
+# further down. Both channels publish under npm's default `latest` dist-tag.
+# GitHub Packages only ever receives rc builds - stable releases go to npmjs -
+# so `latest` there means the newest rc. Publishing prereleases under an `rc`
+# tag instead would leave that registry with no `latest` at all, and
+# `npm install <pkg>` with nothing to resolve.
+#
+# The branch is the only thing that decides this, so a workflow needs to say
+# nothing beyond which branch it runs on.
+if [ "${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}" = main ]; then
   channel=release
   registry="https://registry.npmjs.org"
 else
@@ -70,22 +73,6 @@ selected() {
   return 1
 }
 
-# Upstream is where real releases live; its tags are the released versions.
-UPSTREAM_REPO="${UPSTREAM_REPO:-https://github.com/snap-one/ovrc-integration}"
-export GIT_TERMINAL_PROMPT=0 # fail instead of hanging on a credential prompt
-
-# Upstream is a separate private repository, and checkout's persisted credential
-# is an app token scoped to this repository alone - being in the same org grants
-# it nothing, so it reads upstream as a 404. Use a token minted for upstream and
-# clear the persisted header for those reads, so the repo-scoped credential
-# cannot take precedence over the one in the URL.
-upstream_url="$UPSTREAM_REPO"
-upstream_git=(git)
-if [ -n "${UPSTREAM_TOKEN:-}" ]; then
-  upstream_url="https://x-access-token:${UPSTREAM_TOKEN}@${UPSTREAM_REPO#https://}"
-  upstream_git=(git -c "http.https://github.com/.extraheader=")
-fi
-
 # True when version $1 is at or above version $2. Plain x.y.z only, which is all
 # a released version and an rc base ever are.
 gte() {
@@ -100,7 +87,7 @@ next_patch() {
 }
 
 # @snap-one/foo -> @snap-one/ts-foo. Every tag for a typescript package shares
-# that @scope/ts- namespace, upstream releases and rc's alike.
+# that @scope/ts- namespace, releases and rc's alike.
 tag_prefix() {
   case "$1" in
   */*) echo "${1%%/*}/ts-${1#*/}" ;;
@@ -110,30 +97,27 @@ tag_prefix() {
 
 # Sets rc_base and rc_counter for package $1, run from its directory.
 #
-# The counter is kept in this repo's rc tags rather than derived from the run
-# number, so it counts 0, 1, 2... per base. Once upstream has released the base
-# we were building rc's for, that base is spent: we move to the patch above
-# upstream, which has no rc tags yet and so restarts the counter at zero.
+# The counter is kept in the rc tags rather than derived from the run number, so
+# it counts 0, 1, 2... per base. Once main has released the base we were
+# building rc's for, that base is spent: we move to the patch above the release,
+# which has no rc tags yet and so restarts the counter at zero.
 #
-# Upstream is read from tags rather than the registry so this works before the
-# first publish. An unreachable upstream is fatal on purpose - guessing 0.0.0
-# would quietly build rc's on a base that upstream has already released. Note
-# this has to set variables rather than echo them: bash suppresses `set -e`
-# inside command substitution, so a failure in `x=$(rc_next)` would be ignored.
+# Released versions are read from the release tags rather than the registry so
+# this works before the first publish. main's tags are in this clone, so a
+# shallow checkout - one without them - would quietly build rc's on a base that
+# is already released; hence fetch-depth: 0 in the workflow. Note this has to
+# set variables rather than echo them: bash suppresses `set -e` inside command
+# substitution, so a failure in `x=$(rc_next)` would be ignored.
 compute_rc() {
-  local name="$1" prefix refs upstream
+  local name="$1" prefix released
   prefix=$(tag_prefix "$name")
   rc_base=$(next_patch "$(npm pkg get version | tr -d '"')")
 
-  if ! refs=$("${upstream_git[@]}" ls-remote --tags "$upstream_url" "refs/tags/$prefix-v*" 2>&1); then
-    # git echoes the remote URL on failure, so keep the token out of the log.
-    echo "::error::cannot read tags from $UPSTREAM_REPO: ${refs//${UPSTREAM_TOKEN:-__unset__}/***}" >&2
-    exit 1
-  fi
-  upstream=$(printf '%s\n' "$refs" |
-    sed -n "s|.*refs/tags/$prefix-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
-  if gte "${upstream:-0.0.0}" "$rc_base"; then
-    rc_base=$(next_patch "$upstream")
+  # Plain x.y.z tags only - the trailing $ after [^-]* drops the rc tags.
+  released=$(git tag -l "$prefix-v*" |
+    sed -n "s|^$prefix-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
+  if gte "${released:-0.0.0}" "$rc_base"; then
+    rc_base=$(next_patch "$released")
   fi
 
   rc_counter=$(git tag -l "$prefix-v$rc_base-rc.*" | sed 's|.*-rc\.||' | sort -n | tail -1)
