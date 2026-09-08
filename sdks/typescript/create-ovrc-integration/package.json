@@ -1,9 +1,12 @@
 {
   "name": "@snap-one/create-ovrc-integration",
-  "repository": "https://github.com/snap-one/ovrc-integration",
-  "version": "0.0.3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snap-one/ovrc-integration.git"
+  },
+  "version": "0.0.4-rc.0",
   "bin": {
-    "create-integration": "./dist/create.js"
+    "create-integration": "dist/create.js"
   },
   "scripts": {
     "build": "rm -rf dist && bun build src/index.ts --outfile dist/create.js --target node --format esm --bundle && cp -r src/template dist",

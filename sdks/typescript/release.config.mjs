@@ -10,6 +10,10 @@ import { readFileSync } from "node:fs";
 // Loaded with the cwd set to the package being released.
 const { name } = JSON.parse(readFileSync("package.json", "utf8"));
 
+// @snap-one/foo -> @snap-one/ts-foo, matching the prefix the ts-release task
+// uses for rc tags.
+const tagName = name.includes("/") ? name.replace("/", "/ts-") : `ts-${name}`;
+
 const preset = {
   preset: "conventionalcommits",
   presetConfig: {
@@ -20,10 +24,10 @@ const preset = {
 
 export default {
   branches: ["main"],
-  // Overrides semantic-release-monorepo's `<name>-v<version>`. The ts- prefix
+  // Overrides semantic-release-monorepo's `<name>-v<version>`. The ts- segment
   // namespaces these against the other release lines that tag this repo, and
   // the rc tags the ts-release task writes use the same shape.
-  tagFormat: `ts-${name}-v\${version}`,
+  tagFormat: `${tagName}-v\${version}`,
   plugins: [
     ["@semantic-release/commit-analyzer", preset],
     ["@semantic-release/release-notes-generator", preset],

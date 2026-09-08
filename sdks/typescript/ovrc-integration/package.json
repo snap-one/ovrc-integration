@@ -1,11 +1,14 @@
 {
   "name": "@snap-one/ovrc-integration",
-  "repository": "https://github.com/snap-one/ovrc-integration",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snap-one/ovrc-integration.git"
+  },
   "scripts": {
     "test": "bun i && bun test",
     "typedoc": "bunx typedoc"
   },
-  "version": "0.0.14",
+  "version": "0.0.15-rc.0",
   "bin": {
     "ovrc-integration-esbuild": "bin/ovrc-build.mjs"
   },

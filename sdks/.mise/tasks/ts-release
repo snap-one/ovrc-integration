@@ -41,6 +41,15 @@ next_patch() {
   echo "$major.$minor.$((patch + 1))"
 }
 
+# @snap-one/foo -> @snap-one/ts-foo. Every tag for a typescript package shares
+# that @scope/ts- namespace, upstream releases and rc's alike.
+tag_prefix() {
+  case "$1" in
+  */*) echo "${1%%/*}/ts-${1#*/}" ;;
+  *) echo "ts-$1" ;;
+  esac
+}
+
 # Sets rc_base and rc_counter for package $1, run from its directory.
 #
 # The counter is kept in this repo's rc tags rather than derived from the run
@@ -54,20 +63,21 @@ next_patch() {
 # this has to set variables rather than echo them: bash suppresses `set -e`
 # inside command substitution, so a failure in `x=$(rc_next)` would be ignored.
 compute_rc() {
-  local name="$1" refs upstream
+  local name="$1" prefix refs upstream
+  prefix=$(tag_prefix "$name")
   rc_base=$(next_patch "$(npm pkg get version | tr -d '"')")
 
-  if ! refs=$(git ls-remote --tags "$UPSTREAM_REPO" "refs/tags/ts-$name-v*" 2>&1); then
+  if ! refs=$(git ls-remote --tags "$UPSTREAM_REPO" "refs/tags/$prefix-v*" 2>&1); then
     echo "::error::cannot read tags from $UPSTREAM_REPO: $refs" >&2
     exit 1
   fi
   upstream=$(printf '%s\n' "$refs" |
-    sed -n "s|.*refs/tags/ts-$name-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
+    sed -n "s|.*refs/tags/$prefix-v\([0-9][^-]*\)\$|\1|p" | sort -V | tail -1)
   if gte "${upstream:-0.0.0}" "$rc_base"; then
     rc_base=$(next_patch "$upstream")
   fi
 
-  rc_counter=$(git tag -l "ts-$name-v$rc_base-rc.*" | sed 's|.*-rc\.||' | sort -n | tail -1)
+  rc_counter=$(git tag -l "$prefix-v$rc_base-rc.*" | sed 's|.*-rc\.||' | sort -n | tail -1)
   if [ -z "$rc_counter" ]; then rc_counter=0; else rc_counter=$((rc_counter + 1)); fi
 }
 
@@ -113,17 +123,17 @@ for dir in */; do
       pkg=$(npm pkg get name | tr -d '"')
       compute_rc "$pkg"
       version="$rc_base-rc.$rc_counter"
+      # Never committed back. The rc tag below is this version's record, and
+      # compute_rc reads the counter back out of it on the next run.
       npm --no-git-tag-version version "$version" >/dev/null
 
       # Tag and push before publishing, so a failed publish burns an rc number
       # instead of leaving the next run to collide with a version that is
       # already on the registry.
-      # ponytail: rc versions are never written back to package.json, so the
-      # repo only ever shows the last real release. Commit the bump back if the
-      # checked-in version needs to track the prereleases.
       echo "Publishing $version"
-      git tag "ts-$pkg-v$version"
-      git push origin "ts-$pkg-v$version"
+      tag="$(tag_prefix "$pkg")-v$version"
+      git tag "$tag"
+      git push origin "$tag"
       publish
     else
       # semantic-release-monorepo scopes commit analysis to this directory, so a
