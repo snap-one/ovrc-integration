@@ -1,0 +1,101 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Minimal", "version": "1.0.0" },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "RPCRequestBase": {
+        "type": "object",
+        "properties": {
+          "jsonrpc": { "enum": ["2.0"], "type": "string" },
+          "id": { "type": "string" }
+        },
+        "required": ["jsonrpc", "id"]
+      },
+      "Widget": {
+        "description": "A widget exposed by the device.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The widget's display name.",
+            "type": "string"
+          },
+          "size": { "description": "The widget's size.", "type": "integer" }
+        },
+        "required": ["name", "size"]
+      },
+      "GetWidgetArgs": {
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"]
+      },
+      "GetWidgetParams": {
+        "type": "object",
+        "properties": {
+          "args": { "$ref": "#/components/schemas/GetWidgetArgs" },
+          "includeFields": {
+            "items": { "enum": ["name", "size"], "type": "string" },
+            "type": "array"
+          }
+        },
+        "required": ["args"]
+      },
+      "GetWidgetResult": {
+        "allOf": [{ "$ref": "#/components/schemas/Widget" }],
+        "nullable": true
+      },
+      "GetWidget": {
+        "description": "Fetch a widget by id.",
+        "allOf": [
+          { "$ref": "#/components/schemas/RPCRequestBase" },
+          {
+            "type": "object",
+            "properties": {
+              "method": { "enum": ["getWidget"], "type": "string" },
+              "params": { "$ref": "#/components/schemas/GetWidgetParams" }
+            },
+            "required": ["method", "params"]
+          }
+        ]
+      },
+      "PingArgs": {
+        "type": "object",
+        "properties": { "message": { "type": "string" } },
+        "required": ["message"]
+      },
+      "PingParams": {
+        "type": "object",
+        "properties": { "args": { "$ref": "#/components/schemas/PingArgs" } },
+        "required": ["args"]
+      },
+      "PingResult": { "type": "string" },
+      "Ping": {
+        "description": "Ping the device.",
+        "allOf": [
+          { "$ref": "#/components/schemas/RPCRequestBase" },
+          {
+            "type": "object",
+            "properties": {
+              "method": { "enum": ["ping"], "type": "string" },
+              "params": { "$ref": "#/components/schemas/PingParams" }
+            },
+            "required": ["method", "params"]
+          }
+        ]
+      },
+      "RPCMethod": {
+        "discriminator": {
+          "propertyName": "method",
+          "mapping": {
+            "getWidget": "#/components/schemas/GetWidget",
+            "ping": "#/components/schemas/Ping"
+          }
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/GetWidget" },
+          { "$ref": "#/components/schemas/Ping" }
+        ]
+      }
+    }
+  }
+}

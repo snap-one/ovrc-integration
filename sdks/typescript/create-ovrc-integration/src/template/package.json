@@ -1,0 +1,21 @@
+{
+  "name": "{{projectName}}",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "transpile": "ovrc-integration-esbuild src/index.ts --bundle --format=esm --target=es2023 --outfile=dist/integration.js --minify",
+    "build": "npm run transpile && cp manifest.json dist/manifest.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    {{#each dependencies as |version pkg|}}
+    "{{pkg}}": "{{version}}"{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
+  "devDependencies": {
+    {{#each devDependencies as |version pkg|}}
+    "{{pkg}}": "{{version}}"{{#unless @last}},{{/unless}}
+    {{/each}}
+  }
+}

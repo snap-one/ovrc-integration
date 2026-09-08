@@ -1,0 +1,20 @@
+[book]
+title = "OvrC Integration Developer Documentation"
+authors = ["ADI Global"]
+language = "en"
+
+[output.html]
+git-repository-url = "https://github.com/snap-one/ovrc-integration"
+# copied over from hugo static, some custom styling of some elements
+additional-css = ["src/_static/main.css"] 
+additional-js = [ "src/_static/mermaid.min.js", "src/_static/mermaid-init.js"]
+
+[output.html.print]
+enable = false
+
+[output.html.fold]
+enable = false    # whether or not to enable section folding
+level = 0         # the depth to start folding
+
+[preprocessor.mermaid]
+

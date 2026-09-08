@@ -1,0 +1,33 @@
+.modified-date {
+  color: #888;
+  font-size: 0.85em;
+}
+
+.method-desc {
+  color: #888;
+  font-size: 0.85em;
+}
+
+/* Separator between method blocks. */
+hr {
+  margin: 3.5rem 0 0;
+  border: none;
+  border-top: 1px solid var(--table-border-color, #ccc);
+}
+
+/* Type-definition blocks read as cards, not a wall of tables. */
+details {
+  border: 1px solid var(--table-border-color, #ccc);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details[open] > summary {
+  margin-bottom: 0.5rem;
+}

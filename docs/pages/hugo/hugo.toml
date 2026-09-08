@@ -1,0 +1,48 @@
+baseURL = "/"
+title = "OvrC Integration Developer Documentation"
+locale = "en"
+enableGitInfo = true
+
+# mdbook wants `section/page.md`, not `section/page/index.html`.
+uglyURLs = true
+disablePathToLower = true
+disableKinds = ["taxonomy", "term", "rss", "sitemap", "404"]
+
+[frontmatter]
+lastmod = ["lastmod", ":fileModTime", ":default"]
+
+[params]
+# Packages that are not tied to a single integration category.
+lowLevelPackages = ["ovrc-integration"]
+
+[outputs]
+home = ["summary"]
+section = ["mdbook"]
+page = ["mdbook"]
+
+# Emit markdown, not HTML: mdbook does the rendering.
+[outputFormats.mdbook]
+mediaType = "text/markdown"
+isPlainText = true
+
+[outputFormats.summary]
+mediaType = "text/markdown"
+baseName = "SUMMARY"
+isPlainText = true
+
+# Static assets are served under /_static/ so they never collide with chapters.
+[[module.mounts]]
+source = "content"
+target = "content"
+
+[[module.mounts]]
+source = "layouts"
+target = "layouts"
+
+[[module.mounts]]
+source = "static"
+target = "static/_static"
+
+[[module.mounts]]
+source = "../../../schemas"
+target = "assets/schemas"

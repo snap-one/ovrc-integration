@@ -1,0 +1,10 @@
+{
+  "name": "{{projectName}}",
+  "description": "A simple {{category}}-oriented integration",
+  "version": "0.0.1",
+  "category": "{{category}}",
+  "kind": "js",
+  "identification": {
+    "discovery": {}
+  }
+}

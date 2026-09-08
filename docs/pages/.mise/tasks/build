@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+#MISE description="Compile static site"
+
+set -euo pipefail
+
+cd "$MISE_PROJECT_ROOT"
+
+# Hugo renders the markdown sources (and copies static assets) into mdbook's src/.
+hugo --source hugo --destination ../mdbook/src --cleanDestinationDir
+
+mdbook build mdbook -d "$MISE_PROJECT_ROOT/dist"
