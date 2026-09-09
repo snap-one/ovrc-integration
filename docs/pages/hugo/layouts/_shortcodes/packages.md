@@ -1,6 +1,6 @@
 {{- /* Lists published Typescript packages, newest version first.
        kind="high" for category specific packages, kind="low" for the rest. */ -}}
-{{- $root := "static/packages/typescript" }}
+{{- $root := "static/sdks/typescript" }}
 {{- $wantLow := eq (.Get "kind") "low" }}
 {{- range $pkg := os.ReadDir $root }}
   {{- if $pkg.IsDir }}
@@ -15,7 +15,7 @@
         {{- $latest := index . 0 }}
 
 <h3>
-<a href="/_static/packages/typescript/{{ $name }}/{{ $latest }}/index.html" target="_blank" rel="noopener noreferrer">
+<a href="/_static/sdks/typescript/{{ $name }}/{{ $latest }}/index.html" target="_blank" rel="noopener noreferrer">
 @snap-one/{{ $name }}
 </a>
 </h3>
@@ -37,7 +37,7 @@ npm install @snap-one/{{ $name }}@{{ $latest }}
   {{- range $v := $versions }}
     <li>
       <a
-        href="../../_static/packages/typescript/{{ $name }}/{{ $v }}/index.html"
+        href="/_static/sdks/typescript/{{ $name }}/{{ $v }}/index.html"
         target="_blank"
         rel="noopener noreferrer"
       >

@@ -4,11 +4,19 @@ on:
   push:
     branches:
       - "main"
-      # - "initialize"
+    paths:
+      - "docs/pages/**"
+      - "schemas/**"
+  # A release bumps each package's version and commits it with [skip ci], so no
+  # push event ever carries it. This is what renders the typedoc for a version
+  # that was just published.
+  workflow_run:
+    workflows: ["NPM Release"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # the rendered typedoc is committed back
   pages: write
   id-token: write
 
@@ -18,17 +26,56 @@ concurrency:
 
 jobs:
   deploy:
+    # A failed or cancelled release published nothing to document.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SNPO_SEMANTIC_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "${{ github.event.repository.name }}"
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Default is true, but stated because this is what authenticates the
+          # typedoc commit. Stored as an http.extraheader that checkout strips
+          # again in its post step.
+          persist-credentials: true
+          token: ${{ steps.generate_token.outputs.token }}
+      # Root config, for the bun that renders the typedoc.
       - name: Setup Mise
+        uses: jdx/mise-action@v4
+      - name: Setup Mise for the site
         uses: jdx/mise-action@v4
         with:
           working_directory: docs/pages
+      - name: Render typedoc
+        run: mise run //sdks:ts-typedoc
+      - name: Commit typedoc
+        env:
+          GIT_AUTHOR_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
+          GIT_AUTHOR_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: ${{ steps.generate_token.outputs.app-slug }}[bot]
+          GIT_COMMITTER_EMAIL: "${{ steps.generate_token.outputs.installation-id }}+${{ steps.generate_token.outputs.app-slug }}[bot]@users.noreply.github.com"
+        # [skip ci] because this commit lands under docs/pages/**, which is one
+        # of this workflow's own triggers. Without it every release renders
+        # docs forever. The deploy below is this run's, so nothing is lost by
+        # not re-triggering.
+        run: |
+          git add docs/pages/hugo/static/sdks/typescript
+          if git diff --cached --quiet; then
+            echo "::notice::typedoc is unchanged"
+            exit 0
+          fi
+          git commit -m "docs: render typescript typedoc [skip ci]"
+          git push origin "HEAD:$GITHUB_REF_NAME"
       - name: Build
         run: cd docs/pages && mise build
       - name: Setup Pages
