@@ -9,6 +9,7 @@ experimental = true
 # Locations that contain mise configs.
 config_roots = [
 	"sdks",
+  "docs/pages"
 ]
 
 [tasks.generate]

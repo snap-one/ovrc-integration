@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+#MISE description="Render the typedoc of every typescript package that has one into the docs site"
+set -euo pipefail
+
+out_root="$MISE_MONOREPO_ROOT/docs/pages/hugo/static/sdks/typescript"
+
+cd typescript
+for dir in */; do
+  name="${dir%/}"
+  [ -f "$name/package.json" ] || continue
+  # Opting in is having the script. codegen and create-ovrc-integration ship no
+  # public API, so neither declares one.
+  jq -e '.scripts.typedoc' "$name/package.json" >/dev/null || continue
+
+  echo "::group::$name"
+  (
+    cd "$name"
+    bun install
+    pkg=$(jq -r '.name | sub("^@[^/]+/"; "")' package.json)
+    version=$(jq -r '.version' package.json)
+
+    # --disableSources is what keeps this reproducible: typedoc's source links
+    # embed the current commit sha, so leaving them on rewrites every page on
+    # every commit and the generate-then-check-dirty CI step never passes.
+    #
+    # typedoc clears --out itself (cleanOutputDir), so a rerun of a version
+    # replaces that version's pages rather than layering on top of them.
+    bun run typedoc -- --disableSources --out "$out_root/$pkg/$version"
+  )
+  echo "::endgroup::"
+done

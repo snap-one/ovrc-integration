@@ -4,6 +4,9 @@ on:
     branches:
       - main
     types: [opened, synchronize, reopened]
+concurrency:
+  group: feature-${{ github.ref }}
+  cancel-in-progress: true # a new push makes the previous run's result moot
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout

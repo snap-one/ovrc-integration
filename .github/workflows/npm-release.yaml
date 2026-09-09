@@ -1,5 +1,9 @@
 name: NPM Release
-concurrency: npm-release-${{ github.ref }}
+concurrency:
+  # Never cancelled: a run publishes to a registry and pushes tags, so
+  # interrupting one leaves the registry ahead of git.
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
 on:
   push:
     tags-ignore:
