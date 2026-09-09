@@ -15,7 +15,7 @@
         {{- $latest := index . 0 }}
 
 <h3>
-<a href="/_static/sdks/typescript/{{ $name }}/{{ $latest }}/index.html" target="_blank" rel="noopener noreferrer">
+<a href="/ovrc-integration/_static/sdks/typescript/{{ $name }}/{{ $latest }}/index.html" target="_blank" rel="noopener noreferrer">
 @snap-one/{{ $name }}
 </a>
 </h3>
@@ -37,7 +37,7 @@ npm install @snap-one/{{ $name }}@{{ $latest }}
   {{- range $v := $versions }}
     <li>
       <a
-        href="/_static/sdks/typescript/{{ $name }}/{{ $v }}/index.html"
+        href="/ovrc-integration/_static/sdks/typescript/{{ $name }}/{{ $v }}/index.html"
         target="_blank"
         rel="noopener noreferrer"
       >
