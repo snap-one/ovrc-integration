@@ -8,7 +8,7 @@
     "test": "bun i && bun test",
     "typedoc": "bunx typedoc@0.28.20"
   },
-  "version": "1.0.3",
+  "version": "1.0.0",
   "bin": {
     "ovrc-integration-esbuild": "bin/ovrc-build.mjs"
   },

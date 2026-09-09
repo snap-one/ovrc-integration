@@ -4,7 +4,7 @@
     "type": "git",
     "url": "git+https://github.com/snap-one/ovrc-integration.git"
   },
-  "version": "1.0.1",
+  "version": "1.0.0",
   "bin": {
     "create-integration": "dist/create.js"
   },
