@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "http://localhost:3000"
 title = "OvrC Integration Developer Documentation"
 locale = "en"
 enableGitInfo = true
@@ -13,7 +13,7 @@ lastmod = ["lastmod", ":fileModTime", ":default"]
 
 [params]
 # Packages that are not tied to a single integration category.
-lowLevelPackages = ["ovrc-integration"]
+runtimePackages = ["ovrc-integration"]
 
 [outputs]
 home = ["summary"]
