@@ -16,5 +16,10 @@ enable = false
 enable = false    # whether or not to enable section folding
 level = 0         # the depth to start folding
 
+[output.linkcheck2]
+# Typedoc output is linked with the deployed site prefix (relURL from hugo's
+# baseURL), which linkcheck resolves against src/ and can't find locally.
+exclude = ['^/ovrc-integration/_static/sdks/']
+
 [preprocessor.mermaid]
 

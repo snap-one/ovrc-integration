@@ -35,6 +35,9 @@ jobs:
         # No ref: the default branch's tip is wanted. Do not "fix" this to
         # workflow_run.head_sha - that is the commit the release started from,
         # which predates both its version bumps and its typedoc commit.
+      - uses: cargo-bins/cargo-binstall@main
+        with:
+          version: "1.23.0"
       - name: Setup Mise
         uses: jdx/mise-action@v4
         with:
