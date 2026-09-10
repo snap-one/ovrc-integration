@@ -1,5 +1,6 @@
 ---
 title: Manifest
+weight: 1
 ---
 
 At its core, every OvrC Integration boils down to just two files:

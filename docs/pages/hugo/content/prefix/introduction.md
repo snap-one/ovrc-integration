@@ -1,5 +1,6 @@
 ---
 title: Introduction
+weight: 0
 ---
 
 ## What is an integration?

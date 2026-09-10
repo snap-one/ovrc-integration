@@ -5,7 +5,7 @@
 {{- end }}
 
 {{- with .GetPage "chapter" }}
-{{- range sort .Pages "File.Path"  }}
+{{- range sort .Pages "Weight"  }}
 # {{ .Title }}
 {{ template "chapters" (dict "page" . "depth" 0) }}
 {{- end }}
@@ -16,14 +16,14 @@
 {{- end }}
 
 {{- define "PrefixOrSuffix" }}
-  {{- range sort .Pages "File.Path" }}
+  {{- range sort .Pages "Weight" }}
 {{ template "PageMDLink" . }}
   {{- end }}
 {{- end }}
 
 {{- define "chapters" }}
   {{- $indent := strings.Repeat (mul 2 .depth) " " }}
-  {{- range sort .page.Pages "File.Path" }}
+  {{- range sort .page.Pages "Weight" }}
 {{ $indent }}- {{ template "PageMDLink" . }}{{.File.Path}}
     {{- template "chapters" (dict "page" . "depth" (add $.depth 1)) }}
   {{- end }}
