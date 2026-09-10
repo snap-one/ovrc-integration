@@ -14,7 +14,7 @@
       {{- with $versions | first 1 }}
         {{- $latest := index . 0 }}
 
-### [@snap-one/{{ $name }}]({{ printf "_static/sdks/typescript/%s/%s/index.html" $name $latest | relURL }})
+### [@snap-one/{{ $name }}]({{ printf "_static/sdks/typescript/%s/%s/index.html" $name $latest | absURL }})
 
 ```bash
 npm install @snap-one/{{ $name }}@latest
@@ -29,7 +29,7 @@ npm install @snap-one/{{ $name }}@latest
     <li>
       <div>
         <a
-          href='{{ printf "_static/sdks/typescript/%s/%s/index.html" $name $v | relURL }}'
+          href='{{ printf "_static/sdks/typescript/%s/%s/index.html" $name $v | absURL }}'
           target="_blank"
           rel="noopener noreferrer"
         >
