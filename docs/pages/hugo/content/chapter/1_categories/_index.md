@@ -1,5 +1,5 @@
 ---
-title: "Categories"
+title: Categories
 ---
 
 Each OvrC Integration falls under a device category.
@@ -9,6 +9,6 @@ and the actions it may perform.
 Each category is defined by the set of JSON RPC methods it supports.
 
 The following is a list of currently supported integration categories.
-This list of categories is actively growing and expanding.
+This list of categories is actively growing.
 
 {{< integration-categories >}}
