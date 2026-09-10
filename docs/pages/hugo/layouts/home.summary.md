@@ -31,5 +31,6 @@
 
 {{- define "PageMDLink" }}
 {{- $isWIP := .Params.wip -}}
-[{{ .Title }}{{if $isWIP}} (coming soon){{end}}]({{if not $isWIP}}{{ strings.TrimPrefix "/" .RelPermalink }}{{end}})
+{{- $baseURLPath := (urls.Parse .Site.BaseURL).Path -}}
+[{{ .Title }}{{if $isWIP}} (coming soon){{end}}]({{if not $isWIP}}{{ strings.TrimPrefix $baseURLPath .RelPermalink }}{{end}})
 {{- end }}
