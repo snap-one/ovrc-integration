@@ -14,7 +14,7 @@ Providing necessary inputs to the user prompts,
 run the following command:
 
 ```sh
-npm create @ovrc/integration@latest
+npm init @snap-one/ovrc-integration@latest
 ```
 
 Upon successful creation, a new directory
