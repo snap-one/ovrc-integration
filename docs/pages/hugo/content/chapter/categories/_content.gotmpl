@@ -1,0 +1,26 @@
+{{- $content := dict "mediaType" "text/markdown" }}
+{{- $weight := 0 }}
+{{- range $category := partial "integration-categories.gotmpl" }}
+
+  {{- $.AddPage (dict
+    "content" $content
+    "kind" "section"
+    "layout" "category-root"
+    "params" (dict "category" $category)
+    "path" $category
+    "weight" $weight
+    "title" (strings.Title $category)
+  ) }}
+
+  {{- $.AddPage (dict
+    "content" $content
+    "kind" "page"
+    "layout" "integration-methods"
+    "params" (dict "category" $category)
+    "path" (printf "%s/methods" $category)
+    "title" "JSON-RPC Methods"
+  ) }}
+
+  {{- $weight = add $weight 1 }}
+
+{{- end }}

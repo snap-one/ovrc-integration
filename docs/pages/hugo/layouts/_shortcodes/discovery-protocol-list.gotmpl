@@ -1,0 +1,13 @@
+{{- with resources.Get "schemas/json/manifest.schema.json" | transform.Unmarshal }}
+{{- with index . "$defs"  }}
+{{- with .discoveryData }}
+{{- $protocols := slice }}
+{{- range $key, $_ := .properties }}
+  {{- $protocols = append $key $protocols }}
+{{- end }}
+{{- range $protocol := sort $protocols }}
+- {{ $protocol }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

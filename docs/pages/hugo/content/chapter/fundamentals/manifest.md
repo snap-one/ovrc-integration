@@ -23,4 +23,25 @@ in a `manifest.json` file.
 
 ### identification
 
+The identification field contains data used to identify devices
+with which the integration is compatible. See [matching](./matching.md) for
+more details regarding identification and discovery.
+
+One of the fields within the identification object is `discovery`.
+
+The `discovery` field serves as a declarative mechanism
+for matching an integration to a device, based on data
+received from the device using common protocols.
+
+Some examples of such protocols include: UPnP, SDDP, PJLink, etc...
+The integration manifest must specify one or more discovery protocols.
+
+The list of currently supported protocols/fields include:
+{{< discovery-protocol-list >}}
+
+## Manifest Testing
+
+Tools for creating and testing a `manifest.json` file can be found within
+the [OvrC Integration Developer Mode](./developer-mode.md).
+
 [^1]: currently supported extensions are: `js`.

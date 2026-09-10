@@ -64,7 +64,7 @@ When you run the above, three things happen:
    opening the local development UI.
    > [!NOTE]
    > If the browser does not automatically launch, simply copy and paste the URL printed to stdout in your favorite browser.
-3. The developer UI will attempt to launch OvrC in Integration Developer Mode.
+3. The developer UI will attempt to launch OvrC in [Integration Developer Mode](../chapter/fundamentals/developer-mode.md).
    > [!NOTE]
    > If OvrC does not automatically launch, you can launch it from the local development UI.
 
