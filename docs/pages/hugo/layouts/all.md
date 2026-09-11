@@ -1,4 +1,4 @@
-{{ with partial "lastmod.md" . }}
+{{ with partial "lastmod" . }}
 # {{ .Title }}
 {{ .RenderShortcodes }}
 {{ end }}

@@ -1,3 +1,5 @@
+# {{ .Title }}
+
 The following details the [JSON-RPC](https://www.jsonrpc.org/specification) methods supported by, and other information relating to,
 the **{{ .Title }}** OvrC Integration category.
 

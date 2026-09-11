@@ -1,6 +1,7 @@
-+++
-title = "Language Support"
-+++
+---
+title: "Language Support"
+weight: 2
+---
 
 # Supported Languages
 

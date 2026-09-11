@@ -1,4 +1,4 @@
-{{ with partial "lastmod.md" . }}
+# {{ strings.Title .Params.category }} Methods
 {{- .Content }}
 
 {{- $oapi := printf "/schemas/openapi/%s.json" .Params.category | resources.Get }}
@@ -47,7 +47,6 @@
   <summary>Type Definitions</summary>
     {{- partial "inline/PrettyPrintType" (dict "types" $typeDefs "typeName" .result "level" 5) | safeHTML }}
 </details>
-{{- end }}
 {{- end }}
 
 {{/* ---------------------------------------------------------------------- */}}

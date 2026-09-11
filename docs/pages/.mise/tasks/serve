@@ -10,5 +10,5 @@ cd "$MISE_PROJECT_ROOT"
 hugo --source hugo --destination ../mdbook/src --cleanDestinationDir
 
 trap 'kill 0' EXIT
-hugo --source hugo --destination ../mdbook/src --watch &
+hugo --source hugo --destination ../mdbook/src --watch --cleanDestinationDir &
 mdbook serve mdbook --open

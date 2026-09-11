@@ -1,4 +1,6 @@
+{{- $result := slice }}
 {{- range resources.Match "schemas/openapi/*.json"}}
 {{- $category := . | strings.TrimPrefix "/schemas/openapi/" | strings.TrimSuffix ".json" }}
-- {{ $category | strings.Title }}
+{{- $result = append $category $result }}
 {{- end }}
+{{- return (sort $result "value" "asc" ) }}

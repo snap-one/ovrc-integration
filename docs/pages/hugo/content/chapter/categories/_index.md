@@ -1,5 +1,6 @@
 ---
 title: Categories
+weight: 1
 ---
 
 Each OvrC Integration falls under a device category.
