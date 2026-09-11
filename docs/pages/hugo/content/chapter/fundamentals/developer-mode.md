@@ -74,7 +74,7 @@ itself must be flagged as a [development device](#development-devices).
 > Even after becoming a certified developer, **LAN Mode** can be enabled
 > by providing the `--lan` option when starting the development server[^1].
 
-### Development devices
+### Development Devices
 
 As stated previously, once a user has been developer certified,
 all device communications are proxied through OvrC's
