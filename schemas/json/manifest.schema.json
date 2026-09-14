@@ -4,14 +4,7 @@
   "title": "Integration Manifest",
   "description": "Schema for the integration manifest.",
   "type": "object",
-  "required": [
-    "name",
-    "version",
-    "description",
-    "category",
-    "identification",
-    "kind"
-  ],
+  "required": ["name", "version", "description", "category", "identification", "kind"],
   "properties": {
     "name": {
       "type": "string",
@@ -271,6 +264,28 @@
                   "minItems": 1,
                   "items": {
                     "$ref": "#/$defs/upnp"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "wsdiscovery": {
+          "description": "WS-Discovery discovery matcher, or an $or of WS-Discovery matchers.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/wsdiscovery"
+            },
+            {
+              "type": "object",
+              "required": ["$or"],
+              "additionalProperties": false,
+              "properties": {
+                "$or": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/wsdiscovery"
                   }
                 }
               }
@@ -565,6 +580,39 @@
         { "required": ["modelName"] },
         { "required": ["services"] }
       ]
+    },
+    "wsdiscovery": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "description": "WS-Discovery discovery matcher. Properties are AND'd together.",
+      "properties": {
+        "types": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A type advertised by the device. Example: dn:NetworkVideoTransmitter"
+          },
+          "description": "WS-Discovery types advertised by the device. Types are AND'd together, and each must match a different advertised type."
+        },
+        "scopes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A scope advertised by the device. Example: onvif://www.onvif.org/manufacturer/Hanwha%20Vision"
+          },
+          "description": "WS-Discovery scopes advertised by the device. Scopes are AND'd together, and each must match a different advertised scope."
+        },
+        "xAddr": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The advertised transport address, with the host removed. Example: /onvif/device_service"
+        }
+      }
     }
   }
 }
