@@ -10,7 +10,7 @@ We are actively improving the JavaScript runtime in which JavaScript integration
 The runtime does not support, nor will it ever support, the entire Node.js standard library–or any other
 popular JavaScript runtime standard library for that matter.
 
-Many commonly used packages make assumptions related to the environment in which they are run.
+Many commonly used packages make assumptions related to the environment in which they will be run.
 Searching for alternative packages that are better designed is a good first step.
 In some scenarios, options are few. Depending on the failures being observed, it may be possible
 to address them by using [esbuild's alias feature](https://esbuild.github.io/api/#alias),
