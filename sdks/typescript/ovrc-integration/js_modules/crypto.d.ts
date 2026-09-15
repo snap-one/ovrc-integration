@@ -35,14 +35,71 @@ declare global {
   type CryptoBufferSource = ArrayBuffer | QuickJS.ArrayBufferView;
   type CryptoRandomFillBuffer = ArrayBuffer | QuickJS.ArrayBufferView;
   type CryptoAlgorithmIdentifier = string | CryptoAlgorithm;
-  type CryptoHashAlgorithmIdentifier = CryptoAlgorithmIdentifier;
-  type CryptoKeyFormat = "jwk" | "pkcs8" | "raw" | "spki";
+  type CryptoHashAlgorithmIdentifier =
+    | CryptoDigestAlgorithmName
+    | CryptoAlgorithmIdentifier;
+  type CryptoKeyFormat =
+    | "jwk"
+    | "pkcs8"
+    | "raw"
+    | "raw-public"
+    | "raw-secret"
+    | "raw-seed"
+    | "spki";
   type CryptoKeyType = "private" | "public" | "secret";
   type CryptoKeyUsage =
+    | "decapsulateBits"
+    | "decapsulateKey"
     | "decrypt"
     | "deriveBits"
     | "deriveKey"
+    | "encapsulateBits"
+    | "encapsulateKey"
     | "encrypt"
+    | "sign"
+    | "unwrapKey"
+    | "verify"
+    | "wrapKey";
+
+  type CryptoDigestAlgorithmName =
+    | "SHA-1"
+    | "SHA-256"
+    | "SHA-384"
+    | "SHA-512"
+    | "SHA3-256"
+    | "SHA3-384"
+    | "SHA3-512";
+
+  type CryptoMlDsaAlgorithmName = "ML-DSA-44" | "ML-DSA-65" | "ML-DSA-87";
+
+  type CryptoMlKemAlgorithmName =
+    | "ML-KEM-512"
+    | "ML-KEM-768"
+    | "ML-KEM-1024";
+
+  type CryptoHybridKemAlgorithmName =
+    | "MLKEM768-P256"
+    | "MLKEM768-X25519"
+    | "MLKEM1024-P384";
+
+  type CryptoKemAlgorithmName =
+    | CryptoMlKemAlgorithmName
+    | CryptoHybridKemAlgorithmName;
+
+  type CryptoSubtleOperation =
+    | "decapsulateBits"
+    | "decapsulateKey"
+    | "decrypt"
+    | "deriveBits"
+    | "deriveKey"
+    | "digest"
+    | "encapsulateBits"
+    | "encapsulateKey"
+    | "encrypt"
+    | "exportKey"
+    | "generateKey"
+    | "getPublicKey"
+    | "importKey"
     | "sign"
     | "unwrapKey"
     | "verify"
@@ -94,8 +151,51 @@ declare global {
     publicKey: CryptoKey;
   }
 
+  interface CryptoEncapsulatedBits {
+    ciphertext: ArrayBuffer;
+    sharedKey: ArrayBuffer;
+  }
+
+  interface CryptoEncapsulatedKey {
+    ciphertext: ArrayBuffer;
+    sharedKey: CryptoKey;
+  }
+
   class SubtleCrypto {
     private constructor();
+    static supports(
+      operation: CryptoSubtleOperation,
+      algorithm: CryptoAlgorithmIdentifier | CryptoAlgorithmParameters,
+      additional?: unknown,
+    ): boolean;
+    getPublicKey(
+      key: CryptoKey,
+      keyUsages: readonly CryptoKeyUsage[],
+    ): Promise<CryptoKey>;
+    encapsulateBits(
+      encapsulationAlgorithm: CryptoKemAlgorithmName | CryptoAlgorithmParameters,
+      encapsulationKey: CryptoKey,
+    ): Promise<CryptoEncapsulatedBits>;
+    encapsulateKey(
+      encapsulationAlgorithm: CryptoKemAlgorithmName | CryptoAlgorithmParameters,
+      encapsulationKey: CryptoKey,
+      sharedKeyAlgorithm: CryptoAlgorithmIdentifier | CryptoAlgorithmParameters,
+      extractable: boolean,
+      usages: readonly CryptoKeyUsage[],
+    ): Promise<CryptoEncapsulatedKey>;
+    decapsulateBits(
+      decapsulationAlgorithm: CryptoKemAlgorithmName | CryptoAlgorithmParameters,
+      decapsulationKey: CryptoKey,
+      ciphertext: CryptoBufferSource,
+    ): Promise<ArrayBuffer>;
+    decapsulateKey(
+      decapsulationAlgorithm: CryptoKemAlgorithmName | CryptoAlgorithmParameters,
+      decapsulationKey: CryptoKey,
+      ciphertext: CryptoBufferSource,
+      sharedKeyAlgorithm: CryptoAlgorithmIdentifier | CryptoAlgorithmParameters,
+      extractable: boolean,
+      usages: readonly CryptoKeyUsage[],
+    ): Promise<CryptoKey>;
     decrypt(
       algorithm: CryptoAlgorithmIdentifier | CryptoAlgorithmParameters,
       key: CryptoKey,
