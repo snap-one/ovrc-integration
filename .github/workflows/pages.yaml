@@ -35,6 +35,12 @@ jobs:
         # No ref: the default branch's tip is wanted. Do not "fix" this to
         # workflow_run.head_sha - that is the commit the release started from,
         # which predates both its version bumps and its typedoc commit.
+        with:
+          # Hugo's enableGitInfo derives each page's lastmod from the commit
+          # that last touched it. A shallow clone has only one commit, so every
+          # page would be dated the build.
+          fetch-depth: 0
+          filter: blob:none
       - uses: cargo-bins/cargo-binstall@main
         with:
           version: "1.23.0"
