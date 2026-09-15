@@ -7,8 +7,8 @@ src = "content"
 [output.html]
 git-repository-url = "https://github.com/snap-one/ovrc-integration"
 # copied over from hugo static, some custom styling of some elements
-additional-css = ["src/_static/main.css"] 
-additional-js = [ "src/_static/mermaid.min.js", "src/_static/mermaid-init.js"]
+additional-css = ["content/_static/main.css"] 
+additional-js = [ "content/_static/mermaid.min.js", "content/_static/mermaid-init.js", "content/_static/valid-edit-urls.js"]
 edit-url-template = "https://github.com/snap-one/ovrc-integration/edit/release-candidate/docs/pages/hugo/{path}"
 
 [output.html.print]
