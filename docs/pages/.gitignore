@@ -1,5 +1,6 @@
 dist/
 mdbook/src
+mdbook/content
 hugo/.hugo_build.lock
 **/book/
 **/bin/

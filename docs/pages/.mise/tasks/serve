@@ -7,8 +7,8 @@ set -euo pipefail
 cd "$MISE_PROJECT_ROOT"
 
 # mdbook needs a populated src/ before it can build, so render once up front.
-hugo --source hugo --destination ../mdbook/src --cleanDestinationDir
+hugo --source hugo --destination ../mdbook/content --cleanDestinationDir
 
 trap 'kill 0' EXIT
-hugo --source hugo --destination ../mdbook/src --watch --cleanDestinationDir &
+hugo --source hugo --destination ../mdbook/content --watch --cleanDestinationDir &
 mdbook serve mdbook --open
