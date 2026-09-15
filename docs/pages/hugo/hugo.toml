@@ -9,7 +9,7 @@ disablePathToLower = true
 disableKinds = ["taxonomy", "term", "rss", "sitemap", "404"]
 
 [frontmatter]
-lastmod = ["lastmod", ":fileModTime", ":default"]
+lastmod = ["lastmod", ":git", ":default"]
 
 [params]
 # Packages that are not tied to a single integration category.

@@ -1,0 +1,9 @@
+{{- /* One FAQ entry, rendered as a card (styled by _static/main.css).
+       Arg 0 is the question, the inner text is the markdown answer. */ -}}
+<div class="qa">
+
+## {{ .Get 0 }}
+
+{{ .Inner | strings.TrimSpace }}
+
+</div>
