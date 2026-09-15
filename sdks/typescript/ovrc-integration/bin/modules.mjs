@@ -28,6 +28,8 @@ export default [
 /* stream/web */ "ovrc:stream/web",
 /* string_decoder */ "string_decoder",
 /* string_decoder */ "ovrc:string_decoder",
+/* timers */ "timers",
+/* timers */ "ovrc:timers",
 /* url */ "url",
 /* url */ "ovrc:url",
 /* util */ "util",

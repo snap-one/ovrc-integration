@@ -146,6 +146,7 @@ export type AuthenticationInput = {
   /** @description The unique identifier of the authentication method to set values for. */
   id: string;
 };
+/** @description Stop an app source, such as Netflix. */
 export type DispatchAppSourcesTerminate = RPCRequestBase & {
   /** @enum {string} */
   method: "dispatchAppSourcesTerminate";
@@ -1006,6 +1007,7 @@ export type RPCSuccessResponse =
 export type ScreenMute = {
   muted?: boolean;
 };
+/** @description Switch to an app source, such as Netflix. */
 export type SetAppSourcesActive = RPCRequestBase & {
   /** @enum {string} */
   method: "setAppSourcesActive";
@@ -1058,6 +1060,7 @@ export type SetAuthenticationResponse = RPCMethodResult & {
   result?: SetAuthenticationResult;
 };
 export type SetAuthenticationResult = Authentication;
+/** @description Set the ARC mode for a specific input. */
 export type SetInputARCMode = RPCRequestBase & {
   /** @enum {string} */
   method: "setInputARCMode";
@@ -1094,6 +1097,7 @@ export type SetInputARCModeResponse = RPCMethodResult & {
   result?: SetInputARCModeResult;
 };
 export type SetInputARCModeResult = Input;
+/** @description Enable or disable CEC control for a specific input. */
 export type SetInputCECMode = RPCRequestBase & {
   /** @enum {string} */
   method: "setInputCECMode";
@@ -1130,6 +1134,7 @@ export type SetInputCECModeResponse = RPCMethodResult & {
   result?: SetInputCECModeResult;
 };
 export type SetInputCECModeResult = Input;
+/** @description Set the input port type, such as HDMI or DisplayPort. */
 export type SetInputConnectionType = RPCRequestBase & {
   /** @enum {string} */
   method: "setInputConnectionType";
@@ -1166,6 +1171,7 @@ export type SetInputConnectionTypeResponse = RPCMethodResult & {
   result?: SetInputConnectionTypeResult;
 };
 export type SetInputConnectionTypeResult = Input;
+/** @description Name an input, such as Apple TV or HDMI 1. */
 export type SetInputLabel = RPCRequestBase & {
   /** @enum {string} */
   method: "setInputLabel";
@@ -1202,6 +1208,7 @@ export type SetInputLabelResponse = RPCMethodResult & {
   result?: SetInputLabelResult;
 };
 export type SetInputLabelResult = Input;
+/** @description Switch to a specific input, such as HDMI 1 or HDMI 2. */
 export type SetInputsActive = RPCRequestBase & {
   /** @enum {string} */
   method: "setInputsActive";
@@ -1312,6 +1319,7 @@ export type SetNetworkConfigResponse = RPCMethodResult & {
   result?: SetNetworkConfigResult;
 };
 export type SetNetworkConfigResult = Network;
+/** @description Output port type, such as HDMI or optical audio. */
 export type SetOutputConnectionType = RPCRequestBase & {
   /** @enum {string} */
   method: "setOutputConnectionType";
@@ -1341,6 +1349,7 @@ export type SetOutputConnectionTypeResponse = RPCMethodResult & {
   result?: SetOutputConnectionTypeResult;
 };
 export type SetOutputConnectionTypeResult = Output;
+/** @description Power-saving mode for the display, such as sleep. */
 export type SetPowerPowerSavingMode = RPCRequestBase & {
   /** @enum {string} */
   method: "setPowerPowerSavingMode";
@@ -1363,6 +1372,7 @@ export type SetPowerPowerSavingModeResponse = RPCMethodResult & {
   result?: SetPowerPowerSavingModeResult;
 };
 export type SetPowerPowerSavingModeResult = PowerPowerSavingMode;
+/** @description Turn the display on, off, or wake it up. */
 export type SetPowerState = RPCRequestBase & {
   /** @enum {string} */
   method: "setPowerState";
@@ -2959,6 +2969,9 @@ export type methodSetVideoPictureMode = (
 ) => Promise<methodSetVideoPictureModeResult>;
 
 export type Handler = {
+  /**
+   * Stop an app source, such as Netflix.
+   */
   dispatchAppSourcesTerminate?: methodDispatchAppSourcesTerminate;
 
   dispatchAuthenticationPrompt?: methodDispatchAuthenticationPrompt;
@@ -2992,17 +3005,27 @@ export type Handler = {
   getSystem?: methodGetSystem;
 
   getVideo?: methodGetVideo;
-
+  /**
+   * Switch to an app source, such as Netflix.
+   */
   setAppSourcesActive?: methodSetAppSourcesActive;
 
   setAuthentication?: methodSetAuthentication;
-
+  /**
+   * Set the ARC mode for a specific input.
+   */
   setInputARCMode?: methodSetInputARCMode;
-
+  /**
+   * Enable or disable CEC control for a specific input.
+   */
   setInputCECMode?: methodSetInputCECMode;
-
+  /**
+   * Set the input port type, such as HDMI or DisplayPort.
+   */
   setInputConnectionType?: methodSetInputConnectionType;
-
+  /**
+   * Name an input, such as Apple TV or HDMI 1.
+   */
   setInputLabel?: methodSetInputLabel;
   /**
 *
@@ -3014,7 +3037,9 @@ export type Handler = {
          
 */
   setInputsARCMode?: methodSetInputsARCMode;
-
+  /**
+   * Switch to a specific input, such as HDMI 1 or HDMI 2.
+   */
   setInputsActive?: methodSetInputsActive;
   /**
 *
@@ -3028,11 +3053,17 @@ export type Handler = {
   setInputsCECMode?: methodSetInputsCECMode;
 
   setNetworkConfig?: methodSetNetworkConfig;
-
+  /**
+   * Output port type, such as HDMI or optical audio.
+   */
   setOutputConnectionType?: methodSetOutputConnectionType;
-
+  /**
+   * Power-saving mode for the display, such as sleep.
+   */
   setPowerPowerSavingMode?: methodSetPowerPowerSavingMode;
-
+  /**
+   * Turn the display on, off, or wake it up.
+   */
   setPowerState?: methodSetPowerState;
 
   setPowerWakeOnLan?: methodSetPowerWakeOnLan;
