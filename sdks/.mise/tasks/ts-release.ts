@@ -6,26 +6,6 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 
 const typescript = resolve(import.meta.dir, "../../typescript");
 
-// Install before anything picks a registry. GitHub Packages does not proxy
-// npmjs, so an install pointed there fails outright.
-await $`bun install`.cwd(typescript);
-
-const target = releaseTarget(await currentBranch());
-const filter = Bun.env.PACKAGES?.trim();
-const base = await changeBase(Bun.env.BASE_SHA);
-
-console.log(`Publishing ${target.channel} builds to ${target.registry}`);
-if (filter) console.log(`Releasing only packages matching: ${filter}`);
-
-for (const dir of await selectPackages({
-  root: typescript,
-  filter,
-  channel: target.channel,
-  base,
-})) {
-  await releasePackage(dir, target);
-}
-
 type Manifest = { name: string; version: string; private?: boolean | string };
 type Target = { channel: "release" | "rc"; registry: string };
 
@@ -281,4 +261,24 @@ async function runSemanticRelease(
       NPM_CONFIG_ACCESS: "public",
       NPM_CONFIG_PROVENANCE: String(Bun.env.REPO_VISIBILITY === "public"),
     });
+}
+
+// Install before anything picks a registry. GitHub Packages does not proxy
+// npmjs, so an install pointed there fails outright.
+await $`bun install`.cwd(typescript);
+
+const target = releaseTarget(await currentBranch());
+const filter = Bun.env.PACKAGES?.trim();
+const base = await changeBase(Bun.env.BASE_SHA);
+
+console.log(`Publishing ${target.channel} builds to ${target.registry}`);
+if (filter) console.log(`Releasing only packages matching: ${filter}`);
+
+for (const dir of await selectPackages({
+  root: typescript,
+  filter,
+  channel: target.channel,
+  base,
+})) {
+  await releasePackage(dir, target);
 }
