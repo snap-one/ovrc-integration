@@ -2035,7 +2035,7 @@
       "type": "object"
     },
     "Output": {
-      "description": "Represents an individual physical output on the device, such as TV speakers, an ARC-connected soundbar, a headphone jack, etc...",
+      "description": "An output represents a single audio channel which can be configured on the display.\nAn integration may return multiple outputs (such as when the display supports configuring multiple output channels),\nbut OvrC currently only uses the first output provided, if any.",
       "properties": {
         "audio": {
           "anyOf": [
@@ -2046,21 +2046,14 @@
               "type": "null"
             }
           ],
-          "description": "The current state of audio on this output. This may be null if the display does not report audio\ninformation for individual outputs, in which case the allAudio field on the outputs object should be used–if possible."
+          "description": "The current state of audio on this output.\nThis may be null if the audio output channel does not report audio,\nin which case the allAudio field on the outputs object should be used–if possible."
         },
         "connectionType": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/KeyValuePair"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "The active connectionType for this output. Even if connectionTypes is empty\nor not supported, this field must be populated. For example a TV speaker output\nmay have the type \"Digital Optical\" and a canonicalId of \"CONN:OPTICAL\"."
+          "$ref": "#/$defs/KeyValuePair",
+          "description": "The active connectionType for this output. Even if connectionTypes is empty\nor not supported, this field must be populated.\nFor example a TV output may have the type \"Digital Optical\" and a canonicalId of \"CONN:OPTICAL\",\nor \"Internal Speaker\" and a canonicalId of \"CONN:INTERNAL\"."
         },
         "connectionTypes": {
-          "description": "A list of connection types that this output supports. For example: \"Digital Optical\", \"Digital Coax\", \"RCA\".\n\nIn many cases, this field is not applicable. In which case it may be null.\nA non-null value implies that the integration supports setting the output's connection type.",
+          "description": "A list of connection types that this output supports.\nFor example: \"Digital Optical\", \"Digital Coax\", \"RCA\", \"eARC\", \"Aux Port\".\nA non-null value implies that the integration supports setting the output's connection type.",
           "items": {
             "$ref": "#/$defs/KeyValuePair"
           },
@@ -2068,6 +2061,10 @@
             "array",
             "null"
           ]
+        },
+        "destination": {
+          "$ref": "#/$defs/OutputDestination",
+          "description": "Details regarding the current output channel's destination."
         },
         "friendlyName": {
           "description": "A user-friendly name for this output.",
@@ -2111,6 +2108,43 @@
             }
           ],
           "description": "The current volume level of the output or display.\nThis value should be null if the volume level cannot be known."
+        }
+      },
+      "type": "object"
+    },
+    "OutputDestination": {
+      "properties": {
+        "active": {
+          "$ref": "#/$defs/KeyValuePair",
+          "description": "The active destination for this output channel. Even if available is empty\nor not supported, this field must be populated.\nFor example a TV output may have the destination \"Digital Optical\" and a canonicalId of \"CONN:OPTICAL\",\nor \"Internal Speaker\" and a canonicalId of \"CONN:INTERNAL\"."
+        },
+        "audio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutputAudio"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The current state of audio on this output destination.\nThis may be null if the destiniation does not report audio,\nin which case the allAudio field on the outputs object should be used–if possible."
+        },
+        "available": {
+          "description": "A list of output destiniations that the associated output channel can select from.\nFor example: \"Digital Optical\", \"Digital Coax\", \"RCA\", \"eARC - HDMI1\", \"Bluetooth: Bob's Headphones\".",
+          "items": {
+            "$ref": "#/$defs/KeyValuePair"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "canSelectActive": {
+          "description": "A boolean reflecting whether the current output destination's\n\"active\" destination can be changed to one of the options provided in \"available\".\n\nA null value communicates selection is not enabled at the integration level,\na false value communicates the device or output channel does not currently support the action,\nand a true value communicates selection is supported via the setOutputDestinationActive rpc method.",
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "type": "object"
@@ -2360,6 +2394,9 @@
           "$ref": "#/$defs/SetOutputConnectionType"
         },
         {
+          "$ref": "#/$defs/SetOutputDestinationActive"
+        },
+        {
           "$ref": "#/$defs/SetPowerPowerSavingMode"
         },
         {
@@ -2510,6 +2547,9 @@
         },
         {
           "$ref": "#/$defs/SetOutputConnectionTypeResponse"
+        },
+        {
+          "$ref": "#/$defs/SetOutputDestinationActiveResponse"
         },
         {
           "$ref": "#/$defs/SetPowerPowerSavingModeResponse"
@@ -3420,6 +3460,7 @@
               "friendlyName",
               "connectionTypes",
               "connectionType",
+              "destination",
               "audio"
             ],
             "type": "string"
@@ -3447,6 +3488,89 @@
       ]
     },
     "SetOutputConnectionTypeResult": {
+      "$ref": "#/$defs/Output"
+    },
+    "SetOutputDestinationActive": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCRequestBase"
+        },
+        {
+          "properties": {
+            "method": {
+              "enum": [
+                "setOutputDestinationActive"
+              ],
+              "type": "string"
+            },
+            "params": {
+              "$ref": "#/$defs/SetOutputDestinationActiveParams"
+            }
+          },
+          "required": [
+            "method",
+            "params"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Output port type, such as HDMI or optical audio."
+    },
+    "SetOutputDestinationActiveArgs": {
+      "properties": {
+        "destinationId": {
+          "type": "string"
+        },
+        "outputId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "outputId",
+        "destinationId"
+      ],
+      "type": "object"
+    },
+    "SetOutputDestinationActiveParams": {
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SetOutputDestinationActiveArgs"
+        },
+        "includeFields": {
+          "items": {
+            "enum": [
+              "id",
+              "friendlyName",
+              "connectionTypes",
+              "connectionType",
+              "destination",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "args"
+      ],
+      "type": "object"
+    },
+    "SetOutputDestinationActiveResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RPCMethodResult"
+        },
+        {
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/SetOutputDestinationActiveResult"
+            }
+          }
+        }
+      ]
+    },
+    "SetOutputDestinationActiveResult": {
       "$ref": "#/$defs/Output"
     },
     "SetPowerPowerSavingMode": {
