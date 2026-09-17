@@ -14,6 +14,11 @@ The executable can be installed from the releases in this repository.
 Once installed, move the executable somewhere within your `$PATH`.
 Run `ovrc --help` to verify it's functional.
 
+### MacOS
+
+On MacOS, you will likely need to trust the executable. You can do this in your System Settings,
+or by running `sudo xattr -rd com.apple.quarantine {path_to_executable}`.
+
 ### Enable Completions (optional)
 
 To enable shell completions for the `ovrc` CLI,
