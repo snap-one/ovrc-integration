@@ -1,0 +1,10 @@
+services:
+  ovrc_integration:
+    build:
+      context: .
+    environment:
+      - WATCH
+      - INTEGRATION_CONTAINER
+    volumes:
+      - ./:/app
+      - /app/node_modules
