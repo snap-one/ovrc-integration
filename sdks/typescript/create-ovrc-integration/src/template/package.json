@@ -5,7 +5,10 @@
   "private": true,
   "scripts": {
     "transpile": "ovrc-integration-esbuild src/index.ts --bundle --format=esm --target=es2023 --outfile=dist/integration.js --minify",
-    "build": "npm run transpile && cp manifest.json dist/manifest.json",
+    "build": "if [ \"$WATCH\" = \"true\" ]; then npm run build:watch; else npm run build:once; fi",
+    "build:once": "npm i && npm run transpile && cp manifest.json dist/manifest.json",
+    "build:watch": "npm run watch -- npm run build:once",
+    "watch": "watchexec --exts ts,js,json --ignore 'dist/*' -- ",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
