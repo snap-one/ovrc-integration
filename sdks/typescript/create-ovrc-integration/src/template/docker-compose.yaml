@@ -7,4 +7,7 @@ services:
       - INTEGRATION_CONTAINER
     volumes:
       - ./:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
+
+volumes:
+  node_modules:
