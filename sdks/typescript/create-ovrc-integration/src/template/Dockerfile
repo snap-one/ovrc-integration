@@ -1,6 +1,4 @@
 FROM node:lts-alpine
+RUN apk add --no-cache watchexec
 WORKDIR /app
-COPY package.json ./
-RUN npm install
-COPY . .
-RUN npm run build && cp -r dist /build
+CMD [ "npm", "run", "build"]

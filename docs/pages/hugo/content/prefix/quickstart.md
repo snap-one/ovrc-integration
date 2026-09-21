@@ -7,7 +7,8 @@ weight: 1
 
 - Install the OvrC CLI. Installation instructions and binaries can be found at: <https://github.com/snap-one/ovrc-integration>.
 - Install [Node.js](https://nodejs.org/)
-- An [OvrC account](https://app.ovrc.com), with a location containing a "Discovered" device.
+- Install [Docker](https://docs.docker.com/engine/install/)
+- Have access to an [OvrC account](https://app.ovrc.com), with a location containing a "Discovered" device accessible over your LAN.
 
 ## Scaffold a new integration
 
@@ -18,24 +19,8 @@ run the following command:
 npm init @snap-one/ovrc-integration@latest
 ```
 
-Upon successful creation, a new directory
-will be created containing the newly created
-integration. Navigate to that directory and run:
-
-```sh
-npm install
-```
-
-Finally, to ensure everything is functional,
-run:
-
-```sh
-npm run build
-```
-
-Congrats, you've created your first integration!
-
-## Serve the integration
+Upon successful initialization, a new directory
+will be created containing your integration.
 
 As you develop and iterate on your integration,
 you will need to run it to test it out in OvrC.
@@ -47,15 +32,11 @@ These tools are available when OvrC is launched in
 
 To launch OvrC in Integration Developer Mode:
 
-1. Build your integration (`npm run build`)
-2. Start the OvrC development server by running:
+Navigate to the root of your integration's directory and run:
 
-   ```sh
-   # note: ./dist is the default build directory
-   # for a JavaScript integration. If yours is different,
-   # update the command below accordingly.
-   ovrc integration serve ./dist
-   ```
+```bash
+ovrc integration serve
+```
 
 When you run the above, three things happen:
 
@@ -77,9 +58,11 @@ You will see two authentication form fields.
 In your integration's source code,
 open the `src/index.ts` file.
 
-Make some changes to the text, save them, then run `npm run build`.
-You do not need to restart the OvrC CLI when you make changes to the integration.
-Finally, back in the OvrC UI, refresh the page.
+Make some changes to the text, save them.
+You should see your integration being rebuilt in
+the console output from the `ovrc integration serve` command.
+
+Back in the OvrC UI, refresh the page.
 Your changes will be reflected in the UI.
 
 Congrats! That's a functional OvrC Integration!
