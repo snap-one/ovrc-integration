@@ -20,7 +20,7 @@ npm init @snap-one/ovrc-integration@latest
 ```
 
 Upon successful initialization, a new directory
-will be created containing the new integration.
+will be created containing your integration.
 
 As you develop and iterate on your integration,
 you will need to run it to test it out in OvrC.
