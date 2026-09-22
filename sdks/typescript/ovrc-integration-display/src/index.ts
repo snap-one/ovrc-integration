@@ -20,7 +20,12 @@ export type ActiveContext = {
   id?: string;
   /** @description The physical input that is currently active on the device. This may be null if there is no active input, or if the device does not report this information. */
   input?: Input | null;
-  /** @description The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information. */
+  /**
+   * @description The output(s) that are currently active on the device.
+   *     This may be null or empty if there are no active outputs, or if the device does not report this information.
+   *
+   *     This would typically be a subset of outputs returned from getOutputs.
+   */
   outputs?: Output[] | null;
   /**
    * @description The application/source that is currently active on the device.
@@ -435,6 +440,12 @@ export type GetNetworkResponse = RPCMethodResult & {
   result?: GetNetworkResult;
 };
 export type GetNetworkResult = Network | null;
+/**
+ * @description A list of outputs the display supports.
+ *     See the outputs field within the ActiveContext type,
+ *     which is communicates which of these outputs are
+ *     currently in use.
+ */
 export type GetOutputs = RPCRequestBase & {
   /** @enum {string} */
   method: "getOutputs";
@@ -1733,8 +1744,13 @@ export type methodDispatchAppSourcesTerminateResult = {
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<boolean>)
     | boolean;
   /**
-   * The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information.
-   */
+*
+     * @description The output(s) that are currently active on the device.
+     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
+     *
+     *     This would typically be a subset of outputs returned from getOutputs.
+     
+*/
   outputs?:
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<Output[] | null>)
     | Output[]
@@ -2111,8 +2127,13 @@ export type methodSetAppSourcesActiveResult = {
     | ((args: SetAppSourcesActiveArgs) => Promise<boolean>)
     | boolean;
   /**
-   * The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information.
-   */
+*
+     * @description The output(s) that are currently active on the device.
+     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
+     *
+     *     This would typically be a subset of outputs returned from getOutputs.
+     
+*/
   outputs?:
     | ((args: SetAppSourcesActiveArgs) => Promise<Output[] | null>)
     | Output[]
@@ -2789,8 +2810,13 @@ export type methodSetInputsActiveResult = {
 */
   canReportInput?: ((args: SetInputsActiveArgs) => Promise<boolean>) | boolean;
   /**
-   * The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information.
-   */
+*
+     * @description The output(s) that are currently active on the device.
+     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
+     *
+     *     This would typically be a subset of outputs returned from getOutputs.
+     
+*/
   outputs?:
     | ((args: SetInputsActiveArgs) => Promise<Output[] | null>)
     | Output[]
@@ -3128,7 +3154,14 @@ export type Handler = {
   getMetadata?: methodGetMetadata;
 
   getNetwork?: methodGetNetwork;
-
+  /**
+*
+         * @description A list of outputs the display supports.
+         *     See the outputs field within the ActiveContext type,
+         *     which is communicates which of these outputs are
+         *     currently in use.
+         
+*/
   getOutputs?: methodGetOutputs;
 
   getPower?: methodGetPower;
