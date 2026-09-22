@@ -23,6 +23,13 @@ declare module "ovrc:core" {
     jsonrpc: "2.0";
   } & ({ error: RpcMethodError } | { result: unknown });
 
+  export type Device = {
+    /**
+     * The IPv4 address of the device, on its LAN.
+     */
+    ipv4: string;
+  };
+
   /**
    * Retrieves the RPC methods from the current request body.
    *
@@ -33,6 +40,12 @@ declare module "ovrc:core" {
    * @throws {Error} If the request context is not found or if called multiple times
    */
   export function getRequestMethods(): RpcMethod[];
+
+  /**
+   * Loads the device associated with the current
+   * integration execution context.
+   */
+  export function getDevice(): Device;
 
   /**
    * Writes the result of a method execution back to the client.
