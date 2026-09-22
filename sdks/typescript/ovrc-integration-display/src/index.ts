@@ -817,26 +817,33 @@ export type NetworkIPv4ConfigInput = {
   /** @description Static IPv4 configuration, if applicable. */
   static?: IPv4StaticConfigInput | null;
 };
-/** @description Represents an individual physical output on the device, such as TV speakers, an ARC-connected soundbar, a headphone jack, etc... */
+/**
+ * @description An output represents a single audio channel which can be configured on the display.
+ *     An integration may return multiple outputs (such as when the display supports configuring multiple output channels),
+ *     but OvrC currently only uses the first output provided, if any.
+ */
 export type Output = {
   /**
-   * @description The current state of audio on this output. This may be null if the display does not report audio
-   *     information for individual outputs, in which case the allAudio field on the outputs object should be used–if possible.
+   * @description The current state of audio on this output.
+   *     This may be null if the audio output channel does not report audio,
+   *     in which case the allAudio field on the outputs object should be used–if possible.
    */
   audio?: OutputAudio | null;
   /**
    * @description The active connectionType for this output. Even if connectionTypes is empty
-   *     or not supported, this field must be populated. For example a TV speaker output
-   *     may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL".
+   *     or not supported, this field must be populated.
+   *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
+   *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
    */
-  connectionType?: KeyValuePair | null;
+  connectionType?: KeyValuePair;
   /**
-   * @description A list of connection types that this output supports. For example: "Digital Optical", "Digital Coax", "RCA".
-   *
-   *     In many cases, this field is not applicable. In which case it may be null.
+   * @description A list of connection types that this output supports.
+   *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
    *     A non-null value implies that the integration supports setting the output's connection type.
    */
   connectionTypes?: KeyValuePair[] | null;
+  /** @description Details regarding the current output channel's destination. */
+  destination?: OutputDestination;
   /** @description A user-friendly name for this output. */
   friendlyName?: string;
   /** @description A unique identifier for this output. This is used when setting the active output. */
@@ -856,6 +863,35 @@ export type OutputAudio = {
    *     This value should be null if the volume level cannot be known.
    */
   volume?: Volume | null;
+};
+export type OutputDestination = {
+  /**
+   * @description The active destination for this output channel. Even if available is empty
+   *     or not supported, this field must be populated.
+   *     For example a TV output may have the destination "Digital Optical" and a canonicalId of "CONN:OPTICAL",
+   *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
+   */
+  active?: KeyValuePair;
+  /**
+   * @description The current state of audio on this output destination.
+   *     This may be null if the destiniation does not report audio,
+   *     in which case the allAudio field on the outputs object should be used–if possible.
+   */
+  audio?: OutputAudio | null;
+  /**
+   * @description A list of output destiniations that the associated output channel can select from.
+   *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC - HDMI1", "Bluetooth: Bob's Headphones".
+   */
+  available?: KeyValuePair[] | null;
+  /**
+   * @description A boolean reflecting whether the current output destination's
+   *     "active" destination can be changed to one of the options provided in "available".
+   *
+   *     A null value communicates selection is not enabled at the integration level,
+   *     a false value communicates the device or output channel does not currently support the action,
+   *     and a true value communicates selection is supported via the setOutputDestinationActive rpc method.
+   */
+  canSelectActive?: boolean | null;
 };
 export type Outputs = {
   /**
@@ -948,6 +984,7 @@ export type RPCMethod =
   | SetInputsCECMode
   | SetNetworkConfig
   | SetOutputConnectionType
+  | SetOutputDestinationActive
   | SetPowerPowerSavingMode
   | SetPowerState
   | SetPowerWakeOnLan
@@ -996,6 +1033,7 @@ export type RPCSuccessResponse =
   | SetInputsCECModeResponse
   | SetNetworkConfigResponse
   | SetOutputConnectionTypeResponse
+  | SetOutputDestinationActiveResponse
   | SetPowerPowerSavingModeResponse
   | SetPowerStateResponse
   | SetPowerWakeOnLanResponse
@@ -1342,6 +1380,7 @@ export type SetOutputConnectionTypeParams = {
     | "friendlyName"
     | "connectionTypes"
     | "connectionType"
+    | "destination"
     | "audio"
   )[];
 };
@@ -1349,6 +1388,37 @@ export type SetOutputConnectionTypeResponse = RPCMethodResult & {
   result?: SetOutputConnectionTypeResult;
 };
 export type SetOutputConnectionTypeResult = Output;
+/** @description Output port type, such as HDMI or optical audio. */
+export type SetOutputDestinationActive = RPCRequestBase & {
+  /** @enum {string} */
+  method: "setOutputDestinationActive";
+  params: SetOutputDestinationActiveParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "setOutputDestinationActive";
+};
+export type SetOutputDestinationActiveArgs = {
+  destinationId: string;
+  outputId: string;
+};
+export type SetOutputDestinationActiveParams = {
+  args: SetOutputDestinationActiveArgs;
+  includeFields?: (
+    | "id"
+    | "friendlyName"
+    | "connectionTypes"
+    | "connectionType"
+    | "destination"
+    | "audio"
+  )[];
+};
+export type SetOutputDestinationActiveResponse = RPCMethodResult & {
+  result?: SetOutputDestinationActiveResult;
+};
+export type SetOutputDestinationActiveResult = Output;
 /** @description Power-saving mode for the display, such as sleep. */
 export type SetPowerPowerSavingMode = RPCRequestBase & {
   /** @enum {string} */
@@ -2785,9 +2855,8 @@ export type methodSetOutputConnectionTypeResult = {
     | string;
   /**
 *
-     * @description A list of connection types that this output supports. For example: "Digital Optical", "Digital Coax", "RCA".
-     *
-     *     In many cases, this field is not applicable. In which case it may be null.
+     * @description A list of connection types that this output supports.
+     *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
      *     A non-null value implies that the integration supports setting the output's connection type.
      
 */
@@ -2798,18 +2867,25 @@ export type methodSetOutputConnectionTypeResult = {
   /**
 *
      * @description The active connectionType for this output. Even if connectionTypes is empty
-     *     or not supported, this field must be populated. For example a TV speaker output
-     *     may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL".
+     *     or not supported, this field must be populated.
+     *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
+     *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
      
 */
   connectionType?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<KeyValuePair | null>)
-    | KeyValuePair
-    | null;
+    | ((args: SetOutputConnectionTypeArgs) => Promise<KeyValuePair>)
+    | KeyValuePair;
+  /**
+   * Details regarding the current output channel's destination.
+   */
+  destination?:
+    | ((args: SetOutputConnectionTypeArgs) => Promise<OutputDestination>)
+    | OutputDestination;
   /**
 *
-     * @description The current state of audio on this output. This may be null if the display does not report audio
-     *     information for individual outputs, in which case the allAudio field on the outputs object should be used–if possible.
+     * @description The current state of audio on this output.
+     *     This may be null if the audio output channel does not report audio,
+     *     in which case the allAudio field on the outputs object should be used–if possible.
      
 */
   audio?:
@@ -2821,6 +2897,61 @@ export type methodSetOutputConnectionTypeResult = {
 export type methodSetOutputConnectionType = (
   params: SetOutputConnectionTypeParams,
 ) => Promise<methodSetOutputConnectionTypeResult>;
+export type methodSetOutputDestinationActiveResult = {
+  /**
+   * A unique identifier for this output. This is used when setting the active output.
+   */
+  id?: ((args: SetOutputDestinationActiveArgs) => Promise<string>) | string;
+  /**
+   * A user-friendly name for this output.
+   */
+  friendlyName?:
+    | ((args: SetOutputDestinationActiveArgs) => Promise<string>)
+    | string;
+  /**
+*
+     * @description A list of connection types that this output supports.
+     *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
+     *     A non-null value implies that the integration supports setting the output's connection type.
+     
+*/
+  connectionTypes?:
+    | ((args: SetOutputDestinationActiveArgs) => Promise<KeyValuePair[] | null>)
+    | KeyValuePair[]
+    | null;
+  /**
+*
+     * @description The active connectionType for this output. Even if connectionTypes is empty
+     *     or not supported, this field must be populated.
+     *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
+     *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
+     
+*/
+  connectionType?:
+    | ((args: SetOutputDestinationActiveArgs) => Promise<KeyValuePair>)
+    | KeyValuePair;
+  /**
+   * Details regarding the current output channel's destination.
+   */
+  destination?:
+    | ((args: SetOutputDestinationActiveArgs) => Promise<OutputDestination>)
+    | OutputDestination;
+  /**
+*
+     * @description The current state of audio on this output.
+     *     This may be null if the audio output channel does not report audio,
+     *     in which case the allAudio field on the outputs object should be used–if possible.
+     
+*/
+  audio?:
+    | ((args: SetOutputDestinationActiveArgs) => Promise<OutputAudio | null>)
+    | OutputAudio
+    | null;
+};
+
+export type methodSetOutputDestinationActive = (
+  params: SetOutputDestinationActiveParams,
+) => Promise<methodSetOutputDestinationActiveResult>;
 export type methodSetPowerPowerSavingModeResult = {
   available?:
     | ((args: SetPowerPowerSavingModeArgs) => Promise<KeyValuePair[] | null>)
@@ -3057,6 +3188,10 @@ export type Handler = {
    * Output port type, such as HDMI or optical audio.
    */
   setOutputConnectionType?: methodSetOutputConnectionType;
+  /**
+   * Output port type, such as HDMI or optical audio.
+   */
+  setOutputDestinationActive?: methodSetOutputDestinationActive;
   /**
    * Power-saving mode for the display, such as sleep.
    */
