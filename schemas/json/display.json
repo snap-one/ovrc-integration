@@ -27,7 +27,7 @@
           "description": "The physical input that is currently active on the device. This may be null if there is no active input, or if the device does not report this information."
         },
         "outputs": {
-          "description": "The output(s) that are currently active on the device. This may be null or empty if there are no active outputs, or if the device does not report this information.",
+          "description": "The output(s) that are currently active on the device.\nThis may be null or empty if there are no active outputs, or if the device does not report this information.\n\nThis would typically be a subset of outputs returned from getOutputs.",
           "items": {
             "$ref": "#/$defs/Output"
           },
@@ -1174,7 +1174,8 @@
           ],
           "type": "object"
         }
-      ]
+      ],
+      "description": "A list of outputs the display supports.\nSee the outputs field within the ActiveContext type,\nwhich is communicates which of these outputs are\ncurrently in use."
     },
     "GetOutputsArgs": {
       "properties": {},
