@@ -59,7 +59,7 @@ same LAN as the target development device(s).
 
 After becoming a certified integration developer,
 all connections to a device are established via
-a propriety OvrC proxy, which is how connections
+a proprietary OvrC proxy, which is how connections
 are established to devices once the integration is published.
 This proxy also enables remote integration testing and
 development.
