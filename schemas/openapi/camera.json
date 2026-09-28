@@ -296,7 +296,7 @@
             "type": "object"
           }
         ],
-        "description": "Dispatches a reboot action to the camera."
+        "description": "Dispatch a device reboot. The integration should NOT wait until the reboot has completed.\nThe resulting boolean reflects whether the reboot was dispatched."
       },
       "DispatchPowerRebootArgs": {
         "properties": {},
