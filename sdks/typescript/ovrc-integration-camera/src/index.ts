@@ -141,7 +141,10 @@ export type DispatchFirmwareUpdateResponse = RPCMethodResult & {
   result?: DispatchFirmwareUpdateResult;
 };
 export type DispatchFirmwareUpdateResult = Firmware;
-/** @description Dispatches a reboot action to the camera. */
+/**
+ * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+ *     The resulting boolean reflects whether the reboot was dispatched.
+ */
 export type DispatchPowerReboot = RPCRequestBase & {
   /** @enum {string} */
   method: "dispatchPowerReboot";
@@ -1045,8 +1048,11 @@ export type Handler = {
 
   dispatchFirmwareUpdate?: methodDispatchFirmwareUpdate;
   /**
-   * Dispatches a reboot action to the camera.
-   */
+*
+         * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+         *     The resulting boolean reflects whether the reboot was dispatched.
+         
+*/
   dispatchPowerReboot?: methodDispatchPowerReboot;
   /**
    * Authentication methods supported by the integration.
