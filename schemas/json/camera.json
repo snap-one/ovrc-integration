@@ -301,7 +301,7 @@
           "type": "object"
         }
       ],
-      "description": "Dispatches a reboot action to the camera."
+      "description": "Dispatch a device reboot. The integration should NOT wait until the reboot has completed.\nThe resulting boolean reflects whether the reboot was dispatched."
     },
     "DispatchPowerRebootArgs": {
       "properties": {},
@@ -1004,6 +1004,7 @@
         "includeFields": {
           "items": {
             "enum": [
+              "contactInformation",
               "hostname",
               "model",
               "brand",
@@ -1864,6 +1865,13 @@
       "properties": {
         "brand": {
           "description": "Brand reported by the camera.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contactInformation": {
+          "description": "The name, email or both of who to contact about the device.",
           "type": [
             "string",
             "null"

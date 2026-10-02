@@ -67,4 +67,4 @@ Your changes will be reflected in the UI.
 
 Congrats! That's a functional OvrC Integration!
 
-[^browser-note]: Only Chromium based browsers are currently supported.
+[^browser-note]: Most major browsers are supported, with the exception of Safari.

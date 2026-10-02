@@ -141,7 +141,10 @@ export type DispatchFirmwareUpdateResponse = RPCMethodResult & {
   result?: DispatchFirmwareUpdateResult;
 };
 export type DispatchFirmwareUpdateResult = Firmware;
-/** @description Dispatches a reboot action to the camera. */
+/**
+ * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+ *     The resulting boolean reflects whether the reboot was dispatched.
+ */
 export type DispatchPowerReboot = RPCRequestBase & {
   /** @enum {string} */
   method: "dispatchPowerReboot";
@@ -377,6 +380,7 @@ export type GetSystemArgs = Record<string, unknown>;
 export type GetSystemParams = {
   args: GetSystemArgs;
   includeFields?: (
+    | "contactInformation"
     | "hostname"
     | "model"
     | "brand"
@@ -727,6 +731,8 @@ export type SetNetworkConfigResult = Network;
 export type System = {
   /** @description Brand reported by the camera. */
   brand?: string | null;
+  /** @description The name, email or both of who to contact about the device. */
+  contactInformation?: string | null;
   /** @description Date/time metadata reported by the camera. */
   dateTime?: SystemDateTime | null;
   /** @description Hostname reported directly by the camera. */
@@ -954,6 +960,13 @@ export type methodGetProfiles = (
 ) => Promise<methodGetProfilesResult>;
 export type methodGetSystemResult = {
   /**
+   * The name, email or both of who to contact about the device.
+   */
+  contactInformation?:
+    | ((args: GetSystemArgs) => Promise<string | null>)
+    | string
+    | null;
+  /**
    * Hostname reported directly by the camera.
    */
   hostname?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
@@ -1045,8 +1058,11 @@ export type Handler = {
 
   dispatchFirmwareUpdate?: methodDispatchFirmwareUpdate;
   /**
-   * Dispatches a reboot action to the camera.
-   */
+*
+         * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+         *     The resulting boolean reflects whether the reboot was dispatched.
+         
+*/
   dispatchPowerReboot?: methodDispatchPowerReboot;
   /**
    * Authentication methods supported by the integration.
