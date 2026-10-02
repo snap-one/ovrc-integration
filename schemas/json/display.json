@@ -1346,7 +1346,8 @@
               "country",
               "model",
               "brand",
-              "serialNumber"
+              "serialNumber",
+              "contactInformation"
             ],
             "type": "string"
           },
@@ -4186,6 +4187,13 @@
     "System": {
       "properties": {
         "brand": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contactInformation": {
+          "description": "The name, email or both of who to contact about the device.",
           "type": [
             "string",
             "null"

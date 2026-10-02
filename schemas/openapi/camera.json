@@ -971,6 +971,7 @@
           "includeFields": {
             "items": {
               "enum": [
+                "contactInformation",
                 "hostname",
                 "model",
                 "brand",
@@ -1781,6 +1782,11 @@
         "properties": {
           "brand": {
             "description": "Brand reported by the camera.",
+            "nullable": true,
+            "type": "string"
+          },
+          "contactInformation": {
+            "description": "The name, email or both of who to contact about the device.",
             "nullable": true,
             "type": "string"
           },

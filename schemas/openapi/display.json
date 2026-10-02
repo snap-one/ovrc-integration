@@ -1297,7 +1297,8 @@
                 "country",
                 "model",
                 "brand",
-                "serialNumber"
+                "serialNumber",
+                "contactInformation"
               ],
               "type": "string"
             },
@@ -4057,6 +4058,11 @@
       "System": {
         "properties": {
           "brand": {
+            "nullable": true,
+            "type": "string"
+          },
+          "contactInformation": {
+            "description": "The name, email or both of who to contact about the device.",
             "nullable": true,
             "type": "string"
           },
