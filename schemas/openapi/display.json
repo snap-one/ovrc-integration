@@ -1637,6 +1637,23 @@
         },
         "type": "object"
       },
+      "InputLabelChange": {
+        "properties": {
+          "inputId": {
+            "description": "The identifier of the input for which the label should be changed.",
+            "type": "string"
+          },
+          "label": {
+            "description": "The label that should be assigned to the input,\nspecified via the inputId.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "inputId",
+          "label"
+        ],
+        "type": "object"
+      },
       "Inputs": {
         "description": "An object representing all physical inputs on the device, as well as any global input settings that may apply to all or some of the inputs.",
         "properties": {
@@ -1907,27 +1924,6 @@
       "Output": {
         "description": "An output represents a single audio channel which can be configured on the display.\nAn integration may return multiple outputs (such as when the display supports configuring multiple output channels),\nbut OvrC currently only uses the first output provided, if any.",
         "properties": {
-          "audio": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OutputAudio"
-              }
-            ],
-            "description": "The current state of audio on this output.\nThis may be null if the audio output channel does not report audio,\nin which case the allAudio field on the outputs object should be used–if possible.",
-            "nullable": true
-          },
-          "connectionType": {
-            "$ref": "#/components/schemas/KeyValuePair",
-            "description": "The active connectionType for this output. Even if connectionTypes is empty\nor not supported, this field must be populated.\nFor example a TV output may have the type \"Digital Optical\" and a canonicalId of \"CONN:OPTICAL\",\nor \"Internal Speaker\" and a canonicalId of \"CONN:INTERNAL\"."
-          },
-          "connectionTypes": {
-            "description": "A list of connection types that this output supports.\nFor example: \"Digital Optical\", \"Digital Coax\", \"RCA\", \"eARC\", \"Aux Port\".\nA non-null value implies that the integration supports setting the output's connection type.",
-            "items": {
-              "$ref": "#/components/schemas/KeyValuePair"
-            },
-            "nullable": true,
-            "type": "array"
-          },
           "destination": {
             "$ref": "#/components/schemas/OutputDestination",
             "description": "Details regarding the current output channel's destination."
@@ -2170,12 +2166,11 @@
             "setInputARCMode": "#/components/schemas/SetInputARCMode",
             "setInputCECMode": "#/components/schemas/SetInputCECMode",
             "setInputConnectionType": "#/components/schemas/SetInputConnectionType",
-            "setInputLabel": "#/components/schemas/SetInputLabel",
+            "setInputLabels": "#/components/schemas/SetInputLabels",
             "setInputsARCMode": "#/components/schemas/SetInputsARCMode",
             "setInputsActive": "#/components/schemas/SetInputsActive",
             "setInputsCECMode": "#/components/schemas/SetInputsCECMode",
             "setNetworkConfig": "#/components/schemas/SetNetworkConfig",
-            "setOutputConnectionType": "#/components/schemas/SetOutputConnectionType",
             "setOutputDestinationActive": "#/components/schemas/SetOutputDestinationActive",
             "setPowerPowerSavingMode": "#/components/schemas/SetPowerPowerSavingMode",
             "setPowerState": "#/components/schemas/SetPowerState",
@@ -2250,7 +2245,7 @@
             "$ref": "#/components/schemas/SetInputConnectionType"
           },
           {
-            "$ref": "#/components/schemas/SetInputLabel"
+            "$ref": "#/components/schemas/SetInputLabels"
           },
           {
             "$ref": "#/components/schemas/SetInputsARCMode"
@@ -2263,9 +2258,6 @@
           },
           {
             "$ref": "#/components/schemas/SetNetworkConfig"
-          },
-          {
-            "$ref": "#/components/schemas/SetOutputConnectionType"
           },
           {
             "$ref": "#/components/schemas/SetOutputDestinationActive"
@@ -2405,7 +2397,7 @@
             "$ref": "#/components/schemas/SetInputConnectionTypeResponse"
           },
           {
-            "$ref": "#/components/schemas/SetInputLabelResponse"
+            "$ref": "#/components/schemas/SetInputLabelsResponse"
           },
           {
             "$ref": "#/components/schemas/SetInputsARCModeResponse"
@@ -2418,9 +2410,6 @@
           },
           {
             "$ref": "#/components/schemas/SetNetworkConfigResponse"
-          },
-          {
-            "$ref": "#/components/schemas/SetOutputConnectionTypeResponse"
           },
           {
             "$ref": "#/components/schemas/SetOutputDestinationActiveResponse"
@@ -2886,7 +2875,7 @@
       "SetInputConnectionTypeResult": {
         "$ref": "#/components/schemas/Input"
       },
-      "SetInputLabel": {
+      "SetInputLabels": {
         "allOf": [
           {
             "$ref": "#/components/schemas/RPCRequestBase"
@@ -2895,12 +2884,12 @@
             "properties": {
               "method": {
                 "enum": [
-                  "setInputLabel"
+                  "setInputLabels"
                 ],
                 "type": "string"
               },
               "params": {
-                "$ref": "#/components/schemas/SetInputLabelParams"
+                "$ref": "#/components/schemas/SetInputLabelsParams"
               }
             },
             "required": [
@@ -2910,27 +2899,26 @@
             "type": "object"
           }
         ],
-        "description": "Name an input, such as Apple TV or HDMI 1."
+        "description": "Change the label(s) shown on the device for specified inputs.\nFor example, this could be used to set the on-device label\nfor the hdmi1 input to \"Apple TV\"."
       },
-      "SetInputLabelArgs": {
+      "SetInputLabelsArgs": {
         "properties": {
-          "inputId": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/InputLabelChange"
+            },
+            "type": "array"
           }
         },
         "required": [
-          "inputId",
-          "label"
+          "labels"
         ],
         "type": "object"
       },
-      "SetInputLabelParams": {
+      "SetInputLabelsParams": {
         "properties": {
           "args": {
-            "$ref": "#/components/schemas/SetInputLabelArgs"
+            "$ref": "#/components/schemas/SetInputLabelsArgs"
           },
           "includeFields": {
             "items": {
@@ -2958,7 +2946,7 @@
         ],
         "type": "object"
       },
-      "SetInputLabelResponse": {
+      "SetInputLabelsResponse": {
         "allOf": [
           {
             "$ref": "#/components/schemas/RPCMethodResult"
@@ -2966,14 +2954,17 @@
           {
             "properties": {
               "result": {
-                "$ref": "#/components/schemas/SetInputLabelResult"
+                "$ref": "#/components/schemas/SetInputLabelsResult"
               }
             }
           }
         ]
       },
-      "SetInputLabelResult": {
-        "$ref": "#/components/schemas/Input"
+      "SetInputLabelsResult": {
+        "items": {
+          "$ref": "#/components/schemas/Input"
+        },
+        "type": "array"
       },
       "SetInputsARCMode": {
         "allOf": [
@@ -3281,89 +3272,6 @@
       "SetNetworkConfigResult": {
         "$ref": "#/components/schemas/Network"
       },
-      "SetOutputConnectionType": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RPCRequestBase"
-          },
-          {
-            "properties": {
-              "method": {
-                "enum": [
-                  "setOutputConnectionType"
-                ],
-                "type": "string"
-              },
-              "params": {
-                "$ref": "#/components/schemas/SetOutputConnectionTypeParams"
-              }
-            },
-            "required": [
-              "method",
-              "params"
-            ],
-            "type": "object"
-          }
-        ],
-        "description": "Output port type, such as HDMI or optical audio."
-      },
-      "SetOutputConnectionTypeArgs": {
-        "properties": {
-          "outputId": {
-            "type": "string"
-          },
-          "typeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "outputId",
-          "typeId"
-        ],
-        "type": "object"
-      },
-      "SetOutputConnectionTypeParams": {
-        "properties": {
-          "args": {
-            "$ref": "#/components/schemas/SetOutputConnectionTypeArgs"
-          },
-          "includeFields": {
-            "items": {
-              "enum": [
-                "id",
-                "friendlyName",
-                "connectionTypes",
-                "connectionType",
-                "destination",
-                "audio"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "args"
-        ],
-        "type": "object"
-      },
-      "SetOutputConnectionTypeResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RPCMethodResult"
-          },
-          {
-            "properties": {
-              "result": {
-                "$ref": "#/components/schemas/SetOutputConnectionTypeResult"
-              }
-            }
-          }
-        ]
-      },
-      "SetOutputConnectionTypeResult": {
-        "$ref": "#/components/schemas/Output"
-      },
       "SetOutputDestinationActive": {
         "allOf": [
           {
@@ -3415,10 +3323,7 @@
               "enum": [
                 "id",
                 "friendlyName",
-                "connectionTypes",
-                "connectionType",
-                "destination",
-                "audio"
+                "destination"
               ],
               "type": "string"
             },
