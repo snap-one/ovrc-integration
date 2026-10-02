@@ -35,24 +35,33 @@ class SourceComment {
   }
 
   get toString() {
-    let open = "",
-      close = "";
-    switch (this.kind.type) {
-      case "Block":
-      case "CommentBlock":
-        open = "/**\n";
-        close = "\n*/";
-        break;
-      case "Line":
-      case "CommentLine":
-        break;
-    }
+    const { type, value } = this.kind;
+    if (type !== "Block" && type !== "CommentBlock") return value;
 
-    let value = this.kind.value;
-    if (value.startsWith("* @description")) {
-      value = "*" + value.slice("* @description".length);
-    }
-    return open + value + close;
+    // Rebuild the JSDoc from its lines: recast hands back the raw body
+    // (e.g. "*\n     * @description foo\n     *     bar\n     "), whose
+    // indentation and stars come from the comment's original position.
+    // The @description tag is dropped, and its 4-space continuation indent
+    // (added by openapi-typescript) with it.
+    let inDescription = false;
+    const lines = value
+      .replace(/^\*/, "")
+      .split("\n")
+      .map((line) => {
+        line = line.replace(/^\s*\*? ?/, "").trimEnd();
+        if (line.startsWith("@description")) {
+          inDescription = true;
+          return line.slice("@description".length).trimStart();
+        }
+        if (line.startsWith("@")) inDescription = false;
+        return inDescription ? line.replace(/^ {4}/, "") : line;
+      });
+    while (lines[0] === "") lines.shift();
+    while (lines.at(-1) === "") lines.pop();
+
+    return ["/**", ...lines.map((l) => (l ? ` * ${l}` : " *")), " */"].join(
+      "\n",
+    );
   }
 }
 

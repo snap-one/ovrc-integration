@@ -1666,23 +1666,19 @@ export type methodDispatchAppSourcesTerminateResult = {
    */
   id?: ((args: DispatchAppSourcesTerminateArgs) => Promise<string>) | string;
   /**
-*
-     * @description The application/source that is currently active on the device.
-     *     This does not include physical inputs, which are represented separately by the input field.
-     *     If there is no active application/source, or the device does not report this information, this field may be null.
-     
-*/
+   * The application/source that is currently active on the device.
+   * This does not include physical inputs, which are represented separately by the input field.
+   * If there is no active application/source, or the device does not report this information, this field may be null.
+   */
   source?:
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<AppSource | null>)
     | AppSource
     | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active application/source.
-     *     When true, the source field will be populated with the active application/source–if there is an active application;
-     *     when false, the source field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active application/source.
+   * When true, the source field will be populated with the active application/source–if there is an active application;
+   * when false, the source field should always be null and will be ignored.
+   */
   canReportSource?:
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<boolean>)
     | boolean;
@@ -1694,23 +1690,19 @@ export type methodDispatchAppSourcesTerminateResult = {
     | Input
     | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active input.
-     *     When true, the input field will be populated with the active input–if there is an active input;
-     *     when false, the input field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active input.
+   * When true, the input field will be populated with the active input–if there is an active input;
+   * when false, the input field should always be null and will be ignored.
+   */
   canReportInput?:
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<boolean>)
     | boolean;
   /**
-*
-     * @description The output(s) that are currently active on the device.
-     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
-     *
-     *     This would typically be a subset of outputs returned from getOutputs.
-     
-*/
+   * The output(s) that are currently active on the device.
+   * This may be null or empty if there are no active outputs, or if the device does not report this information.
+   *
+   * This would typically be a subset of outputs returned from getOutputs.
+   */
   outputs?:
     | ((args: DispatchAppSourcesTerminateArgs) => Promise<Output[] | null>)
     | Output[]
@@ -1726,30 +1718,24 @@ export type methodDispatchAuthenticationPromptResult = {
    */
   id?: ((args: DispatchAuthenticationPromptArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+   * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+   * This will be displayed to the user.
+   */
   label?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<string>)
     | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+   * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+   * There is no way to report the validity of an individual field within the authentication method itself.
+   */
   valid?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<boolean>)
     | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+   * Format: uri
+   * A url to documentation describing how to set/configure this authentication method.
+   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+   */
   documentationURL?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<string | null>)
     | string
@@ -1789,11 +1775,9 @@ export type methodDispatchPowerReboot = (
 ) => Promise<methodDispatchPowerRebootResult>;
 export type methodGetActiveContextsResult = {
   /**
-*
-     * @description A list of currently active display contexts.
-     *     For many displays, this list will only ever contain a single item.
-     
-*/
+   * A list of currently active display contexts.
+   * For many displays, this list will only ever contain a single item.
+   */
   contexts?:
     | ((args: GetActiveContextsArgs) => Promise<ActiveContext[] | null>)
     | ActiveContext[]
@@ -1817,11 +1801,9 @@ export type methodGetAppSources = (
 ) => Promise<methodGetAppSourcesResult>;
 export type methodGetAuthenticationResult = {
   /**
-*
-     * @description A list of authentication methods required or
-     *     available for a user to use.
-     
-*/
+   * A list of authentication methods required or
+   * available for a user to use.
+   */
   methods?:
     | ((args: GetAuthenticationArgs) => Promise<Authentication[] | null>)
     | Authentication[]
@@ -1847,12 +1829,10 @@ export type methodGetFirmware = (
 ) => Promise<methodGetFirmwareResult>;
 export type methodGetInputsResult = {
   /**
-*
-     * @description A list of physical inputs on the device.
-     *     This may be null or empty if the device does not have any physical inputs,
-     *     or if it does not support reporting them.
-     
-*/
+   * A list of physical inputs on the device.
+   * This may be null or empty if the device does not have any physical inputs,
+   * or if it does not support reporting them.
+   */
   available?:
     | ((args: GetInputsArgs) => Promise<Input[] | null>)
     | Input[]
@@ -1916,21 +1896,17 @@ export type methodGetNetwork = (
 ) => Promise<methodGetNetworkResult>;
 export type methodGetOutputsResult = {
   /**
-*
-     * @description A list of outputs the display has available.
-     *     This may be null or empty if the available outputs cannot be retrieved from the device.
-     
-*/
+   * A list of outputs the display has available.
+   * This may be null or empty if the available outputs cannot be retrieved from the device.
+   */
   available?:
     | ((args: GetOutputsArgs) => Promise<Output[] | null>)
     | Output[]
     | null;
   /**
-*
-     * @description The current state of audio for the display as a whole.
-     *     This should only be provided if the audio cannot be reported on a per-output basis.
-     
-*/
+   * The current state of audio for the display as a whole.
+   * This should only be provided if the audio cannot be reported on a per-output basis.
+   */
   allAudio?:
     | ((args: GetOutputsArgs) => Promise<OutputAudio | null>)
     | OutputAudio
@@ -1942,14 +1918,12 @@ export type methodGetOutputs = (
 ) => Promise<methodGetOutputsResult>;
 export type methodGetPowerResult = {
   /**
-*
-     * @description If non-null, denotes the integration supports the dispatchPowerReboot rpc method.
-     *     A false value denotes the integration supports the dispatchPowerReboot rpc method,
-     *     but the device cannot currently be rebooted.
-     *     A true value denotes the integration supports the dispatchPowerReboot rpc method,
-     *     and the device can be rebooted.
-     
-*/
+   * If non-null, denotes the integration supports the dispatchPowerReboot rpc method.
+   * A false value denotes the integration supports the dispatchPowerReboot rpc method,
+   * but the device cannot currently be rebooted.
+   * A true value denotes the integration supports the dispatchPowerReboot rpc method,
+   * and the device can be rebooted.
+   */
   canReboot?:
     | ((args: GetPowerArgs) => Promise<boolean | null>)
     | boolean
@@ -2056,23 +2030,19 @@ export type methodSetAppSourcesActiveResult = {
    */
   id?: ((args: SetAppSourcesActiveArgs) => Promise<string>) | string;
   /**
-*
-     * @description The application/source that is currently active on the device.
-     *     This does not include physical inputs, which are represented separately by the input field.
-     *     If there is no active application/source, or the device does not report this information, this field may be null.
-     
-*/
+   * The application/source that is currently active on the device.
+   * This does not include physical inputs, which are represented separately by the input field.
+   * If there is no active application/source, or the device does not report this information, this field may be null.
+   */
   source?:
     | ((args: SetAppSourcesActiveArgs) => Promise<AppSource | null>)
     | AppSource
     | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active application/source.
-     *     When true, the source field will be populated with the active application/source–if there is an active application;
-     *     when false, the source field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active application/source.
+   * When true, the source field will be populated with the active application/source–if there is an active application;
+   * when false, the source field should always be null and will be ignored.
+   */
   canReportSource?:
     | ((args: SetAppSourcesActiveArgs) => Promise<boolean>)
     | boolean;
@@ -2084,23 +2054,19 @@ export type methodSetAppSourcesActiveResult = {
     | Input
     | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active input.
-     *     When true, the input field will be populated with the active input–if there is an active input;
-     *     when false, the input field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active input.
+   * When true, the input field will be populated with the active input–if there is an active input;
+   * when false, the input field should always be null and will be ignored.
+   */
   canReportInput?:
     | ((args: SetAppSourcesActiveArgs) => Promise<boolean>)
     | boolean;
   /**
-*
-     * @description The output(s) that are currently active on the device.
-     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
-     *
-     *     This would typically be a subset of outputs returned from getOutputs.
-     
-*/
+   * The output(s) that are currently active on the device.
+   * This may be null or empty if there are no active outputs, or if the device does not report this information.
+   *
+   * This would typically be a subset of outputs returned from getOutputs.
+   */
   outputs?:
     | ((args: SetAppSourcesActiveArgs) => Promise<Output[] | null>)
     | Output[]
@@ -2116,26 +2082,20 @@ export type methodSetAuthenticationResult = {
    */
   id?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+   * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+   * This will be displayed to the user.
+   */
   label?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+   * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+   * There is no way to report the validity of an individual field within the authentication method itself.
+   */
   valid?: ((args: SetAuthenticationArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+   * Format: uri
+   * A url to documentation describing how to set/configure this authentication method.
+   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+   */
   documentationURL?:
     | ((args: SetAuthenticationArgs) => Promise<string | null>)
     | string
@@ -2158,105 +2118,85 @@ export type methodSetInputARCModeResult = {
    */
   id?: ((args: SetInputARCModeArgs) => Promise<string>) | string;
   /**
-*
-     * @description A user-friendly name for this input.
-     *     This value provides a consistent identifier for the input, regardless of the device's internal naming.
-     *     For example: "HDMI1".
-     
-*/
+   * A user-friendly name for this input.
+   * This value provides a consistent identifier for the input, regardless of the device's internal naming.
+   * For example: "HDMI1".
+   */
   friendlyName?: ((args: SetInputARCModeArgs) => Promise<string>) | string;
   /**
-*
-     * @description The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
-     *     This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
-     
-*/
+   * The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
+   * This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
+   */
   label?: ((args: SetInputARCModeArgs) => Promise<Label | null>) | Label | null;
   /**
-*
-     * @description Communicates whether this input can be selected as the active input.
-     *     This value reflects the current state of the input, not the overall capability of the device or integration.
-     *     For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
-     
-*/
+   * Communicates whether this input can be selected as the active input.
+   * This value reflects the current state of the input, not the overall capability of the device or integration.
+   * For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
+   */
   canActivate?: ((args: SetInputARCModeArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * @description A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
-     *     In many cases, this field is not applicable. In which case it may be null or empty.
-     *     A non-empty list implies that the integration supports setting the input's connection type.
-     
-*/
+   * A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
+   * In many cases, this field is not applicable. In which case it may be null or empty.
+   * A non-empty list implies that the integration supports setting the input's connection type.
+   */
   connectionTypes?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active connectionType for this input. Even if connectionTypes is empty
-     *     or not supported, this field must be populated. For example a plain HDMI input
-     *     may have the type "hdmi" and a canonicalId of "CONN:HDMI".
-     
-*/
+   * The active connectionType for this input. Even if connectionTypes is empty
+   * or not supported, this field must be populated. For example a plain HDMI input
+   * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
+   */
   connectionType?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair>)
     | KeyValuePair;
   /**
-*
-     * @description A list of CEC modes supported by this input.
-     *     This field is only populated if the display supports reporting CEC modes on a per-input basis.
-     *     See the inputs object's cecModes field for more information.
-     
-*/
+   * A list of CEC modes supported by this input.
+   * This field is only populated if the display supports reporting CEC modes on a per-input basis.
+   * See the inputs object's cecModes field for more information.
+   */
   cecModes?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active CEC mode for this input.
-     *     This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
-     *     See the inputs object's cecMode field for more information.
-     
-*/
+   * The active CEC mode for this input.
+   * This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
+   * See the inputs object's cecMode field for more information.
+   */
   cecMode?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description A list of ARC modes supported by this input.
-     *     This field is only populated if the display supports reporting ARC modes on a per-input basis.
-     *     See the inputs object's arcModes field for more information.
-     
-*/
+   * A list of ARC modes supported by this input.
+   * This field is only populated if the display supports reporting ARC modes on a per-input basis.
+   * See the inputs object's arcModes field for more information.
+   */
   arcModes?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active ARC mode for this input.
-     *     This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
-     *     See the inputs object's arcMode field for more information.
-     
-*/
+   * The active ARC mode for this input.
+   * This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
+   * See the inputs object's arcMode field for more information.
+   */
   arcMode?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description Communicates whether an active signal can be detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether an active signal can be detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   signalPresent?:
     | ((
         args: SetInputARCModeArgs,
@@ -2266,17 +2206,15 @@ export type methodSetInputARCModeResult = {
     | "UNKNOWN"
     | null;
   /**
-*
-     * @description Communicates whether a physical connection is detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether a physical connection is detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   connectionPresent?:
     | ((
         args: SetInputARCModeArgs,
@@ -2296,105 +2234,85 @@ export type methodSetInputCECModeResult = {
    */
   id?: ((args: SetInputCECModeArgs) => Promise<string>) | string;
   /**
-*
-     * @description A user-friendly name for this input.
-     *     This value provides a consistent identifier for the input, regardless of the device's internal naming.
-     *     For example: "HDMI1".
-     
-*/
+   * A user-friendly name for this input.
+   * This value provides a consistent identifier for the input, regardless of the device's internal naming.
+   * For example: "HDMI1".
+   */
   friendlyName?: ((args: SetInputCECModeArgs) => Promise<string>) | string;
   /**
-*
-     * @description The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
-     *     This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
-     
-*/
+   * The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
+   * This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
+   */
   label?: ((args: SetInputCECModeArgs) => Promise<Label | null>) | Label | null;
   /**
-*
-     * @description Communicates whether this input can be selected as the active input.
-     *     This value reflects the current state of the input, not the overall capability of the device or integration.
-     *     For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
-     
-*/
+   * Communicates whether this input can be selected as the active input.
+   * This value reflects the current state of the input, not the overall capability of the device or integration.
+   * For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
+   */
   canActivate?: ((args: SetInputCECModeArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * @description A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
-     *     In many cases, this field is not applicable. In which case it may be null or empty.
-     *     A non-empty list implies that the integration supports setting the input's connection type.
-     
-*/
+   * A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
+   * In many cases, this field is not applicable. In which case it may be null or empty.
+   * A non-empty list implies that the integration supports setting the input's connection type.
+   */
   connectionTypes?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active connectionType for this input. Even if connectionTypes is empty
-     *     or not supported, this field must be populated. For example a plain HDMI input
-     *     may have the type "hdmi" and a canonicalId of "CONN:HDMI".
-     
-*/
+   * The active connectionType for this input. Even if connectionTypes is empty
+   * or not supported, this field must be populated. For example a plain HDMI input
+   * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
+   */
   connectionType?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair>)
     | KeyValuePair;
   /**
-*
-     * @description A list of CEC modes supported by this input.
-     *     This field is only populated if the display supports reporting CEC modes on a per-input basis.
-     *     See the inputs object's cecModes field for more information.
-     
-*/
+   * A list of CEC modes supported by this input.
+   * This field is only populated if the display supports reporting CEC modes on a per-input basis.
+   * See the inputs object's cecModes field for more information.
+   */
   cecModes?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active CEC mode for this input.
-     *     This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
-     *     See the inputs object's cecMode field for more information.
-     
-*/
+   * The active CEC mode for this input.
+   * This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
+   * See the inputs object's cecMode field for more information.
+   */
   cecMode?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description A list of ARC modes supported by this input.
-     *     This field is only populated if the display supports reporting ARC modes on a per-input basis.
-     *     See the inputs object's arcModes field for more information.
-     
-*/
+   * A list of ARC modes supported by this input.
+   * This field is only populated if the display supports reporting ARC modes on a per-input basis.
+   * See the inputs object's arcModes field for more information.
+   */
   arcModes?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active ARC mode for this input.
-     *     This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
-     *     See the inputs object's arcMode field for more information.
-     
-*/
+   * The active ARC mode for this input.
+   * This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
+   * See the inputs object's arcMode field for more information.
+   */
   arcMode?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description Communicates whether an active signal can be detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether an active signal can be detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   signalPresent?:
     | ((
         args: SetInputCECModeArgs,
@@ -2404,17 +2322,15 @@ export type methodSetInputCECModeResult = {
     | "UNKNOWN"
     | null;
   /**
-*
-     * @description Communicates whether a physical connection is detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether a physical connection is detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   connectionPresent?:
     | ((
         args: SetInputCECModeArgs,
@@ -2434,112 +2350,92 @@ export type methodSetInputConnectionTypeResult = {
    */
   id?: ((args: SetInputConnectionTypeArgs) => Promise<string>) | string;
   /**
-*
-     * @description A user-friendly name for this input.
-     *     This value provides a consistent identifier for the input, regardless of the device's internal naming.
-     *     For example: "HDMI1".
-     
-*/
+   * A user-friendly name for this input.
+   * This value provides a consistent identifier for the input, regardless of the device's internal naming.
+   * For example: "HDMI1".
+   */
   friendlyName?:
     | ((args: SetInputConnectionTypeArgs) => Promise<string>)
     | string;
   /**
-*
-     * @description The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
-     *     This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
-     
-*/
+   * The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
+   * This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
+   */
   label?:
     | ((args: SetInputConnectionTypeArgs) => Promise<Label | null>)
     | Label
     | null;
   /**
-*
-     * @description Communicates whether this input can be selected as the active input.
-     *     This value reflects the current state of the input, not the overall capability of the device or integration.
-     *     For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
-     
-*/
+   * Communicates whether this input can be selected as the active input.
+   * This value reflects the current state of the input, not the overall capability of the device or integration.
+   * For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
+   */
   canActivate?:
     | ((args: SetInputConnectionTypeArgs) => Promise<boolean>)
     | boolean;
   /**
-*
-     * @description A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
-     *     In many cases, this field is not applicable. In which case it may be null or empty.
-     *     A non-empty list implies that the integration supports setting the input's connection type.
-     
-*/
+   * A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
+   * In many cases, this field is not applicable. In which case it may be null or empty.
+   * A non-empty list implies that the integration supports setting the input's connection type.
+   */
   connectionTypes?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active connectionType for this input. Even if connectionTypes is empty
-     *     or not supported, this field must be populated. For example a plain HDMI input
-     *     may have the type "hdmi" and a canonicalId of "CONN:HDMI".
-     
-*/
+   * The active connectionType for this input. Even if connectionTypes is empty
+   * or not supported, this field must be populated. For example a plain HDMI input
+   * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
+   */
   connectionType?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair>)
     | KeyValuePair;
   /**
-*
-     * @description A list of CEC modes supported by this input.
-     *     This field is only populated if the display supports reporting CEC modes on a per-input basis.
-     *     See the inputs object's cecModes field for more information.
-     
-*/
+   * A list of CEC modes supported by this input.
+   * This field is only populated if the display supports reporting CEC modes on a per-input basis.
+   * See the inputs object's cecModes field for more information.
+   */
   cecModes?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active CEC mode for this input.
-     *     This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
-     *     See the inputs object's cecMode field for more information.
-     
-*/
+   * The active CEC mode for this input.
+   * This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
+   * See the inputs object's cecMode field for more information.
+   */
   cecMode?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description A list of ARC modes supported by this input.
-     *     This field is only populated if the display supports reporting ARC modes on a per-input basis.
-     *     See the inputs object's arcModes field for more information.
-     
-*/
+   * A list of ARC modes supported by this input.
+   * This field is only populated if the display supports reporting ARC modes on a per-input basis.
+   * See the inputs object's arcModes field for more information.
+   */
   arcModes?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description The active ARC mode for this input.
-     *     This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
-     *     See the inputs object's arcMode field for more information.
-     
-*/
+   * The active ARC mode for this input.
+   * This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
+   * See the inputs object's arcMode field for more information.
+   */
   arcMode?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
     | null;
   /**
-*
-     * @description Communicates whether an active signal can be detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether an active signal can be detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   signalPresent?:
     | ((
         args: SetInputConnectionTypeArgs,
@@ -2549,17 +2445,15 @@ export type methodSetInputConnectionTypeResult = {
     | "UNKNOWN"
     | null;
   /**
-*
-     * @description Communicates whether a physical connection is detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * Communicates whether a physical connection is detected on this input.
+   * If this value is not supported, it may be null or UNKNOWN.
+   * - "TRUE":
+   *
+   * - "FALSE":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   connectionPresent?:
     | ((
         args: SetInputConnectionTypeArgs,
@@ -2580,24 +2474,20 @@ export type methodSetInputLabels = (
 ) => Promise<methodSetInputLabelsResult>;
 export type methodSetInputsARCModeResult = {
   /**
-*
-     * @description If the display does not support reporting ARC modes on a per-input basis, this field may be populated with the list of ARC modes the display supports.
-     *     Typical modes might include "ARC", "eARC", or "Disabled".
-     *
-     *     If the display does support reporting ARC modes on a per-input basis, this field should be null,
-     *     and the modes should be listed on the individual input(s) instead.
-     
-*/
+   * If the display does not support reporting ARC modes on a per-input basis, this field may be populated with the list of ARC modes the display supports.
+   * Typical modes might include "ARC", "eARC", or "Disabled".
+   *
+   * If the display does support reporting ARC modes on a per-input basis, this field should be null,
+   * and the modes should be listed on the individual input(s) instead.
+   */
   available?:
     | ((args: SetInputsARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description If the display does not support reporting the current ARC mode on a per-input basis, this field may be populated with the active ARC mode.
-     *     See the arcModes field for more information.
-     
-*/
+   * If the display does not support reporting the current ARC mode on a per-input basis, this field may be populated with the active ARC mode.
+   * See the arcModes field for more information.
+   */
   active?:
     | ((args: SetInputsARCModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
@@ -2613,44 +2503,36 @@ export type methodSetInputsActiveResult = {
    */
   id?: ((args: SetInputsActiveArgs) => Promise<string>) | string;
   /**
-*
-     * @description The application/source that is currently active on the device.
-     *     This does not include physical inputs, which are represented separately by the input field.
-     *     If there is no active application/source, or the device does not report this information, this field may be null.
-     
-*/
+   * The application/source that is currently active on the device.
+   * This does not include physical inputs, which are represented separately by the input field.
+   * If there is no active application/source, or the device does not report this information, this field may be null.
+   */
   source?:
     | ((args: SetInputsActiveArgs) => Promise<AppSource | null>)
     | AppSource
     | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active application/source.
-     *     When true, the source field will be populated with the active application/source–if there is an active application;
-     *     when false, the source field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active application/source.
+   * When true, the source field will be populated with the active application/source–if there is an active application;
+   * when false, the source field should always be null and will be ignored.
+   */
   canReportSource?: ((args: SetInputsActiveArgs) => Promise<boolean>) | boolean;
   /**
    * The physical input that is currently active on the device. This may be null if there is no active input, or if the device does not report this information.
    */
   input?: ((args: SetInputsActiveArgs) => Promise<Input | null>) | Input | null;
   /**
-*
-     * @description Indicates whether the device is capable of reporting the currently active input.
-     *     When true, the input field will be populated with the active input–if there is an active input;
-     *     when false, the input field should always be null and will be ignored.
-     
-*/
+   * Indicates whether the device is capable of reporting the currently active input.
+   * When true, the input field will be populated with the active input–if there is an active input;
+   * when false, the input field should always be null and will be ignored.
+   */
   canReportInput?: ((args: SetInputsActiveArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * @description The output(s) that are currently active on the device.
-     *     This may be null or empty if there are no active outputs, or if the device does not report this information.
-     *
-     *     This would typically be a subset of outputs returned from getOutputs.
-     
-*/
+   * The output(s) that are currently active on the device.
+   * This may be null or empty if there are no active outputs, or if the device does not report this information.
+   *
+   * This would typically be a subset of outputs returned from getOutputs.
+   */
   outputs?:
     | ((args: SetInputsActiveArgs) => Promise<Output[] | null>)
     | Output[]
@@ -2662,24 +2544,20 @@ export type methodSetInputsActive = (
 ) => Promise<methodSetInputsActiveResult>;
 export type methodSetInputsCECModeResult = {
   /**
-*
-     * @description If the display does not support reporting CEC modes on a per-input basis, this field may be populated with the list of CEC modes the display supports.
-     *     In many cases, this may be as simple "Enabled" or "Disabled".
-     *
-     *     If the display does support reporting CEC modes on a per-input basis, this field should be null,
-     *     and the modes should be listed on the individual input(s) instead.
-     
-*/
+   * If the display does not support reporting CEC modes on a per-input basis, this field may be populated with the list of CEC modes the display supports.
+   * In many cases, this may be as simple "Enabled" or "Disabled".
+   *
+   * If the display does support reporting CEC modes on a per-input basis, this field should be null,
+   * and the modes should be listed on the individual input(s) instead.
+   */
   available?:
     | ((args: SetInputsCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
   /**
-*
-     * @description If the display does not support reporting the current CEC mode on a per-input basis, this field may be populated with the active CEC mode.
-     *     See the cecModes field for more information.
-     
-*/
+   * If the display does not support reporting the current CEC mode on a per-input basis, this field may be populated with the active CEC mode.
+   * See the cecModes field for more information.
+   */
   active?:
     | ((args: SetInputsCECModeArgs) => Promise<KeyValuePair | null>)
     | KeyValuePair
@@ -2741,15 +2619,13 @@ export type methodSetPowerPowerSavingMode = (
 ) => Promise<methodSetPowerPowerSavingModeResult>;
 export type methodSetPowerStateResult = {
   /**
-*
-     * @description - "ON":
-     *
-     *     - "STANDBY":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
+   * - "ON":
+   *
+   * - "STANDBY":
+   *
+   * - "UNKNOWN":
+   * @enum {string|null}
+   */
   current?:
     | ((
         args: SetPowerStateArgs,
@@ -2759,17 +2635,15 @@ export type methodSetPowerStateResult = {
     | "UNKNOWN"
     | null;
   /**
-*
-     * @description If non-null, denotes the integration supports
-     *     the setPowerPowerState method.
-     *     - "ON":
-     *
-     *     - "STANDBY":
-     *
-     *     - "OFF":
-     * @enum {string|null}
-     
-*/
+   * If non-null, denotes the integration supports
+   * the setPowerPowerState method.
+   * - "ON":
+   *
+   * - "STANDBY":
+   *
+   * - "OFF":
+   * @enum {string|null}
+   */
   allowedPowerState?:
     | ((args: SetPowerStateArgs) => Promise<"ON" | "STANDBY" | "OFF" | null>)
     | "ON"
@@ -2783,13 +2657,11 @@ export type methodSetPowerState = (
 ) => Promise<methodSetPowerStateResult>;
 export type methodSetPowerWakeOnLanResult = {
   /**
-*
-     * @description - "ENABLED":
-     *
-     *     - "DISABLED":
-     * @enum {string}
-     
-*/
+   * - "ENABLED":
+   *
+   * - "DISABLED":
+   * @enum {string}
+   */
   mode?:
     | ((args: SetPowerWakeOnLanArgs) => Promise<"ENABLED" | "DISABLED">)
     | "ENABLED"
@@ -2881,11 +2753,9 @@ export type Handler = {
 
   dispatchFirmwareUpdate?: methodDispatchFirmwareUpdate;
   /**
-*
-         * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
-         *     The resulting boolean reflects whether the reboot was dispatched.
-         
-*/
+   * Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+   * The resulting boolean reflects whether the reboot was dispatched.
+   */
   dispatchPowerReboot?: methodDispatchPowerReboot;
 
   getActiveContexts?: methodGetActiveContexts;
@@ -2906,13 +2776,11 @@ export type Handler = {
 
   getNetwork?: methodGetNetwork;
   /**
-*
-         * @description A list of outputs the display supports.
-         *     See the outputs field within the ActiveContext type,
-         *     which is communicates which of these outputs are
-         *     currently in use.
-         
-*/
+   * A list of outputs the display supports.
+   * See the outputs field within the ActiveContext type,
+   * which is communicates which of these outputs are
+   * currently in use.
+   */
   getOutputs?: methodGetOutputs;
 
   getPower?: methodGetPower;
@@ -2939,36 +2807,30 @@ export type Handler = {
    */
   setInputConnectionType?: methodSetInputConnectionType;
   /**
-*
-         * @description Change the label(s) shown on the device for specified inputs.
-         *     For example, this could be used to set the on-device label
-         *     for the hdmi1 input to "Apple TV".
-         
-*/
+   * Change the label(s) shown on the device for specified inputs.
+   * For example, this could be used to set the on-device label
+   * for the hdmi1 input to "Apple TV".
+   */
   setInputLabels?: methodSetInputLabels;
   /**
-*
-         * @description Selects the target ARC mode for the display.
-         *     This action only applies to integrations
-         *     that expose arcModes only at the global level–not per input.
-         *
-         *     The per input method is setInputARCMode.
-         
-*/
+   * Selects the target ARC mode for the display.
+   * This action only applies to integrations
+   * that expose arcModes only at the global level–not per input.
+   *
+   * The per input method is setInputARCMode.
+   */
   setInputsARCMode?: methodSetInputsARCMode;
   /**
    * Switch to a specific input, such as HDMI 1 or HDMI 2.
    */
   setInputsActive?: methodSetInputsActive;
   /**
-*
-         * @description Selects the target CEC mode for the display.
-         *     This action only applies to integrations
-         *     that expose cecModes only at the global level–not per input.
-         *
-         *     The per input method is setInputCECMode.
-         
-*/
+   * Selects the target CEC mode for the display.
+   * This action only applies to integrations
+   * that expose cecModes only at the global level–not per input.
+   *
+   * The per input method is setInputCECMode.
+   */
   setInputsCECMode?: methodSetInputsCECMode;
 
   setNetworkConfig?: methodSetNetworkConfig;
@@ -2987,24 +2849,20 @@ export type Handler = {
 
   setPowerWakeOnLan?: methodSetPowerWakeOnLan;
   /**
-*
-         * @description Sets the system country, providing a countryId
-         *     from the list of available languages returned by
-         *     getSystem.
-         
-*/
+   * Sets the system country, providing a countryId
+   * from the list of available languages returned by
+   * getSystem.
+   */
   setSystemCountry?: methodSetSystemCountry;
   /**
    * Sets the system label, when applicable (i.e. if getSystem denotes the integration supports setting the system label)
    */
   setSystemLabel?: methodSetSystemLabel;
   /**
-*
-         * @description Sets the system language, providing a languageId
-         *     from the list of available languages returned by
-         *     getSystem.
-         
-*/
+   * Sets the system language, providing a languageId
+   * from the list of available languages returned by
+   * getSystem.
+   */
   setSystemLanguage?: methodSetSystemLanguage;
 
   setVideoAspectRatio?: methodSetVideoAspectRatio;

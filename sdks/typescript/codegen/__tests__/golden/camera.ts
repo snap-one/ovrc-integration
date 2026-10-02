@@ -708,34 +708,28 @@ export type WifiInfo = {
 };
 export type methodDispatchAuthenticationPromptResult = {
   /**
-* The unique identifier for this authentication method. This is used when setting authentication values. 
-*/
+ * The unique identifier for this authentication method. This is used when setting authentication values.
+ */
   id?: ((args: DispatchAuthenticationPromptArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+ * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+ * This will be displayed to the user.
+ */
   label?: ((args: DispatchAuthenticationPromptArgs) => Promise<string>) | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+ * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+ * There is no way to report the validity of an individual field within the authentication method itself.
+ */
   valid?: ((args: DispatchAuthenticationPromptArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+ * Format: uri
+ * A url to documentation describing how to set/configure this authentication method.
+ * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+ */
   documentationURL?: ((args: DispatchAuthenticationPromptArgs) => Promise<string | null>) | string | null;
   /**
-* A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set. 
-*/
+ * A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.
+ */
   fields?: ((args: DispatchAuthenticationPromptArgs) => Promise<AuthenticationField[] | null>) | AuthenticationField[] | null;
 }
 
@@ -751,56 +745,52 @@ export type methodGetAuthenticationResult = GetAuthenticationResult
 export type methodGetAuthentication = (params: GetAuthenticationParams) => Promise<methodGetAuthenticationResult>;
 export type methodGetFirmwareResult = {
   /**
-* The current firmware version details for the device. 
-*/
+ * The current firmware version details for the device.
+ */
   current?: ((args: GetFirmwareArgs) => Promise<FirmwareVersionDetails | null>) | FirmwareVersionDetails | null;
   /**
-*
-     * @description A list of firmware versions available for update.
-     *     A non-empty list indicates that a firmware update is available and that this integration supports dispatching firmware updates.
-     *
-     *     A null value indicates that the integration does not support firmware updates, or that it cannot determine if there are any updates available.
-     *     An empty list indicates that there are no firmware updates currently available for this device, but that the integration does support firmware updates.
-     
-*/
+ * A list of firmware versions available for update.
+ * A non-empty list indicates that a firmware update is available and that this integration supports dispatching firmware updates.
+ *
+ * A null value indicates that the integration does not support firmware updates, or that it cannot determine if there are any updates available.
+ * An empty list indicates that there are no firmware updates currently available for this device, but that the integration does support firmware updates.
+ */
   updateCandidates?: ((args: GetFirmwareArgs) => Promise<FirmwareVersionDetails[] | null>) | FirmwareVersionDetails[] | null;
   /**
-*
-     * @description The current status of any ongoing firmware update operation.
-     *     - "UNSUPPORTED": Indicates that the integration does not support monitoring firmware update status, or that it cannot determine the current status of a firmware update operation.
-     *     This DOES NOT indicate that the integration does not support firmware updates at all. See the `updateCandidates` field on the firmware type for that information.
-     *
-     *     - "READY": Communicates that the device is ready to begin a firmware update, and supports monitoring the status of the update once it has begun.
-     *     This does not indicate that a firmware update is available. See the `updateCandidates` field on the firmware type for that information.
-     *
-     *     - "COMPLETE": Indicates that the firmware update has completed successfully.
-     *
-     *     - "INPROGRESS": Indicates that a firmware update is currently in progress.
-     *
-     *     - "FAILED": Indicates that the firmware update has failed.
-     * @enum {string}
-     
-*/
+ * The current status of any ongoing firmware update operation.
+ * - "UNSUPPORTED": Indicates that the integration does not support monitoring firmware update status, or that it cannot determine the current status of a firmware update operation.
+ * This DOES NOT indicate that the integration does not support firmware updates at all. See the `updateCandidates` field on the firmware type for that information.
+ *
+ * - "READY": Communicates that the device is ready to begin a firmware update, and supports monitoring the status of the update once it has begun.
+ * This does not indicate that a firmware update is available. See the `updateCandidates` field on the firmware type for that information.
+ *
+ * - "COMPLETE": Indicates that the firmware update has completed successfully.
+ *
+ * - "INPROGRESS": Indicates that a firmware update is currently in progress.
+ *
+ * - "FAILED": Indicates that the firmware update has failed.
+ * @enum {string}
+ */
   updateStatus?: ((args: GetFirmwareArgs) => Promise<"UNSUPPORTED" | "READY" | "COMPLETE" | "INPROGRESS" | "FAILED">) | "UNSUPPORTED" | "READY" | "COMPLETE" | "INPROGRESS" | "FAILED";
 }
 
 export type methodGetFirmware = (params: GetFirmwareParams) => Promise<methodGetFirmwareResult>;
 export type methodGetImageSettingsResult = {
   /**
-* A list of physical sources on the camera. 
-*/
+ * A list of physical sources on the camera.
+ */
   sources?: ((args: GetImageSettingsArgs) => Promise<ImageSettingsSource[] | null>) | ImageSettingsSource[] | null;
 }
 
 export type methodGetImageSettings = (params: GetImageSettingsParams) => Promise<methodGetImageSettingsResult>;
 export type methodGetMetadataResult = {
   /**
-* Format: uri 
-*/
+ * Format: uri
+ */
   userManualURL?: ((args: GetMetadataArgs) => Promise<string | null>) | string | null;
   /**
-* Format: uri 
-*/
+ * Format: uri
+ */
   knowledgeBaseURL?: ((args: GetMetadataArgs) => Promise<string | null>) | string | null;
   
   dataAcquisition?: ((args: GetMetadataArgs) => Promise<KeyValuePair[] | null>) | KeyValuePair[] | null;
@@ -809,90 +799,84 @@ export type methodGetMetadataResult = {
 export type methodGetMetadata = (params: GetMetadataParams) => Promise<methodGetMetadataResult>;
 export type methodGetNetworkResult = {
   /**
-* A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports. 
-*/
+ * A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports.
+ */
   interfaces?: ((args: GetNetworkArgs) => Promise<NetworkInterface[] | null>) | NetworkInterface[] | null;
 }
 
 export type methodGetNetwork = (params: GetNetworkParams) => Promise<methodGetNetworkResult>;
 export type methodGetPowerResult = {
   /**
-* Indicates whether the camera supports a reboot action. 
-*/
+ * Indicates whether the camera supports a reboot action.
+ */
   canReboot?: ((args: GetPowerArgs) => Promise<boolean | null>) | boolean | null;
 }
 
 export type methodGetPower = (params: GetPowerParams) => Promise<methodGetPowerResult>;
 export type methodGetProfilesResult = {
   /**
-* A list of configured streaming profiles on the camera. 
-*/
+ * A list of configured streaming profiles on the camera.
+ */
   available?: ((args: GetProfilesArgs) => Promise<Profile[] | null>) | Profile[] | null;
 }
 
 export type methodGetProfiles = (params: GetProfilesParams) => Promise<methodGetProfilesResult>;
 export type methodGetSystemResult = {
   /**
-* Hostname reported directly by the camera. 
-*/
+ * Hostname reported directly by the camera.
+ */
   hostname?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
   /**
-* Model reported by the camera. 
-*/
+ * Model reported by the camera.
+ */
   model?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
   /**
-* Brand reported by the camera. 
-*/
+ * Brand reported by the camera.
+ */
   brand?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
   /**
-* Serial number reported by the camera. 
-*/
+ * Serial number reported by the camera.
+ */
   serialNumber?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
   /**
-* Date/time metadata reported by the camera. 
-*/
+ * Date/time metadata reported by the camera.
+ */
   dateTime?: ((args: GetSystemArgs) => Promise<SystemDateTime | null>) | SystemDateTime | null;
 }
 
 export type methodGetSystem = (params: GetSystemParams) => Promise<methodGetSystemResult>;
 export type methodSetAuthenticationResult = {
   /**
-* The unique identifier for this authentication method. This is used when setting authentication values. 
-*/
+ * The unique identifier for this authentication method. This is used when setting authentication values.
+ */
   id?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+ * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+ * This will be displayed to the user.
+ */
   label?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+ * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+ * There is no way to report the validity of an individual field within the authentication method itself.
+ */
   valid?: ((args: SetAuthenticationArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+ * Format: uri
+ * A url to documentation describing how to set/configure this authentication method.
+ * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+ */
   documentationURL?: ((args: SetAuthenticationArgs) => Promise<string | null>) | string | null;
   /**
-* A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set. 
-*/
+ * A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.
+ */
   fields?: ((args: SetAuthenticationArgs) => Promise<AuthenticationField[] | null>) | AuthenticationField[] | null;
 }
 
 export type methodSetAuthentication = (params: SetAuthenticationParams) => Promise<methodSetAuthenticationResult>;
 export type methodSetNetworkConfigResult = {
   /**
-* A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports. 
-*/
+ * A list of available network interfaces on the device, such as Wi-Fi adapters and Ethernet ports.
+ */
   interfaces?: ((args: SetNetworkConfigArgs) => Promise<NetworkInterface[] | null>) | NetworkInterface[] | null;
 }
 
@@ -904,40 +888,40 @@ export type Handler = {
   
   dispatchFirmwareUpdate?: methodDispatchFirmwareUpdate;
   /**
-* Dispatches a reboot action to the camera. 
-*/
+ * Dispatches a reboot action to the camera.
+ */
   dispatchPowerReboot?: methodDispatchPowerReboot;
   /**
-* Authentication methods supported by the integration. 
-*/
+ * Authentication methods supported by the integration.
+ */
   getAuthentication?: methodGetAuthentication;
   /**
-* Firmware metadata reported by the camera. 
-*/
+ * Firmware metadata reported by the camera.
+ */
   getFirmware?: methodGetFirmware;
   /**
-* Lens/source image settings exposed by the camera. 
-*/
+ * Lens/source image settings exposed by the camera.
+ */
   getImageSettings?: methodGetImageSettings;
   /**
-* Integration metadata reported by the camera. 
-*/
+ * Integration metadata reported by the camera.
+ */
   getMetadata?: methodGetMetadata;
   /**
-* Network information reported by the camera. 
-*/
+ * Network information reported by the camera.
+ */
   getNetwork?: methodGetNetwork;
   /**
-* Power capabilities and state reported by the camera. 
-*/
+ * Power capabilities and state reported by the camera.
+ */
   getPower?: methodGetPower;
   /**
-* Video streaming profiles exposed by the camera. 
-*/
+ * Video streaming profiles exposed by the camera.
+ */
   getProfiles?: methodGetProfiles;
   /**
-* System-level metadata reported by the camera. 
-*/
+ * System-level metadata reported by the camera.
+ */
   getSystem?: methodGetSystem;
   
   setAuthentication?: methodSetAuthentication;
