@@ -512,6 +512,7 @@ export type GetSystemParams = {
     | "model"
     | "brand"
     | "serialNumber"
+    | "contactInformation"
   )[];
 };
 export type GetSystemResponse = RPCMethodResult & {
@@ -628,6 +629,15 @@ export type Input = {
    * @enum {string|null}
    */
   signalPresent?: "TRUE" | "FALSE" | "UNKNOWN" | null;
+};
+export type InputLabelChange = {
+  /** @description The identifier of the input for which the label should be changed. */
+  inputId: string;
+  /**
+   * @description The label that should be assigned to the input,
+   *     specified via the inputId.
+   */
+  label: string;
 };
 /** @description An object representing all physical inputs on the device, as well as any global input settings that may apply to all or some of the inputs. */
 export type Inputs = {
@@ -838,25 +848,6 @@ export type NetworkIPv4ConfigInput = {
  *     but OvrC currently only uses the first output provided, if any.
  */
 export type Output = {
-  /**
-   * @description The current state of audio on this output.
-   *     This may be null if the audio output channel does not report audio,
-   *     in which case the allAudio field on the outputs object should be used–if possible.
-   */
-  audio?: OutputAudio | null;
-  /**
-   * @description The active connectionType for this output. Even if connectionTypes is empty
-   *     or not supported, this field must be populated.
-   *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
-   *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
-   */
-  connectionType?: KeyValuePair;
-  /**
-   * @description A list of connection types that this output supports.
-   *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
-   *     A non-null value implies that the integration supports setting the output's connection type.
-   */
-  connectionTypes?: KeyValuePair[] | null;
   /** @description Details regarding the current output channel's destination. */
   destination?: OutputDestination;
   /** @description A user-friendly name for this output. */
@@ -993,12 +984,11 @@ export type RPCMethod =
   | SetInputARCMode
   | SetInputCECMode
   | SetInputConnectionType
-  | SetInputLabel
+  | SetInputLabels
   | SetInputsARCMode
   | SetInputsActive
   | SetInputsCECMode
   | SetNetworkConfig
-  | SetOutputConnectionType
   | SetOutputDestinationActive
   | SetPowerPowerSavingMode
   | SetPowerState
@@ -1042,12 +1032,11 @@ export type RPCSuccessResponse =
   | SetInputARCModeResponse
   | SetInputCECModeResponse
   | SetInputConnectionTypeResponse
-  | SetInputLabelResponse
+  | SetInputLabelsResponse
   | SetInputsARCModeResponse
   | SetInputsActiveResponse
   | SetInputsCECModeResponse
   | SetNetworkConfigResponse
-  | SetOutputConnectionTypeResponse
   | SetOutputDestinationActiveResponse
   | SetPowerPowerSavingModeResponse
   | SetPowerStateResponse
@@ -1224,24 +1213,27 @@ export type SetInputConnectionTypeResponse = RPCMethodResult & {
   result?: SetInputConnectionTypeResult;
 };
 export type SetInputConnectionTypeResult = Input;
-/** @description Name an input, such as Apple TV or HDMI 1. */
-export type SetInputLabel = RPCRequestBase & {
+/**
+ * @description Change the label(s) shown on the device for specified inputs.
+ *     For example, this could be used to set the on-device label
+ *     for the hdmi1 input to "Apple TV".
+ */
+export type SetInputLabels = RPCRequestBase & {
   /** @enum {string} */
-  method: "setInputLabel";
-  params: SetInputLabelParams;
+  method: "setInputLabels";
+  params: SetInputLabelsParams;
 } & {
   /**
    * @description discriminator enum property added by openapi-typescript
    * @enum {string}
    */
-  method: "setInputLabel";
+  method: "setInputLabels";
 };
-export type SetInputLabelArgs = {
-  inputId: string;
-  label: string;
+export type SetInputLabelsArgs = {
+  labels: InputLabelChange[];
 };
-export type SetInputLabelParams = {
-  args: SetInputLabelArgs;
+export type SetInputLabelsParams = {
+  args: SetInputLabelsArgs;
   includeFields?: (
     | "id"
     | "friendlyName"
@@ -1257,10 +1249,10 @@ export type SetInputLabelParams = {
     | "connectionPresent"
   )[];
 };
-export type SetInputLabelResponse = RPCMethodResult & {
-  result?: SetInputLabelResult;
+export type SetInputLabelsResponse = RPCMethodResult & {
+  result?: SetInputLabelsResult;
 };
-export type SetInputLabelResult = Input;
+export type SetInputLabelsResult = Input[];
 /** @description Switch to a specific input, such as HDMI 1 or HDMI 2. */
 export type SetInputsActive = RPCRequestBase & {
   /** @enum {string} */
@@ -1373,37 +1365,6 @@ export type SetNetworkConfigResponse = RPCMethodResult & {
 };
 export type SetNetworkConfigResult = Network;
 /** @description Output port type, such as HDMI or optical audio. */
-export type SetOutputConnectionType = RPCRequestBase & {
-  /** @enum {string} */
-  method: "setOutputConnectionType";
-  params: SetOutputConnectionTypeParams;
-} & {
-  /**
-   * @description discriminator enum property added by openapi-typescript
-   * @enum {string}
-   */
-  method: "setOutputConnectionType";
-};
-export type SetOutputConnectionTypeArgs = {
-  outputId: string;
-  typeId: string;
-};
-export type SetOutputConnectionTypeParams = {
-  args: SetOutputConnectionTypeArgs;
-  includeFields?: (
-    | "id"
-    | "friendlyName"
-    | "connectionTypes"
-    | "connectionType"
-    | "destination"
-    | "audio"
-  )[];
-};
-export type SetOutputConnectionTypeResponse = RPCMethodResult & {
-  result?: SetOutputConnectionTypeResult;
-};
-export type SetOutputConnectionTypeResult = Output;
-/** @description Output port type, such as HDMI or optical audio. */
 export type SetOutputDestinationActive = RPCRequestBase & {
   /** @enum {string} */
   method: "setOutputDestinationActive";
@@ -1421,14 +1382,7 @@ export type SetOutputDestinationActiveArgs = {
 };
 export type SetOutputDestinationActiveParams = {
   args: SetOutputDestinationActiveArgs;
-  includeFields?: (
-    | "id"
-    | "friendlyName"
-    | "connectionTypes"
-    | "connectionType"
-    | "destination"
-    | "audio"
-  )[];
+  includeFields?: ("id" | "friendlyName" | "destination")[];
 };
 export type SetOutputDestinationActiveResponse = RPCMethodResult & {
   result?: SetOutputDestinationActiveResult;
@@ -1639,6 +1593,8 @@ export type SetVideoPictureModeResponse = RPCMethodResult & {
 export type SetVideoPictureModeResult = VideoPictureMode;
 export type System = {
   brand?: string | null;
+  /** @description The name, email or both of who to contact about the device. */
+  contactInformation?: string | null;
   country?: SystemCountry | null;
   friendlyName?: string | null;
   label?: GlobalLabel | null;
@@ -2044,6 +2000,13 @@ export type methodGetSystemResult = {
   brand?: ((args: GetSystemArgs) => Promise<string | null>) | string | null;
 
   serialNumber?:
+    | ((args: GetSystemArgs) => Promise<string | null>)
+    | string
+    | null;
+  /**
+   * The name, email or both of who to contact about the device.
+   */
+  contactInformation?:
     | ((args: GetSystemArgs) => Promise<string | null>)
     | string
     | null;
@@ -2610,144 +2573,11 @@ export type methodSetInputConnectionTypeResult = {
 export type methodSetInputConnectionType = (
   params: SetInputConnectionTypeParams,
 ) => Promise<methodSetInputConnectionTypeResult>;
-export type methodSetInputLabelResult = {
-  /**
-   * The unique identifier for this input. This is used when setting the active input.
-   */
-  id?: ((args: SetInputLabelArgs) => Promise<string>) | string;
-  /**
-*
-     * @description A user-friendly name for this input.
-     *     This value provides a consistent identifier for the input, regardless of the device's internal naming.
-     *     For example: "HDMI1".
-     
-*/
-  friendlyName?: ((args: SetInputLabelArgs) => Promise<string>) | string;
-  /**
-*
-     * @description The input's label, as stored on the device itself. E.g. "Playstation", "Blu-ray", "Cable Box", etc...
-     *     This is typically user-configurable on the device, and may be null if the device does not have a label for this input.
-     
-*/
-  label?: ((args: SetInputLabelArgs) => Promise<Label | null>) | Label | null;
-  /**
-*
-     * @description Communicates whether this input can be selected as the active input.
-     *     This value reflects the current state of the input, not the overall capability of the device or integration.
-     *     For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
-     
-*/
-  canActivate?: ((args: SetInputLabelArgs) => Promise<boolean>) | boolean;
-  /**
-*
-     * @description A list of connection types that this input supports. For example: "COMPONENT vs or COMPOSITE" or "HDMI with Optical Audio".
-     *     In many cases, this field is not applicable. In which case it may be null or empty.
-     *     A non-empty list implies that the integration supports setting the input's connection type.
-     
-*/
-  connectionTypes?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair[] | null>)
-    | KeyValuePair[]
-    | null;
-  /**
-*
-     * @description The active connectionType for this input. Even if connectionTypes is empty
-     *     or not supported, this field must be populated. For example a plain HDMI input
-     *     may have the type "hdmi" and a canonicalId of "CONN:HDMI".
-     
-*/
-  connectionType?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair>)
-    | KeyValuePair;
-  /**
-*
-     * @description A list of CEC modes supported by this input.
-     *     This field is only populated if the display supports reporting CEC modes on a per-input basis.
-     *     See the inputs object's cecModes field for more information.
-     
-*/
-  cecModes?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair[] | null>)
-    | KeyValuePair[]
-    | null;
-  /**
-*
-     * @description The active CEC mode for this input.
-     *     This field is only populated if the display supports reporting the current CEC mode on a per-input basis.
-     *     See the inputs object's cecMode field for more information.
-     
-*/
-  cecMode?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair | null>)
-    | KeyValuePair
-    | null;
-  /**
-*
-     * @description A list of ARC modes supported by this input.
-     *     This field is only populated if the display supports reporting ARC modes on a per-input basis.
-     *     See the inputs object's arcModes field for more information.
-     
-*/
-  arcModes?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair[] | null>)
-    | KeyValuePair[]
-    | null;
-  /**
-*
-     * @description The active ARC mode for this input.
-     *     This field is only populated if the display supports reporting the current ARC mode on a per-input basis.
-     *     See the inputs object's arcMode field for more information.
-     
-*/
-  arcMode?:
-    | ((args: SetInputLabelArgs) => Promise<KeyValuePair | null>)
-    | KeyValuePair
-    | null;
-  /**
-*
-     * @description Communicates whether an active signal can be detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
-  signalPresent?:
-    | ((
-        args: SetInputLabelArgs,
-      ) => Promise<"TRUE" | "FALSE" | "UNKNOWN" | null>)
-    | "TRUE"
-    | "FALSE"
-    | "UNKNOWN"
-    | null;
-  /**
-*
-     * @description Communicates whether a physical connection is detected on this input.
-     *     If this value is not supported, it may be null or UNKNOWN.
-     *     - "TRUE":
-     *
-     *     - "FALSE":
-     *
-     *     - "UNKNOWN":
-     * @enum {string|null}
-     
-*/
-  connectionPresent?:
-    | ((
-        args: SetInputLabelArgs,
-      ) => Promise<"TRUE" | "FALSE" | "UNKNOWN" | null>)
-    | "TRUE"
-    | "FALSE"
-    | "UNKNOWN"
-    | null;
-};
+export type methodSetInputLabelsResult = SetInputLabelsResult;
 
-export type methodSetInputLabel = (
-  params: SetInputLabelParams,
-) => Promise<methodSetInputLabelResult>;
+export type methodSetInputLabels = (
+  params: SetInputLabelsParams,
+) => Promise<methodSetInputLabelsResult>;
 export type methodSetInputsARCModeResult = {
   /**
 *
@@ -2872,61 +2702,6 @@ export type methodSetNetworkConfigResult = {
 export type methodSetNetworkConfig = (
   params: SetNetworkConfigParams,
 ) => Promise<methodSetNetworkConfigResult>;
-export type methodSetOutputConnectionTypeResult = {
-  /**
-   * A unique identifier for this output. This is used when setting the active output.
-   */
-  id?: ((args: SetOutputConnectionTypeArgs) => Promise<string>) | string;
-  /**
-   * A user-friendly name for this output.
-   */
-  friendlyName?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<string>)
-    | string;
-  /**
-*
-     * @description A list of connection types that this output supports.
-     *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
-     *     A non-null value implies that the integration supports setting the output's connection type.
-     
-*/
-  connectionTypes?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
-    | KeyValuePair[]
-    | null;
-  /**
-*
-     * @description The active connectionType for this output. Even if connectionTypes is empty
-     *     or not supported, this field must be populated.
-     *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
-     *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
-     
-*/
-  connectionType?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<KeyValuePair>)
-    | KeyValuePair;
-  /**
-   * Details regarding the current output channel's destination.
-   */
-  destination?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<OutputDestination>)
-    | OutputDestination;
-  /**
-*
-     * @description The current state of audio on this output.
-     *     This may be null if the audio output channel does not report audio,
-     *     in which case the allAudio field on the outputs object should be used–if possible.
-     
-*/
-  audio?:
-    | ((args: SetOutputConnectionTypeArgs) => Promise<OutputAudio | null>)
-    | OutputAudio
-    | null;
-};
-
-export type methodSetOutputConnectionType = (
-  params: SetOutputConnectionTypeParams,
-) => Promise<methodSetOutputConnectionTypeResult>;
 export type methodSetOutputDestinationActiveResult = {
   /**
    * A unique identifier for this output. This is used when setting the active output.
@@ -2939,44 +2714,11 @@ export type methodSetOutputDestinationActiveResult = {
     | ((args: SetOutputDestinationActiveArgs) => Promise<string>)
     | string;
   /**
-*
-     * @description A list of connection types that this output supports.
-     *     For example: "Digital Optical", "Digital Coax", "RCA", "eARC", "Aux Port".
-     *     A non-null value implies that the integration supports setting the output's connection type.
-     
-*/
-  connectionTypes?:
-    | ((args: SetOutputDestinationActiveArgs) => Promise<KeyValuePair[] | null>)
-    | KeyValuePair[]
-    | null;
-  /**
-*
-     * @description The active connectionType for this output. Even if connectionTypes is empty
-     *     or not supported, this field must be populated.
-     *     For example a TV output may have the type "Digital Optical" and a canonicalId of "CONN:OPTICAL",
-     *     or "Internal Speaker" and a canonicalId of "CONN:INTERNAL".
-     
-*/
-  connectionType?:
-    | ((args: SetOutputDestinationActiveArgs) => Promise<KeyValuePair>)
-    | KeyValuePair;
-  /**
    * Details regarding the current output channel's destination.
    */
   destination?:
     | ((args: SetOutputDestinationActiveArgs) => Promise<OutputDestination>)
     | OutputDestination;
-  /**
-*
-     * @description The current state of audio on this output.
-     *     This may be null if the audio output channel does not report audio,
-     *     in which case the allAudio field on the outputs object should be used–if possible.
-     
-*/
-  audio?:
-    | ((args: SetOutputDestinationActiveArgs) => Promise<OutputAudio | null>)
-    | OutputAudio
-    | null;
 };
 
 export type methodSetOutputDestinationActive = (
@@ -3197,9 +2939,13 @@ export type Handler = {
    */
   setInputConnectionType?: methodSetInputConnectionType;
   /**
-   * Name an input, such as Apple TV or HDMI 1.
-   */
-  setInputLabel?: methodSetInputLabel;
+*
+         * @description Change the label(s) shown on the device for specified inputs.
+         *     For example, this could be used to set the on-device label
+         *     for the hdmi1 input to "Apple TV".
+         
+*/
+  setInputLabels?: methodSetInputLabels;
   /**
 *
          * @description Selects the target ARC mode for the display.
@@ -3226,10 +2972,6 @@ export type Handler = {
   setInputsCECMode?: methodSetInputsCECMode;
 
   setNetworkConfig?: methodSetNetworkConfig;
-  /**
-   * Output port type, such as HDMI or optical audio.
-   */
-  setOutputConnectionType?: methodSetOutputConnectionType;
   /**
    * Output port type, such as HDMI or optical audio.
    */
