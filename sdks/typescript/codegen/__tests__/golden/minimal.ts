@@ -52,12 +52,12 @@ export type Widget = {
 };
 export type methodGetWidgetResult = {
   /**
-* The widget's display name. 
-*/
+ * The widget's display name.
+ */
   name?: ((args: GetWidgetArgs) => Promise<string>) | string;
   /**
-* The widget's size. 
-*/
+ * The widget's size.
+ */
   size?: ((args: GetWidgetArgs) => Promise<number>) | number;
 }
 
@@ -68,12 +68,12 @@ export type methodPing = (params: PingParams) => Promise<methodPingResult>;
 
 export type Handler = {
   /**
-* Fetch a widget by id. 
-*/
+ * Fetch a widget by id.
+ */
   getWidget?: methodGetWidget;
   /**
-* Ping the device. 
-*/
+ * Ping the device.
+ */
   ping?: methodPing;
 }
 

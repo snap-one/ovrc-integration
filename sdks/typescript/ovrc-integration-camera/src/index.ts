@@ -790,30 +790,24 @@ export type methodDispatchAuthenticationPromptResult = {
    */
   id?: ((args: DispatchAuthenticationPromptArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+   * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+   * This will be displayed to the user.
+   */
   label?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<string>)
     | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+   * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+   * There is no way to report the validity of an individual field within the authentication method itself.
+   */
   valid?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<boolean>)
     | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+   * Format: uri
+   * A url to documentation describing how to set/configure this authentication method.
+   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+   */
   documentationURL?:
     | ((args: DispatchAuthenticationPromptArgs) => Promise<string | null>)
     | string
@@ -853,11 +847,9 @@ export type methodDispatchPowerReboot = (
 ) => Promise<methodDispatchPowerRebootResult>;
 export type methodGetAuthenticationResult = {
   /**
-*
-     * @description A list of authentication methods required or
-     *     available for a user to use.
-     
-*/
+   * A list of authentication methods required or
+   * available for a user to use.
+   */
   methods?:
     | ((args: GetAuthenticationArgs) => Promise<Authentication[] | null>)
     | Authentication[]
@@ -1003,26 +995,20 @@ export type methodSetAuthenticationResult = {
    */
   id?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
-     *     This will be displayed to the user.
-     
-*/
+   * A short description of the authentication method. For example: "Local Network Authentication", "Cloud Authentication", etc...
+   * This will be displayed to the user.
+   */
   label?: ((args: SetAuthenticationArgs) => Promise<string>) | string;
   /**
-*
-     * @description Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
-     *     There is no way to report the validity of an individual field within the authentication method itself.
-     
-*/
+   * Reports the state of this authentication method. If false, one or more of the fields are missing or invalid.
+   * There is no way to report the validity of an individual field within the authentication method itself.
+   */
   valid?: ((args: SetAuthenticationArgs) => Promise<boolean>) | boolean;
   /**
-*
-     * Format: uri
-     * @description A url to documentation describing how to set/configure this authentication method.
-     *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-     
-*/
+   * Format: uri
+   * A url to documentation describing how to set/configure this authentication method.
+   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
+   */
   documentationURL?:
     | ((args: SetAuthenticationArgs) => Promise<string | null>)
     | string
@@ -1058,11 +1044,9 @@ export type Handler = {
 
   dispatchFirmwareUpdate?: methodDispatchFirmwareUpdate;
   /**
-*
-         * @description Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
-         *     The resulting boolean reflects whether the reboot was dispatched.
-         
-*/
+   * Dispatch a device reboot. The integration should NOT wait until the reboot has completed.
+   * The resulting boolean reflects whether the reboot was dispatched.
+   */
   dispatchPowerReboot?: methodDispatchPowerReboot;
   /**
    * Authentication methods supported by the integration.
