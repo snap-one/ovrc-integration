@@ -1258,6 +1258,18 @@
             "array",
             "null"
           ]
+        },
+        "rotationPresetsSource": {
+          "description": "Where the data in the rotationPresets list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "type": "object"

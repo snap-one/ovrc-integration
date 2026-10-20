@@ -565,6 +565,17 @@ export type Input = {
    */
   arcModes?: KeyValuePair[] | null;
   /**
+   * @description Where the data in the arcModes list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  arcModesSource?: "HARD_CODED" | "API" | null;
+  /**
    * @description Communicates whether this input can be selected as the active input.
    *     This value reflects the current state of the input, not the overall capability of the device or integration.
    *     For example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.
@@ -582,6 +593,17 @@ export type Input = {
    *     See the inputs object's cecModes field for more information.
    */
   cecModes?: KeyValuePair[] | null;
+  /**
+   * @description Where the data in the cecModes list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  cecModesSource?: "HARD_CODED" | "API" | null;
   /**
    * @description Communicates whether a physical connection is detected on this input.
    *     If this value is not supported, it may be null or UNKNOWN.
@@ -605,6 +627,17 @@ export type Input = {
    *     A non-empty list implies that the integration supports setting the input's connection type.
    */
   connectionTypes?: KeyValuePair[] | null;
+  /**
+   * @description Where the data in the connectionTypes list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  connectionTypesSource?: "HARD_CODED" | "API" | null;
   /**
    * @description A user-friendly name for this input.
    *     This value provides a consistent identifier for the input, regardless of the device's internal naming.
@@ -666,6 +699,17 @@ export type InputsARCMode = {
    *     and the modes should be listed on the individual input(s) instead.
    */
   available?: KeyValuePair[] | null;
+  /**
+   * @description Where the data in the available list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 export type InputsCECMode = {
   /**
@@ -681,6 +725,17 @@ export type InputsCECMode = {
    *     and the modes should be listed on the individual input(s) instead.
    */
   available?: KeyValuePair[] | null;
+  /**
+   * @description Where the data in the available list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 /** @description The container for all authentication items. */
 export type IntegrationAuthentication = {
@@ -890,6 +945,17 @@ export type OutputDestination = {
    */
   available?: KeyValuePair[] | null;
   /**
+   * @description Where the data in the available list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
+  /**
    * @description A boolean reflecting whether the current output destination's
    *     "active" destination can be changed to one of the options provided in "available".
    *
@@ -927,6 +993,15 @@ export type Power = {
 export type PowerPowerSavingMode = {
   active?: KeyValuePair | null;
   available?: KeyValuePair[] | null;
+  /**
+   * @description - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 export type PowerPowerState = {
   /**
@@ -1126,10 +1201,13 @@ export type SetInputARCModeParams = {
     | "label"
     | "canActivate"
     | "connectionTypes"
+    | "connectionTypesSource"
     | "connectionType"
     | "cecModes"
+    | "cecModesSource"
     | "cecMode"
     | "arcModes"
+    | "arcModesSource"
     | "arcMode"
     | "signalPresent"
     | "connectionPresent"
@@ -1163,10 +1241,13 @@ export type SetInputCECModeParams = {
     | "label"
     | "canActivate"
     | "connectionTypes"
+    | "connectionTypesSource"
     | "connectionType"
     | "cecModes"
+    | "cecModesSource"
     | "cecMode"
     | "arcModes"
+    | "arcModesSource"
     | "arcMode"
     | "signalPresent"
     | "connectionPresent"
@@ -1200,10 +1281,13 @@ export type SetInputConnectionTypeParams = {
     | "label"
     | "canActivate"
     | "connectionTypes"
+    | "connectionTypesSource"
     | "connectionType"
     | "cecModes"
+    | "cecModesSource"
     | "cecMode"
     | "arcModes"
+    | "arcModesSource"
     | "arcMode"
     | "signalPresent"
     | "connectionPresent"
@@ -1240,10 +1324,13 @@ export type SetInputLabelsParams = {
     | "label"
     | "canActivate"
     | "connectionTypes"
+    | "connectionTypesSource"
     | "connectionType"
     | "cecModes"
+    | "cecModesSource"
     | "cecMode"
     | "arcModes"
+    | "arcModesSource"
     | "arcMode"
     | "signalPresent"
     | "connectionPresent"
@@ -1307,7 +1394,7 @@ export type SetInputsARCModeArgs = {
 };
 export type SetInputsARCModeParams = {
   args: SetInputsARCModeArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetInputsARCModeResponse = RPCMethodResult & {
   result?: SetInputsARCModeResult;
@@ -1336,7 +1423,7 @@ export type SetInputsCECModeArgs = {
 };
 export type SetInputsCECModeParams = {
   args: SetInputsCECModeArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetInputsCECModeResponse = RPCMethodResult & {
   result?: SetInputsCECModeResult;
@@ -1405,7 +1492,7 @@ export type SetPowerPowerSavingModeArgs = {
 };
 export type SetPowerPowerSavingModeParams = {
   args: SetPowerPowerSavingModeArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetPowerPowerSavingModeResponse = RPCMethodResult & {
   result?: SetPowerPowerSavingModeResult;
@@ -1491,7 +1578,7 @@ export type SetSystemCountryArgs = {
 };
 export type SetSystemCountryParams = {
   args: SetSystemCountryArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetSystemCountryResponse = RPCMethodResult & {
   result?: SetSystemCountryResult;
@@ -1541,7 +1628,7 @@ export type SetSystemLanguageArgs = {
 };
 export type SetSystemLanguageParams = {
   args: SetSystemLanguageArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetSystemLanguageResponse = RPCMethodResult & {
   result?: SetSystemLanguageResult;
@@ -1563,7 +1650,7 @@ export type SetVideoAspectRatioArgs = {
 };
 export type SetVideoAspectRatioParams = {
   args: SetVideoAspectRatioArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetVideoAspectRatioResponse = RPCMethodResult & {
   result?: SetVideoAspectRatioResult;
@@ -1585,7 +1672,7 @@ export type SetVideoPictureModeArgs = {
 };
 export type SetVideoPictureModeParams = {
   args: SetVideoPictureModeArgs;
-  includeFields?: ("available" | "active")[];
+  includeFields?: ("available" | "availableSource" | "active")[];
 };
 export type SetVideoPictureModeResponse = RPCMethodResult & {
   result?: SetVideoPictureModeResult;
@@ -1605,10 +1692,28 @@ export type System = {
 export type SystemCountry = {
   active?: KeyValuePair | null;
   available?: KeyValuePair[] | null;
+  /**
+   * @description - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 export type SystemLanguage = {
   active?: KeyValuePair | null;
   available?: KeyValuePair[] | null;
+  /**
+   * @description - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 export type Video = {
   aspectRatio?: VideoAspectRatio | null;
@@ -1621,6 +1726,15 @@ export type Video = {
 export type VideoAspectRatio = {
   active?: KeyValuePair | null;
   available?: KeyValuePair[] | null;
+  /**
+   * @description - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 export type VideoLevel = {
   max?: number;
@@ -1631,6 +1745,15 @@ export type VideoLevel = {
 export type VideoPictureMode = {
   active?: KeyValuePair | null;
   available?: KeyValuePair[] | null;
+  /**
+   * @description - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?: "HARD_CODED" | "API" | null;
 };
 /** @description Represents the volume level of an external output, such as the TV speakers, an ARC-connected soundbar, or a headphone jack. */
 export type Volume = {
@@ -2144,6 +2267,21 @@ export type methodSetInputARCModeResult = {
     | KeyValuePair[]
     | null;
   /**
+   * Where the data in the connectionTypes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  connectionTypesSource?:
+    | ((args: SetInputARCModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
+  /**
    * The active connectionType for this input. Even if connectionTypes is empty
    * or not supported, this field must be populated. For example a plain HDMI input
    * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
@@ -2159,6 +2297,21 @@ export type methodSetInputARCModeResult = {
   cecModes?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the cecModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  cecModesSource?:
+    | ((args: SetInputARCModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active CEC mode for this input.
@@ -2177,6 +2330,21 @@ export type methodSetInputARCModeResult = {
   arcModes?:
     | ((args: SetInputARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the arcModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  arcModesSource?:
+    | ((args: SetInputARCModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active ARC mode for this input.
@@ -2260,6 +2428,21 @@ export type methodSetInputCECModeResult = {
     | KeyValuePair[]
     | null;
   /**
+   * Where the data in the connectionTypes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  connectionTypesSource?:
+    | ((args: SetInputCECModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
+  /**
    * The active connectionType for this input. Even if connectionTypes is empty
    * or not supported, this field must be populated. For example a plain HDMI input
    * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
@@ -2275,6 +2458,21 @@ export type methodSetInputCECModeResult = {
   cecModes?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the cecModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  cecModesSource?:
+    | ((args: SetInputCECModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active CEC mode for this input.
@@ -2293,6 +2491,21 @@ export type methodSetInputCECModeResult = {
   arcModes?:
     | ((args: SetInputCECModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the arcModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  arcModesSource?:
+    | ((args: SetInputCECModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active ARC mode for this input.
@@ -2383,6 +2596,23 @@ export type methodSetInputConnectionTypeResult = {
     | KeyValuePair[]
     | null;
   /**
+   * Where the data in the connectionTypes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  connectionTypesSource?:
+    | ((
+        args: SetInputConnectionTypeArgs,
+      ) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
+  /**
    * The active connectionType for this input. Even if connectionTypes is empty
    * or not supported, this field must be populated. For example a plain HDMI input
    * may have the type "hdmi" and a canonicalId of "CONN:HDMI".
@@ -2398,6 +2628,23 @@ export type methodSetInputConnectionTypeResult = {
   cecModes?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the cecModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  cecModesSource?:
+    | ((
+        args: SetInputConnectionTypeArgs,
+      ) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active CEC mode for this input.
@@ -2416,6 +2663,23 @@ export type methodSetInputConnectionTypeResult = {
   arcModes?:
     | ((args: SetInputConnectionTypeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the arcModes list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  arcModesSource?:
+    | ((
+        args: SetInputConnectionTypeArgs,
+      ) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * The active ARC mode for this input.
@@ -2483,6 +2747,21 @@ export type methodSetInputsARCModeResult = {
   available?:
     | ((args: SetInputsARCModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * Where the data in the available list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetInputsARCModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
   /**
    * If the display does not support reporting the current ARC mode on a per-input basis, this field may be populated with the active ARC mode.
@@ -2555,6 +2834,21 @@ export type methodSetInputsCECModeResult = {
     | KeyValuePair[]
     | null;
   /**
+   * Where the data in the available list comes from.
+   * A null value is equivalent to "HARD_CODED".
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetInputsCECModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
+  /**
    * If the display does not support reporting the current CEC mode on a per-input basis, this field may be populated with the active CEC mode.
    * See the cecModes field for more information.
    */
@@ -2606,6 +2900,21 @@ export type methodSetPowerPowerSavingModeResult = {
   available?:
     | ((args: SetPowerPowerSavingModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((
+        args: SetPowerPowerSavingModeArgs,
+      ) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
 
   active?:
@@ -2678,6 +2987,19 @@ export type methodSetSystemCountryResult = {
     | ((args: SetSystemCountryArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
+  /**
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetSystemCountryArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
 
   active?:
     | ((args: SetSystemCountryArgs) => Promise<KeyValuePair | null>)
@@ -2702,6 +3024,19 @@ export type methodSetSystemLanguageResult = {
     | ((args: SetSystemLanguageArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
+  /**
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetSystemLanguageArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
 
   active?:
     | ((args: SetSystemLanguageArgs) => Promise<KeyValuePair | null>)
@@ -2717,6 +3052,19 @@ export type methodSetVideoAspectRatioResult = {
     | ((args: SetVideoAspectRatioArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
     | null;
+  /**
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetVideoAspectRatioArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
+    | null;
 
   active?:
     | ((args: SetVideoAspectRatioArgs) => Promise<KeyValuePair | null>)
@@ -2731,6 +3079,19 @@ export type methodSetVideoPictureModeResult = {
   available?:
     | ((args: SetVideoPictureModeArgs) => Promise<KeyValuePair[] | null>)
     | KeyValuePair[]
+    | null;
+  /**
+   * - "HARD_CODED": The list is derived from a static/hard-coded list,
+   * within the integration itself. Therefore, the list may contain values
+   * that are not relevant to or supported by the current device.
+   *
+   * - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  availableSource?:
+    | ((args: SetVideoPictureModeArgs) => Promise<"HARD_CODED" | "API" | null>)
+    | "HARD_CODED"
+    | "API"
     | null;
 
   active?:

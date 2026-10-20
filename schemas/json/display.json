@@ -1643,6 +1643,18 @@
             "null"
           ]
         },
+        "arcModesSource": {
+          "description": "Where the data in the arcModes list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "canActivate": {
           "description": "Communicates whether this input can be selected as the active input.\nThis value reflects the current state of the input, not the overall capability of the device or integration.\nFor example, an HDMI input with no cable connected may have canActivate = false, even though the device supports activating that input.",
           "type": "boolean"
@@ -1665,6 +1677,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "cecModesSource": {
+          "description": "Where the data in the cecModes list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         },
@@ -1692,6 +1716,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "connectionTypesSource": {
+          "description": "Where the data in the connectionTypes list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         },
@@ -1807,6 +1843,18 @@
             "array",
             "null"
           ]
+        },
+        "availableSource": {
+          "description": "Where the data in the available list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "type": "object"
@@ -1831,6 +1879,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "availableSource": {
+          "description": "Where the data in the available list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         }
@@ -2134,6 +2194,18 @@
             "null"
           ]
         },
+        "availableSource": {
+          "description": "Where the data in the available list comes from.\nA null value is equivalent to \"HARD_CODED\".\n- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "canSelectActive": {
           "description": "A boolean reflecting whether the current output destination's\n\"active\" destination can be changed to one of the options provided in \"available\".\n\nA null value communicates selection is not enabled at the integration level,\na false value communicates the device or output channel does not currently support the action,\nand a true value communicates selection is supported via the setOutputDestinationActive rpc method.",
           "type": [
@@ -2230,6 +2302,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "availableSource": {
+          "description": "- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         }
@@ -2788,10 +2872,13 @@
               "label",
               "canActivate",
               "connectionTypes",
+              "connectionTypesSource",
               "connectionType",
               "cecModes",
+              "cecModesSource",
               "cecMode",
               "arcModes",
+              "arcModesSource",
               "arcMode",
               "signalPresent",
               "connectionPresent"
@@ -2877,10 +2964,13 @@
               "label",
               "canActivate",
               "connectionTypes",
+              "connectionTypesSource",
               "connectionType",
               "cecModes",
+              "cecModesSource",
               "cecMode",
               "arcModes",
+              "arcModesSource",
               "arcMode",
               "signalPresent",
               "connectionPresent"
@@ -2966,10 +3056,13 @@
               "label",
               "canActivate",
               "connectionTypes",
+              "connectionTypesSource",
               "connectionType",
               "cecModes",
+              "cecModesSource",
               "cecMode",
               "arcModes",
+              "arcModesSource",
               "arcMode",
               "signalPresent",
               "connectionPresent"
@@ -3054,10 +3147,13 @@
               "label",
               "canActivate",
               "connectionTypes",
+              "connectionTypesSource",
               "connectionType",
               "cecModes",
+              "cecModesSource",
               "cecMode",
               "arcModes",
+              "arcModesSource",
               "arcMode",
               "signalPresent",
               "connectionPresent"
@@ -3138,6 +3234,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -3296,6 +3393,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -3524,6 +3622,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -3759,6 +3858,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -3909,6 +4009,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -3983,6 +4084,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -4057,6 +4159,7 @@
           "items": {
             "enum": [
               "available",
+              "availableSource",
               "active"
             ],
             "type": "string"
@@ -4172,6 +4275,18 @@
             "array",
             "null"
           ]
+        },
+        "availableSource": {
+          "description": "- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "type": "object"
@@ -4194,6 +4309,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "availableSource": {
+          "description": "- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         }
@@ -4285,6 +4412,18 @@
             "array",
             "null"
           ]
+        },
+        "availableSource": {
+          "description": "- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "type": "object"
@@ -4324,6 +4463,18 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "availableSource": {
+          "description": "- \"HARD_CODED\": The list is derived from a static/hard-coded list,\nwithin the integration itself. Therefore, the list may contain values\nthat are not relevant to or supported by the current device.\n\n- \"API\": The list is derived from a cloud or on-device api.",
+          "enum": [
+            "HARD_CODED",
+            "API",
+            null
+          ],
+          "type": [
+            "string",
             "null"
           ]
         }
