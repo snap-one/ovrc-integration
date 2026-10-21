@@ -553,6 +553,20 @@ export type NetworkConfigInput = {
 /** @description A network interface on the device, such as a Wi-Fi adapter or Ethernet port. */
 export type NetworkInterface = {
   /**
+   * @description The adapter type of this interface.
+   *     If the value of this field is "UNKNOWN",
+   *     but wifi is non-null, "WIRELESS" will be inferred as the type.
+   *
+   *     A null value is equivalent to "UNKNOWN".
+   *     - "UNKNOWN":
+   *
+   *     - "WIRED":
+   *
+   *     - "WIRELESS":
+   * @enum {string|null}
+   */
+  adapterType?: "UNKNOWN" | "WIRED" | "WIRELESS" | null;
+  /**
    * @description Whether this network interface can be enabled via the integration.
    *     Null indicates the integration does not support changing the enabled status of
    *     any network interfaces. False indicates the network interface cannot be enabled,

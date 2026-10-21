@@ -1901,6 +1901,17 @@
       "NetworkInterface": {
         "description": "A network interface on the device, such as a Wi-Fi adapter or Ethernet port.",
         "properties": {
+          "adapterType": {
+            "description": "The adapter type of this interface.\nIf the value of this field is \"UNKNOWN\",\nbut wifi is non-null, \"WIRELESS\" will be inferred as the type.\n\nA null value is equivalent to \"UNKNOWN\".\n- \"UNKNOWN\": \n\n- \"WIRED\": \n\n- \"WIRELESS\":",
+            "enum": [
+              "UNKNOWN",
+              "WIRED",
+              "WIRELESS",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
           "canEnable": {
             "description": "Whether this network interface can be enabled via the integration.\nNull indicates the integration does not support changing the enabled status of\nany network interfaces. False indicates the network interface cannot be enabled,\nbut the integration does support changing the enabled status of network interfaces\nwhere canEnable is true.",
             "nullable": true,
