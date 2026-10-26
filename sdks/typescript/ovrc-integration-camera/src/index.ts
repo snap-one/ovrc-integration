@@ -435,6 +435,17 @@ export type ImageSettingsSource = {
    *     The unit of this value is degrees.
    */
   rotationPresets?: number[] | null;
+  /**
+   * @description Where the data in the rotationPresets list comes from.
+   *     A null value is equivalent to "HARD_CODED".
+   *     - "HARD_CODED": The list is derived from a static/hard-coded list,
+   *     within the integration itself. Therefore, the list may contain values
+   *     that are not relevant to or supported by the current device.
+   *
+   *     - "API": The list is derived from a cloud or on-device api.
+   * @enum {string|null}
+   */
+  rotationPresetsSource?: "HARD_CODED" | "API" | null;
 };
 /** @description The container for all authentication items. */
 export type IntegrationAuthentication = {
@@ -541,6 +552,20 @@ export type NetworkConfigInput = {
 };
 /** @description A network interface on the device, such as a Wi-Fi adapter or Ethernet port. */
 export type NetworkInterface = {
+  /**
+   * @description The adapter type of this interface.
+   *     If the value of this field is "UNKNOWN",
+   *     but wifi is non-null, "WIRELESS" will be inferred as the type.
+   *
+   *     A null value is equivalent to "UNKNOWN".
+   *     - "UNKNOWN":
+   *
+   *     - "WIRED":
+   *
+   *     - "WIRELESS":
+   * @enum {string|null}
+   */
+  adapterType?: "UNKNOWN" | "WIRED" | "WIRELESS" | null;
   /**
    * @description Whether this network interface can be enabled via the integration.
    *     Null indicates the integration does not support changing the enabled status of

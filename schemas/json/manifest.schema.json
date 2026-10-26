@@ -4,7 +4,14 @@
   "title": "Integration Manifest",
   "description": "Schema for the integration manifest.",
   "type": "object",
-  "required": ["name", "version", "description", "category", "identification", "kind"],
+  "required": [
+    "name",
+    "version",
+    "description",
+    "category",
+    "identification",
+    "kind"
+  ],
   "properties": {
     "name": {
       "type": "string",
@@ -39,10 +46,75 @@
         }
       },
       "additionalProperties": false
+    },
+    "permissions": {
+      "type": "object",
+      "description": "Network access the integration requests.",
+      "properties": {
+        "hosts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/permissionHost"
+          },
+          "description": "Public hosts the integration may connect to (e.g google.com)."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
   "$defs": {
+    "permissionHost": {
+      "type": "object",
+      "required": ["type", "host"],
+      "properties": {
+        "type": {
+          "enum": ["IP", "DOMAIN"],
+          "description": "Kind of host."
+        },
+        "host": {
+          "type": "string",
+          "description": "IPv4/IPv6 address when type is IP, domain name when type is DOMAIN. Example: 192.168.1.10 or api.example.com"
+        },
+        "ports": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "description": "Allowed ports. When omitted, all ports are allowed, which requires additional justification."
+        },
+        "protocols": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["tcp", "udp"]
+          },
+          "description": "Allowed protocols. When omitted, all protocols are allowed, which requires additional justification."
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": { "type": { "const": "IP" } }
+      },
+      "then": {
+        "properties": {
+          "host": {
+            "anyOf": [{ "format": "ipv4" }, { "format": "ipv6" }]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "host": { "format": "hostname" }
+        }
+      }
+    },
     "discovery": {
       "description": "A single object, or an $or of discoveryData objects.",
       "oneOf": [
