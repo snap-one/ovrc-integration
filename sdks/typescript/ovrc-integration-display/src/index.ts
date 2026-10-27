@@ -773,20 +773,32 @@ export type IPv4Config = {
 export type IPv4Settings = {
   /**
    * @description The currently active address type for this network interface.
-   *     - "DHCP":
+   *     - "DHCP": Address, netmask, gateway, and DNS are obtained via DHCP.
    *
-   *     - "DHCP_STATIC_DNS":
+   *     - "DHCP_STATIC_DNS": DHCP address, netmask, and gateway, with static DNS.
    *
-   *     - "STATIC":
+   *     - "STATIC": Address, netmask, gateway, and DNS are statically configured.
+   *
+   *     - "STATIC_DHCP_DNS": Static address, netmask, and gateway, with DNS obtained via DHCP.
    * @enum {string|null}
    */
-  addressType?: "DHCP" | "DHCP_STATIC_DNS" | "STATIC" | null;
+  addressType?:
+    | "DHCP"
+    | "DHCP_STATIC_DNS"
+    | "STATIC"
+    | "STATIC_DHCP_DNS"
+    | null;
   /**
    * @description A list of supported address types for this network interface,
    *     which can be changed if canSet is true.
    */
-  addressTypes?: ("DHCP" | "DHCP_STATIC_DNS" | "STATIC")[] | null;
-  /** @description If true, the integration must support setting the IPv4 configuration on this interface. If false, the effective configuration is read-only and cannot be modified by the integration. */
+  addressTypes?:
+    | ("DHCP" | "DHCP_STATIC_DNS" | "STATIC" | "STATIC_DHCP_DNS")[]
+    | null;
+  /**
+   * @description Whether this interface's IPv4 configuration can be changed right now, given the
+   *     device's current state. Independent of enabled and canEnable on the interface.
+   */
   canSet?: boolean;
   /**
    * @description The number of dns servers the network interface supports.
@@ -900,14 +912,16 @@ export type NetworkInterfaceConfigInput = {
 export type NetworkIPv4ConfigInput = {
   /**
    * @description The address type to use for the network interface.
-   *     - "DHCP":
+   *     - "DHCP": Address, netmask, gateway, and DNS are obtained via DHCP.
    *
-   *     - "DHCP_STATIC_DNS":
+   *     - "DHCP_STATIC_DNS": DHCP address, netmask, and gateway, with static DNS.
    *
-   *     - "STATIC":
+   *     - "STATIC": Address, netmask, gateway, and DNS are statically configured.
+   *
+   *     - "STATIC_DHCP_DNS": Static address, netmask, and gateway, with DNS obtained via DHCP.
    * @enum {string}
    */
-  addressType: "DHCP" | "DHCP_STATIC_DNS" | "STATIC";
+  addressType: "DHCP" | "DHCP_STATIC_DNS" | "STATIC" | "STATIC_DHCP_DNS";
   /** @description Static IPv4 configuration, if applicable. */
   static?: IPv4StaticConfigInput | null;
 };

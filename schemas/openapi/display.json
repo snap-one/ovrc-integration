@@ -1456,11 +1456,12 @@
         "description": "IPv4 network settings for a network interface, including the effective configuration, static configuration, and supported address types.",
         "properties": {
           "addressType": {
-            "description": "The currently active address type for this network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+            "description": "The currently active address type for this network interface.\n- \"DHCP\": Address, netmask, gateway, and DNS are obtained via DHCP.\n\n- \"DHCP_STATIC_DNS\": DHCP address, netmask, and gateway, with static DNS.\n\n- \"STATIC\": Address, netmask, gateway, and DNS are statically configured.\n\n- \"STATIC_DHCP_DNS\": Static address, netmask, and gateway, with DNS obtained via DHCP.",
             "enum": [
               "DHCP",
               "DHCP_STATIC_DNS",
               "STATIC",
+              "STATIC_DHCP_DNS",
               null
             ],
             "nullable": true,
@@ -1469,11 +1470,12 @@
           "addressTypes": {
             "description": "A list of supported address types for this network interface,\nwhich can be changed if canSet is true.",
             "items": {
-              "description": "- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+              "description": "- \"DHCP\": Address, netmask, gateway, and DNS are obtained via DHCP.\n\n- \"DHCP_STATIC_DNS\": DHCP address, netmask, and gateway, with static DNS.\n\n- \"STATIC\": Address, netmask, gateway, and DNS are statically configured.\n\n- \"STATIC_DHCP_DNS\": Static address, netmask, and gateway, with DNS obtained via DHCP.",
               "enum": [
                 "DHCP",
                 "DHCP_STATIC_DNS",
-                "STATIC"
+                "STATIC",
+                "STATIC_DHCP_DNS"
               ],
               "type": "string"
             },
@@ -1481,7 +1483,7 @@
             "type": "array"
           },
           "canSet": {
-            "description": "If true, the integration must support setting the IPv4 configuration on this interface. If false, the effective configuration is read-only and cannot be modified by the integration.",
+            "description": "Whether this interface's IPv4 configuration can be changed right now, given the \ndevice's current state. Independent of enabled and canEnable on the interface.",
             "type": "boolean"
           },
           "dnsServerCount": {
@@ -1875,11 +1877,12 @@
       "NetworkIPv4ConfigInput": {
         "properties": {
           "addressType": {
-            "description": "The address type to use for the network interface.\n- \"DHCP\": \n\n- \"DHCP_STATIC_DNS\": \n\n- \"STATIC\":",
+            "description": "The address type to use for the network interface.\n- \"DHCP\": Address, netmask, gateway, and DNS are obtained via DHCP.\n\n- \"DHCP_STATIC_DNS\": DHCP address, netmask, and gateway, with static DNS.\n\n- \"STATIC\": Address, netmask, gateway, and DNS are statically configured.\n\n- \"STATIC_DHCP_DNS\": Static address, netmask, and gateway, with DNS obtained via DHCP.",
             "enum": [
               "DHCP",
               "DHCP_STATIC_DNS",
-              "STATIC"
+              "STATIC",
+              "STATIC_DHCP_DNS"
             ],
             "type": "string"
           },
