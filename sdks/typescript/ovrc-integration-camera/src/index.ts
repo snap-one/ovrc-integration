@@ -364,6 +364,77 @@ export type GetProfilesResponse = RPCMethodResult & {
   result?: GetProfilesResult;
 };
 export type GetProfilesResult = Profiles | null;
+export type GetSddp = RPCRequestBase & {
+  /** @enum {string} */
+  method: "getSddp";
+  params: GetSddpParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "getSddp";
+};
+export type GetSddpArgs = Record<string, unknown>;
+export type GetSddpParams = {
+  args: GetSddpArgs;
+  includeFields?: ("enabled" | "canSetEnabled")[];
+};
+export type GetSddpResponse = RPCMethodResult & {
+  result?: GetSddpResult;
+};
+export type GetSddpResult = SDDP | null;
+export type GetSnmp = RPCRequestBase & {
+  /** @enum {string} */
+  method: "getSnmp";
+  params: GetSnmpParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "getSnmp";
+};
+export type GetSnmpArgs = Record<string, unknown>;
+export type GetSnmpCredentials = RPCRequestBase & {
+  /** @enum {string} */
+  method: "getSnmpCredentials";
+  params: GetSnmpCredentialsParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "getSnmpCredentials";
+};
+export type GetSnmpCredentialsArgs = Record<string, unknown>;
+export type GetSnmpCredentialsParams = {
+  args: GetSnmpCredentialsArgs;
+  includeFields?: (
+    | "v2ReadCommunity"
+    | "v2WriteCommunity"
+    | "v3ReadUser"
+    | "v3WriteUser"
+  )[];
+};
+export type GetSnmpCredentialsResponse = RPCMethodResult & {
+  result?: GetSnmpCredentialsResult;
+};
+export type GetSnmpCredentialsResult = SNMPCredentials | null;
+export type GetSnmpParams = {
+  args: GetSnmpArgs;
+  includeFields?: (
+    | "enabled"
+    | "canSetEnabled"
+    | "canSetCredentials"
+    | "v2"
+    | "v3"
+  )[];
+};
+export type GetSnmpResponse = RPCMethodResult & {
+  result?: GetSnmpResult;
+};
+export type GetSnmpResult = SNMP | null;
 /** @description System-level metadata reported by the camera. */
 export type GetSystem = RPCRequestBase & {
   /** @enum {string} */
@@ -681,9 +752,15 @@ export type RPCMethod =
   | GetNetwork
   | GetPower
   | GetProfiles
+  | GetSddp
+  | GetSnmp
+  | GetSnmpCredentials
   | GetSystem
   | SetAuthentication
-  | SetNetworkConfig;
+  | SetNetworkConfig
+  | SetSDDPEnabled
+  | SetSNMPCredentials
+  | SetSNMPEnabled;
 export type RPCMethodResult = {
   id: string;
   /** @enum {string} */
@@ -708,9 +785,23 @@ export type RPCSuccessResponse =
   | GetNetworkResponse
   | GetPowerResponse
   | GetProfilesResponse
+  | GetSddpResponse
+  | GetSnmpResponse
+  | GetSnmpCredentialsResponse
   | GetSystemResponse
   | SetAuthenticationResponse
-  | SetNetworkConfigResponse;
+  | SetNetworkConfigResponse
+  | SetSDDPEnabledResponse
+  | SetSNMPCredentialsResponse
+  | SetSNMPEnabledResponse;
+export type SDDP = {
+  /**
+   * @description Whether SDDP can be enabled or disabled right now.
+   *     Null indicates the integration does not support enabling or disabling SDDP.
+   */
+  canSetEnabled?: boolean | null;
+  enabled?: boolean;
+};
 export type SetAuthentication = RPCRequestBase & {
   /** @enum {string} */
   method: "setAuthentication";
@@ -755,6 +846,269 @@ export type SetNetworkConfigResponse = RPCMethodResult & {
   result?: SetNetworkConfigResult;
 };
 export type SetNetworkConfigResult = Network;
+export type SetSDDPEnabled = RPCRequestBase & {
+  /** @enum {string} */
+  method: "setSDDPEnabled";
+  params: SetSDDPEnabledParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "setSDDPEnabled";
+};
+export type SetSDDPEnabledArgs = {
+  enabled: boolean;
+};
+export type SetSDDPEnabledParams = {
+  args: SetSDDPEnabledArgs;
+  includeFields?: ("enabled" | "canSetEnabled")[];
+};
+export type SetSDDPEnabledResponse = RPCMethodResult & {
+  result?: SetSDDPEnabledResult;
+};
+export type SetSDDPEnabledResult = SDDP;
+export type SetSNMPCredentials = RPCRequestBase & {
+  /** @enum {string} */
+  method: "setSNMPCredentials";
+  params: SetSNMPCredentialsParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "setSNMPCredentials";
+};
+export type SetSNMPCredentialsArgs = {
+  input: SNMPCredentialsInput;
+};
+export type SetSNMPCredentialsParams = {
+  args: SetSNMPCredentialsArgs;
+  includeFields?: (
+    | "enabled"
+    | "canSetEnabled"
+    | "canSetCredentials"
+    | "v2"
+    | "v3"
+  )[];
+};
+export type SetSNMPCredentialsResponse = RPCMethodResult & {
+  result?: SetSNMPCredentialsResult;
+};
+export type SetSNMPCredentialsResult = SNMP;
+export type SetSNMPEnabled = RPCRequestBase & {
+  /** @enum {string} */
+  method: "setSNMPEnabled";
+  params: SetSNMPEnabledParams;
+} & {
+  /**
+   * @description discriminator enum property added by openapi-typescript
+   * @enum {string}
+   */
+  method: "setSNMPEnabled";
+};
+export type SetSNMPEnabledArgs = {
+  input: SNMPEnabledInput;
+};
+export type SetSNMPEnabledParams = {
+  args: SetSNMPEnabledArgs;
+  includeFields?: (
+    | "enabled"
+    | "canSetEnabled"
+    | "canSetCredentials"
+    | "v2"
+    | "v3"
+  )[];
+};
+export type SetSNMPEnabledResponse = RPCMethodResult & {
+  result?: SetSNMPEnabledResult;
+};
+export type SetSNMPEnabledResult = SNMP;
+/** @description The device's SNMP agent configuration. */
+export type SNMP = {
+  /**
+   * @description Whether communities and v3 users can be changed right now.
+   *     Null indicates the integration does not support setting SNMP credentials.
+   */
+  canSetCredentials?: boolean | null;
+  /**
+   * @description Whether SNMP can be enabled or disabled right now.
+   *     Null indicates the integration does not support enabling or disabling SNMP.
+   */
+  canSetEnabled?: boolean | null;
+  /**
+   * @description Whether the SNMP agent is enabled.
+   *     Null if the device has no global toggle; see v2.enabled and v3.enabled.
+   */
+  enabled?: boolean | null;
+  /** @description SNMPv1/v2c settings. Null if the device does not support v1/v2c. */
+  v2?: SNMPv2 | null;
+  /** @description SNMPv3 settings. Null if the device does not support v3. */
+  v3?: SNMPv3 | null;
+};
+/** @description A secret value, such as a community string or passphrase. */
+export type SNMPCredential = {
+  credentialType?: AuthenticationFieldCredentialType;
+  /** @description Null if the device does not expose the value. */
+  value?: string | null;
+};
+export type SNMPCredentialInput = {
+  /** @description Null keeps the current value. */
+  value?: string | null;
+};
+/** @description SNMP secrets. Served live from the device, never cached. */
+export type SNMPCredentials = {
+  /** @description Null if read-only v1/v2c access is not configured. */
+  v2ReadCommunity?: SNMPCredential | null;
+  /** @description Null if read-write v1/v2c access is not configured. */
+  v2WriteCommunity?: SNMPCredential | null;
+  /** @description Null if the v3 read-only user is not configured. */
+  v3ReadUser?: SNMPv3UserCredentials | null;
+  /** @description Null if the v3 read-write user is not configured. */
+  v3WriteUser?: SNMPv3UserCredentials | null;
+};
+export type SNMPCredentialsInput = {
+  /** @description Null leaves the v1/v2c communities unchanged. */
+  v2?: SNMPv2CredentialsInput | null;
+  /** @description Null leaves the v3 users unchanged. */
+  v3?: SNMPv3UsersInput | null;
+};
+/** @description Null fields are left unchanged. */
+export type SNMPEnabledInput = {
+  enabled?: boolean | null;
+  v2Enabled?: boolean | null;
+  v3Enabled?: boolean | null;
+};
+export type SNMPv2 = {
+  enabled?: boolean;
+  /** @description Whether a read-only community is configured. */
+  readAccess?: boolean;
+  /** @description Whether a read-write community is configured. */
+  writeAccess?: boolean;
+};
+/** @description Replaces the v1/v2c communities. */
+export type SNMPv2CredentialsInput = {
+  /** @description Null removes read-only access. */
+  readCommunity?: SNMPCredentialInput | null;
+  /** @description Null removes read-write access. */
+  writeCommunity?: SNMPCredentialInput | null;
+};
+export type SNMPv3 = {
+  /** @description The authentication protocols this device supports. */
+  authProtocols?:
+    | ("MD5" | "SHA" | "SHA224" | "SHA256" | "SHA384" | "SHA512")[]
+    | null;
+  enabled?: boolean;
+  /** @description The privacy protocols this device supports. */
+  privProtocols?:
+    | ("DES" | "TRIPLE_DES" | "AES128" | "AES192" | "AES256")[]
+    | null;
+  /** @description The user granted read-only access. Null if not configured. */
+  readUser?: SNMPv3User | null;
+  /** @description The user granted read-write access. Null if not configured. */
+  writeUser?: SNMPv3User | null;
+};
+export type SNMPv3User = {
+  /**
+   * @description Null indicates no authentication.
+   *     - "MD5":
+   *
+   *     - "SHA":
+   *
+   *     - "SHA224":
+   *
+   *     - "SHA256":
+   *
+   *     - "SHA384":
+   *
+   *     - "SHA512":
+   * @enum {string|null}
+   */
+  authProtocol?:
+    | "MD5"
+    | "SHA"
+    | "SHA224"
+    | "SHA256"
+    | "SHA384"
+    | "SHA512"
+    | null;
+  /**
+   * @description Null indicates no encryption. Requires authProtocol.
+   *     - "DES":
+   *
+   *     - "TRIPLE_DES":
+   *
+   *     - "AES128":
+   *
+   *     - "AES192":
+   *
+   *     - "AES256":
+   * @enum {string|null}
+   */
+  privProtocol?: "DES" | "TRIPLE_DES" | "AES128" | "AES192" | "AES256" | null;
+  username?: string;
+};
+export type SNMPv3UserCredentials = {
+  authPassphrase?: SNMPCredential | null;
+  privPassphrase?: SNMPCredential | null;
+};
+export type SNMPv3UserInput = {
+  /**
+   * @description Null keeps the current value.
+   *     Required when authProtocol changes or the user is new.
+   */
+  authPassphrase?: string | null;
+  /**
+   * @description Null disables authentication.
+   *     - "MD5":
+   *
+   *     - "SHA":
+   *
+   *     - "SHA224":
+   *
+   *     - "SHA256":
+   *
+   *     - "SHA384":
+   *
+   *     - "SHA512":
+   * @enum {string|null}
+   */
+  authProtocol?:
+    | "MD5"
+    | "SHA"
+    | "SHA224"
+    | "SHA256"
+    | "SHA384"
+    | "SHA512"
+    | null;
+  /**
+   * @description Null keeps the current value.
+   *     Required when privProtocol changes or the user is new.
+   */
+  privPassphrase?: string | null;
+  /**
+   * @description Null disables encryption. Requires authProtocol.
+   *     - "DES":
+   *
+   *     - "TRIPLE_DES":
+   *
+   *     - "AES128":
+   *
+   *     - "AES192":
+   *
+   *     - "AES256":
+   * @enum {string|null}
+   */
+  privProtocol?: "DES" | "TRIPLE_DES" | "AES128" | "AES192" | "AES256" | null;
+  username: string;
+};
+/** @description Replaces the v3 users. */
+export type SNMPv3UsersInput = {
+  /** @description Null removes the read-only user. */
+  readUser?: SNMPv3UserInput | null;
+  /** @description Null removes the read-write user. */
+  writeUser?: SNMPv3UserInput | null;
+};
 /** @description System metadata reported by the camera. */
 export type System = {
   /** @description Brand reported by the camera. */
@@ -978,6 +1332,90 @@ export type methodGetProfilesResult = {
 export type methodGetProfiles = (
   params: GetProfilesParams,
 ) => Promise<methodGetProfilesResult>;
+export type methodGetSddpResult = {
+  enabled?: ((args: GetSddpArgs) => Promise<boolean>) | boolean;
+  /**
+   * Whether SDDP can be enabled or disabled right now.
+   * Null indicates the integration does not support enabling or disabling SDDP.
+   */
+  canSetEnabled?:
+    | ((args: GetSddpArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+};
+
+export type methodGetSddp = (
+  params: GetSddpParams,
+) => Promise<methodGetSddpResult>;
+export type methodGetSnmpResult = {
+  /**
+   * Whether the SNMP agent is enabled.
+   * Null if the device has no global toggle; see v2.enabled and v3.enabled.
+   */
+  enabled?: ((args: GetSnmpArgs) => Promise<boolean | null>) | boolean | null;
+  /**
+   * Whether SNMP can be enabled or disabled right now.
+   * Null indicates the integration does not support enabling or disabling SNMP.
+   */
+  canSetEnabled?:
+    | ((args: GetSnmpArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * Whether communities and v3 users can be changed right now.
+   * Null indicates the integration does not support setting SNMP credentials.
+   */
+  canSetCredentials?:
+    | ((args: GetSnmpArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * SNMPv1/v2c settings. Null if the device does not support v1/v2c.
+   */
+  v2?: ((args: GetSnmpArgs) => Promise<SNMPv2 | null>) | SNMPv2 | null;
+  /**
+   * SNMPv3 settings. Null if the device does not support v3.
+   */
+  v3?: ((args: GetSnmpArgs) => Promise<SNMPv3 | null>) | SNMPv3 | null;
+};
+
+export type methodGetSnmp = (
+  params: GetSnmpParams,
+) => Promise<methodGetSnmpResult>;
+export type methodGetSnmpCredentialsResult = {
+  /**
+   * Null if read-only v1/v2c access is not configured.
+   */
+  v2ReadCommunity?:
+    | ((args: GetSnmpCredentialsArgs) => Promise<SNMPCredential | null>)
+    | SNMPCredential
+    | null;
+  /**
+   * Null if read-write v1/v2c access is not configured.
+   */
+  v2WriteCommunity?:
+    | ((args: GetSnmpCredentialsArgs) => Promise<SNMPCredential | null>)
+    | SNMPCredential
+    | null;
+  /**
+   * Null if the v3 read-only user is not configured.
+   */
+  v3ReadUser?:
+    | ((args: GetSnmpCredentialsArgs) => Promise<SNMPv3UserCredentials | null>)
+    | SNMPv3UserCredentials
+    | null;
+  /**
+   * Null if the v3 read-write user is not configured.
+   */
+  v3WriteUser?:
+    | ((args: GetSnmpCredentialsArgs) => Promise<SNMPv3UserCredentials | null>)
+    | SNMPv3UserCredentials
+    | null;
+};
+
+export type methodGetSnmpCredentials = (
+  params: GetSnmpCredentialsParams,
+) => Promise<methodGetSnmpCredentialsResult>;
 export type methodGetSystemResult = {
   /**
    * The name, email or both of who to contact about the device.
@@ -1066,6 +1504,103 @@ export type methodSetNetworkConfigResult = {
 export type methodSetNetworkConfig = (
   params: SetNetworkConfigParams,
 ) => Promise<methodSetNetworkConfigResult>;
+export type methodSetSDDPEnabledResult = {
+  enabled?: ((args: SetSDDPEnabledArgs) => Promise<boolean>) | boolean;
+  /**
+   * Whether SDDP can be enabled or disabled right now.
+   * Null indicates the integration does not support enabling or disabling SDDP.
+   */
+  canSetEnabled?:
+    | ((args: SetSDDPEnabledArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+};
+
+export type methodSetSDDPEnabled = (
+  params: SetSDDPEnabledParams,
+) => Promise<methodSetSDDPEnabledResult>;
+export type methodSetSNMPCredentialsResult = {
+  /**
+   * Whether the SNMP agent is enabled.
+   * Null if the device has no global toggle; see v2.enabled and v3.enabled.
+   */
+  enabled?:
+    | ((args: SetSNMPCredentialsArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * Whether SNMP can be enabled or disabled right now.
+   * Null indicates the integration does not support enabling or disabling SNMP.
+   */
+  canSetEnabled?:
+    | ((args: SetSNMPCredentialsArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * Whether communities and v3 users can be changed right now.
+   * Null indicates the integration does not support setting SNMP credentials.
+   */
+  canSetCredentials?:
+    | ((args: SetSNMPCredentialsArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * SNMPv1/v2c settings. Null if the device does not support v1/v2c.
+   */
+  v2?:
+    | ((args: SetSNMPCredentialsArgs) => Promise<SNMPv2 | null>)
+    | SNMPv2
+    | null;
+  /**
+   * SNMPv3 settings. Null if the device does not support v3.
+   */
+  v3?:
+    | ((args: SetSNMPCredentialsArgs) => Promise<SNMPv3 | null>)
+    | SNMPv3
+    | null;
+};
+
+export type methodSetSNMPCredentials = (
+  params: SetSNMPCredentialsParams,
+) => Promise<methodSetSNMPCredentialsResult>;
+export type methodSetSNMPEnabledResult = {
+  /**
+   * Whether the SNMP agent is enabled.
+   * Null if the device has no global toggle; see v2.enabled and v3.enabled.
+   */
+  enabled?:
+    | ((args: SetSNMPEnabledArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * Whether SNMP can be enabled or disabled right now.
+   * Null indicates the integration does not support enabling or disabling SNMP.
+   */
+  canSetEnabled?:
+    | ((args: SetSNMPEnabledArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * Whether communities and v3 users can be changed right now.
+   * Null indicates the integration does not support setting SNMP credentials.
+   */
+  canSetCredentials?:
+    | ((args: SetSNMPEnabledArgs) => Promise<boolean | null>)
+    | boolean
+    | null;
+  /**
+   * SNMPv1/v2c settings. Null if the device does not support v1/v2c.
+   */
+  v2?: ((args: SetSNMPEnabledArgs) => Promise<SNMPv2 | null>) | SNMPv2 | null;
+  /**
+   * SNMPv3 settings. Null if the device does not support v3.
+   */
+  v3?: ((args: SetSNMPEnabledArgs) => Promise<SNMPv3 | null>) | SNMPv3 | null;
+};
+
+export type methodSetSNMPEnabled = (
+  params: SetSNMPEnabledParams,
+) => Promise<methodSetSNMPEnabledResult>;
 
 export type Handler = {
   dispatchAuthenticationPrompt?: methodDispatchAuthenticationPrompt;
@@ -1104,6 +1639,12 @@ export type Handler = {
    * Video streaming profiles exposed by the camera.
    */
   getProfiles?: methodGetProfiles;
+
+  getSddp?: methodGetSddp;
+
+  getSnmp?: methodGetSnmp;
+
+  getSnmpCredentials?: methodGetSnmpCredentials;
   /**
    * System-level metadata reported by the camera.
    */
@@ -1112,6 +1653,12 @@ export type Handler = {
   setAuthentication?: methodSetAuthentication;
 
   setNetworkConfig?: methodSetNetworkConfig;
+
+  setSDDPEnabled?: methodSetSDDPEnabled;
+
+  setSNMPCredentials?: methodSetSNMPCredentials;
+
+  setSNMPEnabled?: methodSetSNMPEnabled;
 };
 
 //@ts-ignore

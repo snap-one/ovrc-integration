@@ -1254,6 +1254,227 @@
         ],
         "nullable": true
       },
+      "GetSddp": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getSddp"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetSddpParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "GetSddpArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetSddpParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetSddpArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "enabled",
+                "canSetEnabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetSddpResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetSddpResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetSddpResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SDDP"
+          }
+        ],
+        "nullable": true
+      },
+      "GetSnmp": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getSnmp"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetSnmpParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "GetSnmpArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetSnmpCredentials": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "getSnmpCredentials"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/GetSnmpCredentialsParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "GetSnmpCredentialsArgs": {
+        "properties": {},
+        "type": "object"
+      },
+      "GetSnmpCredentialsParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetSnmpCredentialsArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "v2ReadCommunity",
+                "v2WriteCommunity",
+                "v3ReadUser",
+                "v3WriteUser"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetSnmpCredentialsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetSnmpCredentialsResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetSnmpCredentialsResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SNMPCredentials"
+          }
+        ],
+        "nullable": true
+      },
+      "GetSnmpParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/GetSnmpArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "enabled",
+                "canSetEnabled",
+                "canSetCredentials",
+                "v2",
+                "v3"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "GetSnmpResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/GetSnmpResult"
+              }
+            }
+          }
+        ]
+      },
+      "GetSnmpResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SNMP"
+          }
+        ],
+        "nullable": true
+      },
       "GetSystem": {
         "allOf": [
           {
@@ -2243,6 +2464,9 @@
             "getNetwork": "#/components/schemas/GetNetwork",
             "getOutputs": "#/components/schemas/GetOutputs",
             "getPower": "#/components/schemas/GetPower",
+            "getSddp": "#/components/schemas/GetSddp",
+            "getSnmp": "#/components/schemas/GetSnmp",
+            "getSnmpCredentials": "#/components/schemas/GetSnmpCredentials",
             "getSystem": "#/components/schemas/GetSystem",
             "getVideo": "#/components/schemas/GetVideo",
             "setAppSourcesActive": "#/components/schemas/SetAppSourcesActive",
@@ -2259,8 +2483,10 @@
             "setPowerPowerSavingMode": "#/components/schemas/SetPowerPowerSavingMode",
             "setPowerState": "#/components/schemas/SetPowerState",
             "setPowerWakeOnLan": "#/components/schemas/SetPowerWakeOnLan",
+            "setSDDPEnabled": "#/components/schemas/SetSDDPEnabled",
+            "setSNMPCredentials": "#/components/schemas/SetSNMPCredentials",
+            "setSNMPEnabled": "#/components/schemas/SetSNMPEnabled",
             "setSystemCountry": "#/components/schemas/SetSystemCountry",
-            "setSystemLabel": "#/components/schemas/SetSystemLabel",
             "setSystemLanguage": "#/components/schemas/SetSystemLanguage",
             "setVideoAspectRatio": "#/components/schemas/SetVideoAspectRatio",
             "setVideoPictureMode": "#/components/schemas/SetVideoPictureMode"
@@ -2306,6 +2532,15 @@
           },
           {
             "$ref": "#/components/schemas/GetPower"
+          },
+          {
+            "$ref": "#/components/schemas/GetSddp"
+          },
+          {
+            "$ref": "#/components/schemas/GetSnmp"
+          },
+          {
+            "$ref": "#/components/schemas/GetSnmpCredentials"
           },
           {
             "$ref": "#/components/schemas/GetSystem"
@@ -2356,10 +2591,16 @@
             "$ref": "#/components/schemas/SetPowerWakeOnLan"
           },
           {
-            "$ref": "#/components/schemas/SetSystemCountry"
+            "$ref": "#/components/schemas/SetSDDPEnabled"
           },
           {
-            "$ref": "#/components/schemas/SetSystemLabel"
+            "$ref": "#/components/schemas/SetSNMPCredentials"
+          },
+          {
+            "$ref": "#/components/schemas/SetSNMPEnabled"
+          },
+          {
+            "$ref": "#/components/schemas/SetSystemCountry"
           },
           {
             "$ref": "#/components/schemas/SetSystemLanguage"
@@ -2460,6 +2701,15 @@
             "$ref": "#/components/schemas/GetPowerResponse"
           },
           {
+            "$ref": "#/components/schemas/GetSddpResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetSnmpResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GetSnmpCredentialsResponse"
+          },
+          {
             "$ref": "#/components/schemas/GetSystemResponse"
           },
           {
@@ -2508,10 +2758,16 @@
             "$ref": "#/components/schemas/SetPowerWakeOnLanResponse"
           },
           {
-            "$ref": "#/components/schemas/SetSystemCountryResponse"
+            "$ref": "#/components/schemas/SetSDDPEnabledResponse"
           },
           {
-            "$ref": "#/components/schemas/SetSystemLabelResponse"
+            "$ref": "#/components/schemas/SetSNMPCredentialsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/SetSNMPEnabledResponse"
+          },
+          {
+            "$ref": "#/components/schemas/SetSystemCountryResponse"
           },
           {
             "$ref": "#/components/schemas/SetSystemLanguageResponse"
@@ -2523,6 +2779,392 @@
             "$ref": "#/components/schemas/SetVideoPictureModeResponse"
           }
         ]
+      },
+      "SDDP": {
+        "properties": {
+          "canSetEnabled": {
+            "description": "Whether SDDP can be enabled or disabled right now.\nNull indicates the integration does not support enabling or disabling SDDP.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SNMP": {
+        "description": "The device's SNMP agent configuration.",
+        "properties": {
+          "canSetCredentials": {
+            "description": "Whether communities and v3 users can be changed right now.\nNull indicates the integration does not support setting SNMP credentials.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "canSetEnabled": {
+            "description": "Whether SNMP can be enabled or disabled right now.\nNull indicates the integration does not support enabling or disabling SNMP.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Whether the SNMP agent is enabled.\nNull if the device has no global toggle; see v2.enabled and v3.enabled.",
+            "nullable": true,
+            "type": "boolean"
+          },
+          "v2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv2"
+              }
+            ],
+            "description": "SNMPv1/v2c settings. Null if the device does not support v1/v2c.",
+            "nullable": true
+          },
+          "v3": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3"
+              }
+            ],
+            "description": "SNMPv3 settings. Null if the device does not support v3.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPCredential": {
+        "description": "A secret value, such as a community string or passphrase.",
+        "properties": {
+          "credentialType": {
+            "$ref": "#/components/schemas/AuthenticationFieldCredentialType"
+          },
+          "value": {
+            "description": "Null if the device does not expose the value.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SNMPCredentialInput": {
+        "properties": {
+          "value": {
+            "description": "Null keeps the current value.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SNMPCredentials": {
+        "description": "SNMP secrets. Served live from the device, never cached.",
+        "properties": {
+          "v2ReadCommunity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredential"
+              }
+            ],
+            "description": "Null if read-only v1/v2c access is not configured.",
+            "nullable": true
+          },
+          "v2WriteCommunity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredential"
+              }
+            ],
+            "description": "Null if read-write v1/v2c access is not configured.",
+            "nullable": true
+          },
+          "v3ReadUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3UserCredentials"
+              }
+            ],
+            "description": "Null if the v3 read-only user is not configured.",
+            "nullable": true
+          },
+          "v3WriteUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3UserCredentials"
+              }
+            ],
+            "description": "Null if the v3 read-write user is not configured.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPCredentialsInput": {
+        "properties": {
+          "v2": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv2CredentialsInput"
+              }
+            ],
+            "description": "Null leaves the v1/v2c communities unchanged.",
+            "nullable": true
+          },
+          "v3": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3UsersInput"
+              }
+            ],
+            "description": "Null leaves the v3 users unchanged.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPEnabledInput": {
+        "description": "Null fields are left unchanged.",
+        "properties": {
+          "enabled": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "v2Enabled": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "v3Enabled": {
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv2": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "readAccess": {
+            "description": "Whether a read-only community is configured.",
+            "type": "boolean"
+          },
+          "writeAccess": {
+            "description": "Whether a read-write community is configured.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv2CredentialsInput": {
+        "description": "Replaces the v1/v2c communities.",
+        "properties": {
+          "readCommunity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredentialInput"
+              }
+            ],
+            "description": "Null removes read-only access.",
+            "nullable": true
+          },
+          "writeCommunity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredentialInput"
+              }
+            ],
+            "description": "Null removes read-write access.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv3": {
+        "properties": {
+          "authProtocols": {
+            "description": "The authentication protocols this device supports.",
+            "items": {
+              "description": "- \"MD5\": \n\n- \"SHA\": \n\n- \"SHA224\": \n\n- \"SHA256\": \n\n- \"SHA384\": \n\n- \"SHA512\":",
+              "enum": [
+                "MD5",
+                "SHA",
+                "SHA224",
+                "SHA256",
+                "SHA384",
+                "SHA512"
+              ],
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "privProtocols": {
+            "description": "The privacy protocols this device supports.",
+            "items": {
+              "description": "- \"DES\": \n\n- \"TRIPLE_DES\": \n\n- \"AES128\": \n\n- \"AES192\": \n\n- \"AES256\":",
+              "enum": [
+                "DES",
+                "TRIPLE_DES",
+                "AES128",
+                "AES192",
+                "AES256"
+              ],
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "readUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3User"
+              }
+            ],
+            "description": "The user granted read-only access. Null if not configured.",
+            "nullable": true
+          },
+          "writeUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3User"
+              }
+            ],
+            "description": "The user granted read-write access. Null if not configured.",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv3User": {
+        "properties": {
+          "authProtocol": {
+            "description": "Null indicates no authentication.\n- \"MD5\": \n\n- \"SHA\": \n\n- \"SHA224\": \n\n- \"SHA256\": \n\n- \"SHA384\": \n\n- \"SHA512\":",
+            "enum": [
+              "MD5",
+              "SHA",
+              "SHA224",
+              "SHA256",
+              "SHA384",
+              "SHA512",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "privProtocol": {
+            "description": "Null indicates no encryption. Requires authProtocol.\n- \"DES\": \n\n- \"TRIPLE_DES\": \n\n- \"AES128\": \n\n- \"AES192\": \n\n- \"AES256\":",
+            "enum": [
+              "DES",
+              "TRIPLE_DES",
+              "AES128",
+              "AES192",
+              "AES256",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv3UserCredentials": {
+        "properties": {
+          "authPassphrase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredential"
+              }
+            ],
+            "nullable": true
+          },
+          "privPassphrase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPCredential"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "SNMPv3UserInput": {
+        "properties": {
+          "authPassphrase": {
+            "description": "Null keeps the current value.\nRequired when authProtocol changes or the user is new.",
+            "nullable": true,
+            "type": "string"
+          },
+          "authProtocol": {
+            "description": "Null disables authentication.\n- \"MD5\": \n\n- \"SHA\": \n\n- \"SHA224\": \n\n- \"SHA256\": \n\n- \"SHA384\": \n\n- \"SHA512\":",
+            "enum": [
+              "MD5",
+              "SHA",
+              "SHA224",
+              "SHA256",
+              "SHA384",
+              "SHA512",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "privPassphrase": {
+            "description": "Null keeps the current value.\nRequired when privProtocol changes or the user is new.",
+            "nullable": true,
+            "type": "string"
+          },
+          "privProtocol": {
+            "description": "Null disables encryption. Requires authProtocol.\n- \"DES\": \n\n- \"TRIPLE_DES\": \n\n- \"AES128\": \n\n- \"AES192\": \n\n- \"AES256\":",
+            "enum": [
+              "DES",
+              "TRIPLE_DES",
+              "AES128",
+              "AES192",
+              "AES256",
+              null
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "type": "object"
+      },
+      "SNMPv3UsersInput": {
+        "description": "Replaces the v3 users.",
+        "properties": {
+          "readUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3UserInput"
+              }
+            ],
+            "description": "Null removes the read-only user.",
+            "nullable": true
+          },
+          "writeUser": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SNMPv3UserInput"
+              }
+            ],
+            "description": "Null removes the read-write user.",
+            "nullable": true
+          }
+        },
+        "type": "object"
       },
       "ScreenMute": {
         "properties": {
@@ -3686,6 +4328,234 @@
       "SetPowerWakeOnLanResult": {
         "$ref": "#/components/schemas/WakeOnLAN"
       },
+      "SetSDDPEnabled": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "setSDDPEnabled"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/SetSDDPEnabledParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SetSDDPEnabledArgs": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "SetSDDPEnabledParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/SetSDDPEnabledArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "enabled",
+                "canSetEnabled"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "SetSDDPEnabledResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/SetSDDPEnabledResult"
+              }
+            }
+          }
+        ]
+      },
+      "SetSDDPEnabledResult": {
+        "$ref": "#/components/schemas/SDDP"
+      },
+      "SetSNMPCredentials": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "setSNMPCredentials"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/SetSNMPCredentialsParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SetSNMPCredentialsArgs": {
+        "properties": {
+          "input": {
+            "$ref": "#/components/schemas/SNMPCredentialsInput"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "type": "object"
+      },
+      "SetSNMPCredentialsParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/SetSNMPCredentialsArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "enabled",
+                "canSetEnabled",
+                "canSetCredentials",
+                "v2",
+                "v3"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "SetSNMPCredentialsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/SetSNMPCredentialsResult"
+              }
+            }
+          }
+        ]
+      },
+      "SetSNMPCredentialsResult": {
+        "$ref": "#/components/schemas/SNMP"
+      },
+      "SetSNMPEnabled": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCRequestBase"
+          },
+          {
+            "properties": {
+              "method": {
+                "enum": [
+                  "setSNMPEnabled"
+                ],
+                "type": "string"
+              },
+              "params": {
+                "$ref": "#/components/schemas/SetSNMPEnabledParams"
+              }
+            },
+            "required": [
+              "method",
+              "params"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SetSNMPEnabledArgs": {
+        "properties": {
+          "input": {
+            "$ref": "#/components/schemas/SNMPEnabledInput"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "type": "object"
+      },
+      "SetSNMPEnabledParams": {
+        "properties": {
+          "args": {
+            "$ref": "#/components/schemas/SetSNMPEnabledArgs"
+          },
+          "includeFields": {
+            "items": {
+              "enum": [
+                "enabled",
+                "canSetEnabled",
+                "canSetCredentials",
+                "v2",
+                "v3"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "args"
+        ],
+        "type": "object"
+      },
+      "SetSNMPEnabledResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RPCMethodResult"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/SetSNMPEnabledResult"
+              }
+            }
+          }
+        ]
+      },
+      "SetSNMPEnabledResult": {
+        "$ref": "#/components/schemas/SNMP"
+      },
       "SetSystemCountry": {
         "allOf": [
           {
@@ -3761,81 +4631,6 @@
       },
       "SetSystemCountryResult": {
         "$ref": "#/components/schemas/SystemCountry"
-      },
-      "SetSystemLabel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RPCRequestBase"
-          },
-          {
-            "properties": {
-              "method": {
-                "enum": [
-                  "setSystemLabel"
-                ],
-                "type": "string"
-              },
-              "params": {
-                "$ref": "#/components/schemas/SetSystemLabelParams"
-              }
-            },
-            "required": [
-              "method",
-              "params"
-            ],
-            "type": "object"
-          }
-        ],
-        "description": "Sets the system label, when applicable (i.e. if getSystem denotes the integration supports setting the system label)"
-      },
-      "SetSystemLabelArgs": {
-        "properties": {
-          "label": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "label"
-        ],
-        "type": "object"
-      },
-      "SetSystemLabelParams": {
-        "properties": {
-          "args": {
-            "$ref": "#/components/schemas/SetSystemLabelArgs"
-          },
-          "includeFields": {
-            "items": {
-              "enum": [
-                "label",
-                "canSet"
-              ],
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "args"
-        ],
-        "type": "object"
-      },
-      "SetSystemLabelResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RPCMethodResult"
-          },
-          {
-            "properties": {
-              "result": {
-                "$ref": "#/components/schemas/SetSystemLabelResult"
-              }
-            }
-          }
-        ]
-      },
-      "SetSystemLabelResult": {
-        "$ref": "#/components/schemas/GlobalLabel"
       },
       "SetSystemLanguage": {
         "allOf": [
