@@ -97,12 +97,6 @@
       "Authentication": {
         "description": "Represents a standalone authentication method or \"form\". This object serves as a mechanism to logically group fields required for authentication.\nFor example: a device may require an access token to communicate over the LAN. The integration may also support communicating via a cloud api, requiring a clientId and clientSecret.\nIn this case, the integration would return two Authentication objects, one for the LAN method and one for the cloud method, each with their respective fields and types.",
         "properties": {
-          "documentationURL": {
-            "description": "A url to documentation describing how to set/configure this authentication method.\nThis is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.",
-            "format": "uri",
-            "nullable": true,
-            "type": "string"
-          },
           "fields": {
             "description": "A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.",
             "items": {
@@ -344,7 +338,6 @@
                 "id",
                 "label",
                 "valid",
-                "documentationURL",
                 "fields"
               ],
               "type": "string"
@@ -3304,7 +3297,6 @@
                 "id",
                 "label",
                 "valid",
-                "documentationURL",
                 "fields"
               ],
               "type": "string"

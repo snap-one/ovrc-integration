@@ -4,12 +4,6 @@
  *     In this case, the integration would return two Authentication objects, one for the LAN method and one for the cloud method, each with their respective fields and types.
  */
 export type Authentication = {
-  /**
-   * Format: uri
-   * @description A url to documentation describing how to set/configure this authentication method.
-   *     This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-   */
-  documentationURL?: string | null;
   /** @description A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set. */
   fields?: AuthenticationField[] | null;
   /** @description The unique identifier for this authentication method. This is used when setting authentication values. */
@@ -113,7 +107,7 @@ export type DispatchAuthenticationPromptArgs = {
 };
 export type DispatchAuthenticationPromptParams = {
   args: DispatchAuthenticationPromptArgs;
-  includeFields?: ("id" | "label" | "valid" | "documentationURL" | "fields")[];
+  includeFields?: ("id" | "label" | "valid" | "fields")[];
 };
 export type DispatchAuthenticationPromptResponse = RPCMethodResult & {
   result?: DispatchAuthenticationPromptResult;
@@ -818,7 +812,7 @@ export type SetAuthenticationArgs = {
 };
 export type SetAuthenticationParams = {
   args: SetAuthenticationArgs;
-  includeFields?: ("id" | "label" | "valid" | "documentationURL" | "fields")[];
+  includeFields?: ("id" | "label" | "valid" | "fields")[];
 };
 export type SetAuthenticationResponse = RPCMethodResult & {
   result?: SetAuthenticationResult;
@@ -1186,15 +1180,6 @@ export type methodDispatchAuthenticationPromptResult = {
     | ((args: DispatchAuthenticationPromptArgs) => Promise<boolean>)
     | boolean;
   /**
-   * Format: uri
-   * A url to documentation describing how to set/configure this authentication method.
-   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-   */
-  documentationURL?:
-    | ((args: DispatchAuthenticationPromptArgs) => Promise<string | null>)
-    | string
-    | null;
-  /**
    * A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.
    */
   fields?:
@@ -1470,15 +1455,6 @@ export type methodSetAuthenticationResult = {
    * There is no way to report the validity of an individual field within the authentication method itself.
    */
   valid?: ((args: SetAuthenticationArgs) => Promise<boolean>) | boolean;
-  /**
-   * Format: uri
-   * A url to documentation describing how to set/configure this authentication method.
-   * This is intended to be displayed to the user as guidance for how to obtain the necessary credentials or complete the necessary steps to successfully authenticate.
-   */
-  documentationURL?:
-    | ((args: SetAuthenticationArgs) => Promise<string | null>)
-    | string
-    | null;
   /**
    * A list of authentication fields required for this authentication method. Each field has a type that indicates how the value should be obtained or set.
    */
