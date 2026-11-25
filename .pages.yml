@@ -11,6 +11,28 @@ media:
     output: ./images
     rename: random
     categories: [image]
+
+components:
+  title:
+    label: Title
+    type: string
+    required: true
+  weight:
+    label: Weight
+    type: number
+    default: 0
+    description: The higher the weight, the further down the item will sink.
+  draft:
+    label: Is Draft?
+    type: boolean
+    default: false
+    description: Drafts cannot be seen in the published docs at all.
+  wip:
+    label: Is Work In Progress?
+    type: boolean
+    default: false
+    description: A placeholder is shown for work in progress items.
+  
 content:
   - name: fundamentals
     label: Fundamentals
@@ -26,24 +48,13 @@ content:
       - _index.md
     fields:
       - name: title
-        label: Title
-        type: string
-        required: true
+        component: title
       - name: weight
-        label: Weight
-        type: number
-        default: 0
-        description: The higher the weight, the further down the item will sink.
+        component: weight
       - name: draft
-        label: Is Draft?
-        type: boolean
-        default: false
-        description: Drafts cannot be seen in the published docs at all.
+        component: draft
       - name: wip
-        label: Is Work In Progress?
-        type: boolean
-        default: false
-        description: A placeholder is shown for work in progress items.
+        component: wip
       - name: body
         type: rich-text
         options:
@@ -62,24 +73,13 @@ content:
       - _index.md
     fields:
       - name: title
-        label: Title
-        type: string
-        required: true
+        component: title
       - name: weight
-        label: Weight
-        type: number
-        default: 0
-        description: The higher the weight, the further down the item will sink.
+        component: weight
       - name: draft
-        label: Is Draft?
-        type: boolean
-        default: false
-        description: Drafts cannot be seen in the published docs at all.
+        component: draft
       - name: wip
-        label: Is Work In Progress?
-        type: boolean
-        default: false
-        description: A placeholder is shown for work in progress items.
+        component: wip
       - name: body
         type: rich-text
         options:
