@@ -5,6 +5,9 @@ content:
     path: docs/pages/hugo/content/chapter/fundamentals
     format: yaml-frontmatter
     subfolders: true
+    filename:
+      template: "{fields.name}.md"
+      field: true
     exclude:
       - images
       - _index.md
