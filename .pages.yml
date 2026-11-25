@@ -5,6 +5,9 @@ content:
     path: docs/pages/hugo/content/chapter/fundamentals
     format: yaml-frontmatter
     subfolders: true
+    exclude:
+      - images
+      - _index.md
     fields:
       - name: title
         label: Title
