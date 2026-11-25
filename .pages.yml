@@ -5,6 +5,12 @@ media:
     output: ./images
     rename: random
     categories: [image]
+  - name: submission_images
+    label: Submission Images
+    input: docs/pages/hugo/content/chapter/submission/images
+    output: ./images
+    rename: random
+    categories: [image]
   - name: prefix_images
     label: Introduction Images
     input: docs/pages/hugo/content/prefix/images
@@ -34,6 +40,31 @@ components:
     description: A placeholder is shown for work in progress items.
   
 content:
+  - name: prefix
+    label: Introduction
+    type: collection
+    path: docs/pages/hugo/content/prefix
+    format: yaml-frontmatter
+    filename:
+      template: "{fields.name}.md"
+      field: true
+    exclude:
+      - images
+      - _index.md
+    fields:
+      - name: title
+        component: title
+      - name: weight
+        component: weight
+      - name: draft
+        component: draft
+      - name: wip
+        component: wip
+      - name: body
+        type: rich-text
+        options:
+          path: docs/pages/hugo/content/prefix/images
+          media: prefix_images
   - name: fundamentals
     label: Fundamentals
     type: collection
@@ -60,11 +91,12 @@ content:
         options:
           path: docs/pages/hugo/content/chapter/fundamentals/images
           media: fundamentals_images
-  - name: prefix
-    label: Introduction
+  - name: submission
+    label: Submitting An Integration
     type: collection
-    path: docs/pages/hugo/content/prefix
+    path: docs/pages/hugo/content/chapter/submission
     format: yaml-frontmatter
+    subfolders: true
     filename:
       template: "{fields.name}.md"
       field: true
@@ -83,5 +115,5 @@ content:
       - name: body
         type: rich-text
         options:
-          path: docs/pages/hugo/content/prefix/images
-          media: prefix_images
+          path: docs/pages/hugo/content/chapter/submission/images
+          media: submission_images
