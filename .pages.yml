@@ -1,0 +1,29 @@
+content:
+  - name: fundamentals
+    label: Fundamentals
+    type: collection
+    path: docs/pages/hugo/content/chapter/fundamentals
+    format: yaml-frontmatter
+    subfolders: true
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: weight
+        label: Weight
+        type: number
+        default: 0
+        description: The higher the weight, the further down the item will sink.
+      - name: draft
+        label: Is Draft?
+        type: boolean
+        default: false
+        description: Drafts cannot be seen in the published docs at all.
+      - name: wip
+        label: Is Work In Progress?
+        type: boolean
+        default: false
+        description: A placeholder is shown for work in progress items.
+      - name: body
+        type: rich-text
