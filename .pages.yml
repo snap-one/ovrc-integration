@@ -1,10 +1,16 @@
 media:
-  name: fundamentals_images
-  label: Fundamentals Images
-  input: docs/pages/hugo/content/chapter/fundamentals/images
-  output: ./images
-  rename: random
-  categories: [image]
+  - name: fundamentals_images
+    label: Fundamentals Images
+    input: docs/pages/hugo/content/chapter/fundamentals/images
+    output: ./images
+    rename: random
+    categories: [image]
+  - name: prefix_images
+    label: Introduction Images
+    input: docs/pages/hugo/content/prefix/images
+    output: ./images
+    rename: random
+    categories: [image]
 content:
   - name: fundamentals
     label: Fundamentals
@@ -43,3 +49,39 @@ content:
         options:
           path: docs/pages/hugo/content/chapter/fundamentals/images
           media: fundamentals_images
+  - name: prefix
+    label: Introduction
+    type: collection
+    path: docs/pages/hugo/content/prefix
+    format: yaml-frontmatter
+    filename:
+      template: "{fields.name}.md"
+      field: true
+    exclude:
+      - images
+      - _index.md
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: weight
+        label: Weight
+        type: number
+        default: 0
+        description: The higher the weight, the further down the item will sink.
+      - name: draft
+        label: Is Draft?
+        type: boolean
+        default: false
+        description: Drafts cannot be seen in the published docs at all.
+      - name: wip
+        label: Is Work In Progress?
+        type: boolean
+        default: false
+        description: A placeholder is shown for work in progress items.
+      - name: body
+        type: rich-text
+        options:
+          path: docs/pages/hugo/content/prefix/images
+          media: prefix_images
