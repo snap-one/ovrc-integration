@@ -33,3 +33,6 @@ content:
         description: A placeholder is shown for work in progress items.
       - name: body
         type: rich-text
+        options:
+          path: docs/pages/hugo/content/chapter/fundamentals/images
+          media: fundamentals_images
