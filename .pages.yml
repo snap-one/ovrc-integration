@@ -1,3 +1,10 @@
+media:
+  name: fundamentals_images
+  label: Fundamentals Images
+  input: docs/pages/hugo/content/chapter/fundamentals/images
+  output: ./images
+  rename: random
+  categories: [image]
 content:
   - name: fundamentals
     label: Fundamentals
